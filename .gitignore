@@ -1,0 +1,61 @@
+# Built application files
+*.jar
+*.aar
+
+# Files for the Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+captures/
+
+# Eclipse
+.project/
+.classpath
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+classes/
+gen-external-apklibs/
+
+# Ant
+build.xml
+ant.properties
+
+# Maven
+target/
+release.properties
+pom.xml.*
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Proguard
+proguard/
+proguard.cfg
+proguard-project.txt
+
+# Log Files
+*.log
+
+# Other
+.checkstyle
+.DS_Store
+Thumbs.db
+tmp
+
+# Unignore jars from the libs folder
+!libs/*.jar
+!gradle/wrapper/*.jar
