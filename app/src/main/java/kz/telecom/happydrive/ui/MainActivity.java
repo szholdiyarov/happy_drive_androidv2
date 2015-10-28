@@ -2,7 +2,9 @@ package kz.telecom.happydrive.ui;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
@@ -11,17 +13,35 @@ import kz.telecom.happydrive.R;
  * Created by Galymzhan Sh on 10/27/15.
  */
 public class MainActivity extends BaseActivity {
+    private DrawerLayout mDrawerLayout;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
+        initToolbar(toolbar);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawerLayout.setFitsSystemWindows(false);
+            mDrawerLayout.setFitsSystemWindows(false);
         }
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,
+                mDrawerLayout, toolbar, 0, 0);
+        mDrawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+    }
+
+    @SuppressWarnings("unused")
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    @SuppressWarnings("unused")
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 }
