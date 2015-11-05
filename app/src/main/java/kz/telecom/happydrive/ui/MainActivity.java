@@ -8,11 +8,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.ui.fragment.DrawerFragment;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements DrawerFragment.Callback {
     private DrawerLayout mDrawerLayout;
 
     @Override
@@ -35,6 +36,12 @@ public class MainActivity extends BaseActivity {
         drawerToggle.syncState();
     }
 
+    @Override
+    public boolean onDrawerMenuItemSelected(int itemId) {
+        closeDrawer();
+        return true;
+    }
+
     @SuppressWarnings("unused")
     public void openDrawer() {
         mDrawerLayout.openDrawer(GravityCompat.START);
@@ -43,5 +50,10 @@ public class MainActivity extends BaseActivity {
     @SuppressWarnings("unused")
     public void closeDrawer() {
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    protected int getDefaultContentViewContainerId() {
+        return R.id.activity_main_view_container;
     }
 }

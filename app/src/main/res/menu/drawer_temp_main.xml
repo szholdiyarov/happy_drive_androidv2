@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:icon="@drawable/ic_temp_main_24p"
+            android:title="Главная"/>
+        <item
+            android:icon="@drawable/ic_temp_card_24p"
+            android:title="Моя визитка"/>
+        <item
+            android:icon="@drawable/ic_catalog_24p"
+            android:title="Каталог"/>
+        <item
+            android:id="@+id/action_temp_hide_card"
+            android:icon="@drawable/ic_temp_lock_24p"
+            android:title="Скрыть визитку"
+            android:checkable="false"
+            app:actionLayout="@layout/layout_action_switch"
+            app:showAsAction="always"/>
+        <item
+            android:icon="@drawable/ic_temp_help_24p"
+            android:title="Помощь"/>
+    </group>
+</menu>
