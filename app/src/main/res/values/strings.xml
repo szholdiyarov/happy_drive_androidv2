@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Happy Drive</string>
+
+    <!-- drawer menu -->
+    <string name="action_main">Мой Happy-Drive</string>
+    <string name="action_favourite">Избранное</string>
+    <string name="action_catalog">Каталог</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_help">Помощь</string>
+    <string name="action_about">О приложении</string>
+
 </resources>
