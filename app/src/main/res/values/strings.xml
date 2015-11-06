@@ -12,5 +12,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_main_login">MainLoginActivity</string>
 
 </resources>

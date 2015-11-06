@@ -2,6 +2,7 @@ package kz.telecom.happydrive.data;
 
 import android.content.SharedPreferences;
 import android.content.Context;
+
 /**
  * Created by darkhan on 07.11.15.
  */
@@ -17,7 +18,7 @@ public class UserLocalStore {
 
     public void storeUserData(User user) {
         SharedPreferences.Editor spEditor = userLocalDatabase.edit();
-        spEditor.putString("username", user.getUsername());
+        spEditor.putString("username", user.getEmail());
         spEditor.putString("password", user.getPassword());
         spEditor.putString("card_id", user.getCardId());
         spEditor.putString("token", user.getToken());
