@@ -66,7 +66,7 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
                         startActivity(new Intent(outer, EmailLoginActivity.class));
                         break;
                     case ResponseCode.EMAIL_USED:
-                        showErrorMessage(CustomMessages.EMAIL_USED);
+                        etEmail.setError(CustomMessages.EMAIL_USED);
                         break;
                     default:
                         showErrorMessage(CustomMessages.INVALID_FORM);

@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.UserLocalStore;
+import kz.telecom.happydrive.ui.MainActivity;
 
 public class MainLoginActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -21,7 +22,10 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
 
         // check if user is already logged in.
         userLocalStore = new UserLocalStore(this);
-
+        if (userLocalStore.getToken() != null) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
         bLogin = (ImageButton) findViewById(R.id.bLogin);
         bRegister = (ImageButton) findViewById(R.id.bRegister);
 
