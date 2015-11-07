@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.CustomMessages;
 import kz.telecom.happydrive.data.ResponseCode;
@@ -33,6 +34,7 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
         setContentView(R.layout.email_activity_login);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        ((TextView) findViewById(R.id.tvRegister)).setOnClickListener(this);
         bLogin = (ImageButton) findViewById(R.id.bLogin);
         bLogin.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
@@ -41,6 +43,9 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.bRegister:
+                startActivity(new Intent(this, RegisterActivity.class));
+                break;
             case R.id.bLogin:
                 User user = new User();
                 user.setEmail(etUsername.getText().toString());

@@ -7,16 +7,32 @@
                 android:padding="40dp"
                 tools:context="kz.telecom.happydrive.ui.auth.MainLoginActivity">
 
-    <Button
-            android:id="@+id/bLogin"
-            android:text="Войти по E-mail"
+    <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_app"/>
+    <TextView
+            android:text="Happy Drive - happy MOMENTS, happy BUSINESS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:paddingTop="10dp"
+            android:gravity="center"/>
+    <ImageButton
+            android:id="@+id/bLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_e_mail"
+            android:paddingTop="40dp"
+            style="?android:attr/borderlessButtonStyle"/>
 
-    <Button
+
+    <ImageButton
             android:id="@+id/bRegister"
             android:text="Регистрация"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/registration"
+            style="?android:attr/borderlessButtonStyle"/>
 
 </LinearLayout>

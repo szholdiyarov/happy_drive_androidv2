@@ -3,33 +3,47 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:padding="40dp"
+
                 tools:context="kz.telecom.happydrive.ui.auth.RegisterActivity">
 
-    <Button
-            android:id="@+id/bBack"
-            android:text="back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
     <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Регистрация"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:clickable="true"
+            android:textColor="#ffffff"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    <!--<Button-->
+            <!--android:id="@+id/bBack"-->
+            <!--android:text="back"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"/>-->
 
     <EditText
             android:id="@+id/etEmail"
-            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
+            android:padding="5dp"
+            android:background="#fff"
+            android:hint="E-mail"
             android:layout_height="wrap_content"/>
     <EditText
             android:id="@+id/etPassword"
-            android:inputType="textPassword"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
             android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:background="#fff"
+            android:hint="пароль"
             android:layout_height="wrap_content"/>
 
-    <Button
+    <ImageButton
             android:id="@+id/bRegister"
-            android:text="РЕГИСТРАЦИЯ"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_register"
+            style="?android:attr/borderlessButtonStyle"/>
 
 </LinearLayout>

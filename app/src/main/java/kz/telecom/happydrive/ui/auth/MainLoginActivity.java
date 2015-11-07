@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.UserLocalStore;
 
 public class MainLoginActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private Button bLogin, bRegister;
+    private ImageButton bLogin, bRegister;
     private UserLocalStore userLocalStore;
 
     @Override
@@ -21,8 +22,8 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
         // check if user is already logged in.
         userLocalStore = new UserLocalStore(this);
 
-        bLogin = (Button) findViewById(R.id.bLogin);
-        bRegister = (Button) findViewById(R.id.bRegister);
+        bLogin = (ImageButton) findViewById(R.id.bLogin);
+        bRegister = (ImageButton) findViewById(R.id.bRegister);
 
         bLogin.setOnClickListener(this);
         bRegister.setOnClickListener(this);
