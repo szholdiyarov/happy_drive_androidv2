@@ -2,11 +2,14 @@ package kz.telecom.happydrive.ui.auth;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.CustomMessages;
 import kz.telecom.happydrive.data.ResponseCode;
@@ -20,7 +23,7 @@ import org.json.JSONObject;
 
 public class EmailLoginActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private Button bLogin;
+    private ImageButton bLogin;
     private EditText etUsername, etPassword;
     private UserLocalStore userLocalStore;
 
@@ -30,8 +33,7 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
         setContentView(R.layout.email_activity_login);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
-        bLogin = (Button) findViewById(R.id.bLogin);
-
+        bLogin = (ImageButton) findViewById(R.id.bLogin);
         bLogin.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
     }
