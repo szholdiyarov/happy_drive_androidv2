@@ -75,7 +75,7 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
                     switch (obj.optInt("code", -1)) {
                         case ResponseCode.OK:
                             // TODO: Store more data.
-                            user.setCardId(obj.optString("token"));
+                            user.setToken(obj.optString("token"));
                             logUserIn(user);
                             break;
                         default:
