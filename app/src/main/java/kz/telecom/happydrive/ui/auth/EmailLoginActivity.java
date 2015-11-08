@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
     private ImageButton bLogin;
     private EditText etUsername, etPassword;
     private UserLocalStore userLocalStore;
+    private Button bRegister, bForgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,10 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
         setContentView(R.layout.email_activity_login);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
-        ((TextView) findViewById(R.id.tvRegister)).setOnClickListener(this);
+        bRegister = (Button) findViewById(R.id.bRegister);
+        bRegister.setOnClickListener(this);
+        bForgotPassword = (Button) findViewById(R.id.bForgotPassword);
+        bForgotPassword.setOnClickListener(this);
         bLogin = (ImageButton) findViewById(R.id.bLogin);
         bLogin.setOnClickListener(this);
         userLocalStore = new UserLocalStore(this);
@@ -45,6 +50,9 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.bRegister:
                 startActivity(new Intent(this, RegisterActivity.class));
+                break;
+            case R.id.bForgotPassword:
+                startActivity(new Intent(this, ResetActivity.class));
                 break;
             case R.id.bLogin:
                 User user = new User();
@@ -67,11 +75,11 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
                     switch (obj.optInt("code", -1)) {
                         case ResponseCode.OK:
                             // TODO: Store more data.
-                            user.setCardId(obj.optString("token"));
+                            user.setToken(obj.optString("token"));
                             logUserIn(user);
                             break;
                         default:
-                            showErrorMessage(CustomMessages.INCORRECT_EMAIL_OR_PASSWORD);
+                            etPassword.setError(CustomMessages.INCORRECT_EMAIL_OR_PASSWORD);
                             break;
                     }
                 }

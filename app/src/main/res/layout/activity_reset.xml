@@ -5,45 +5,28 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/background"
                 android:padding="40dp"
-
-                tools:context="kz.telecom.happydrive.ui.auth.RegisterActivity">
+                tools:context="kz.telecom.happydrive.ui.auth.ResetActivity">
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Регистрация"
+            android:text="Восстановить пароль"
             android:clickable="true"
             android:textColor="#ffffff"
             style="?android:attr/borderlessButtonStyle"/>
-
-    <!--<Button-->
-            <!--android:id="@+id/bBack"-->
-            <!--android:text="back"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"/>-->
 
     <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:padding="6dp"
             android:background="#fff"
-            android:hint="E-mail"
+            android:hint="Отправить пароль на E-mail"
             android:layout_height="wrap_content"/>
-    <EditText
-            android:id="@+id/etPassword"
-            android:layout_marginTop="10dp"
-            android:padding="6dp"
-            android:layout_width="match_parent"
-            android:inputType="textPassword"
-            android:background="#fff"
-            android:hint="пароль"
-            android:layout_height="wrap_content"/>
-
     <ImageButton
-            android:id="@+id/bRegister"
+            android:id="@+id/ibSend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_register"
+            android:src="@drawable/btn_send"
             style="?android:attr/borderlessButtonStyle"/>
 
 </LinearLayout>
