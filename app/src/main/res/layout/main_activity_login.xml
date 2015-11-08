@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/background"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical"
+              android:padding="40dp"
+              tools:context="kz.telecom.happydrive.ui.auth.MainLoginActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_app"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text="Happy Drive - happy MOMENTS, happy BUSINESS"
+        android:textColor="#ffffff"/>
+
+    <ImageButton
+        android:id="@+id/bLogin"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp"
+        android:src="@drawable/btn_e_mail"/>
+
+
+    <ImageButton
+        android:id="@+id/bRegister"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/registration"
+        android:text="Регистрация"/>
+
+</LinearLayout>

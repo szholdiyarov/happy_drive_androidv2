@@ -8,5 +8,10 @@
     <string name="action_settings">Настройки</string>
     <string name="action_help">Помощь</string>
     <string name="action_about">О приложении</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_main_login">MainLoginActivity</string>
 
 </resources>

@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:padding="40dp"
+                tools:context="kz.telecom.happydrive.ui.auth.EmailLoginActivity">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Войти по E-mail"
+            android:clickable="true"
+            android:textColor="#ffffff"
+            style="?android:attr/borderlessButtonStyle"/>
+
+
+    <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:padding="5dp"
+            android:background="#fff"
+            android:hint="E-mail"
+            android:layout_height="wrap_content"/>
+    <EditText
+            android:id="@+id/etPassword"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:background="#fff"
+            android:hint="пароль"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="10dp">
+
+        <TextView
+                android:id="@+id/tvForgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Забыли пароль?"
+                android:clickable="true"
+                android:textColor="#ffffff"
+                style="?android:attr/borderlessButtonStyle"/>
+        <ImageButton
+                android:id="@+id/bLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_enter"
+                style="?android:attr/borderlessButtonStyle"/>
+
+    </LinearLayout>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="10dp">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Не зарегистрированы?"
+                android:clickable="false"
+                android:textColor="#ffffff"
+                />
+        <TextView
+                android:id="@+id/tvRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Регистрация"
+                android:clickable="true"
+                android:textColor="#ffffff"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+    </LinearLayout>
+
+</LinearLayout>
