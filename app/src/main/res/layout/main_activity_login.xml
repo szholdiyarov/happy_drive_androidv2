@@ -4,7 +4,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/background"
-                android:padding="40dp"
+                android:padding="20dp"
                 tools:context="kz.telecom.happydrive.ui.auth.MainLoginActivity">
 
     <ImageView
@@ -23,13 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/btn_e_mail"
-            android:paddingTop="40dp"
+            android:layout_marginTop="40dp"
             style="?android:attr/borderlessButtonStyle"/>
 
 
     <ImageButton
             android:id="@+id/bRegister"
             android:text="Регистрация"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@drawable/registration"
