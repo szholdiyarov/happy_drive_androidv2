@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kz.telecom.happydrive">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".HappyDriveApp"
         android:allowBackup="true"
@@ -18,6 +20,8 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="444a8bc27f1541207a800de39f493a507f9e8708" />
     </application>
-
 </manifest>

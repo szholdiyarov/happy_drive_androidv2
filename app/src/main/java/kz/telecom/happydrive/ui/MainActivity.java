@@ -38,6 +38,9 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 
     @Override
     public boolean onDrawerMenuItemSelected(int itemId) {
+        if (true) {
+            throw new RuntimeException("This is an intentional crash for testing purpose");
+        }
         closeDrawer();
         return true;
     }
