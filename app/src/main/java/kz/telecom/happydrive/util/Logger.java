@@ -106,6 +106,8 @@ public class Logger {
 
             if (cause != null) {
                 Crashlytics.logException(cause);
+                Log.println(level.getOrigin(), tag,
+                        Log.getStackTraceString(cause));
             }
         }
     }
