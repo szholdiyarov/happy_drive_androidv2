@@ -12,6 +12,12 @@ import com.facebook.*;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.CustomMessages;
 import kz.telecom.happydrive.data.ResponseCode;
@@ -24,18 +30,32 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
-public class MainLoginActivity extends ActionBarActivity implements View.OnClickListener {
+
+public class MainLoginActivity extends ActionBarActivity implements View.OnClickListener,
+                                                        GoogleApiClient.OnConnectionFailedListener {
 
     private ImageButton bLogin, bRegister;
     private UserLocalStore userLocalStore;
     private LoginButton fbLogin;
     private CallbackManager callbackManager;
     private MainLoginActivity outer;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int GOOGLE_SIGN_IN = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initialize Facebook sdk before setContentView
         FacebookSdk.sdkInitialize(getApplicationContext());
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                                               .requestEmail()
+                                                               .requestIdToken(getString(R.string.google_server_client_id))
+                                                               .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         setContentView(R.layout.main_activity_login);
         outer = this;
 
@@ -51,6 +71,12 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
         bLogin.setOnClickListener(this);
         bRegister.setOnClickListener(this);
 
+        // ----- GOOGLE PLUS LOGIN -----
+        ((Button)findViewById(R.id.google_login_button)).setOnClickListener(this);
+
+        // ----- END GOOGLE PLUS LOGIN
+
+        // ----- FACEBOOK LOGIN BUTTON AND CALLBACK -----
         callbackManager = CallbackManager.Factory.create();
         fbLogin = (LoginButton)findViewById(R.id.login_button);
         fbLogin.setReadPermissions(Arrays.asList("email"));
@@ -94,6 +120,9 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
             }
 
         });
+        // ----- END FACEBOOK LOGIN -----
+
+
     }
 
 
@@ -102,9 +131,15 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
         startActivity(new Intent(this, MainActivity.class));
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.google_login_button:
+                Log.d("Google+", "login");
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
+                break;
             case R.id.bLogin:
                 startActivity(new Intent(this, EmailLoginActivity.class));
                 break;
@@ -118,7 +153,22 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GOOGLE_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String accessToken = acct.getIdToken();
+        } else {
+            showErrorMessage(CustomMessages.INCORRECT_EMAIL_OR_PASSWORD);
+        }
     }
 
     private void showErrorMessage(String message) {
@@ -128,4 +178,8 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
         dialogBuilder.show();
     }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        showErrorMessage(CustomMessages.CONNECTION_FAILED);
+    }
 }

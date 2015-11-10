@@ -41,6 +41,12 @@ public class AuthBackendRequests {
         progressDialog.setMessage("Подождите пожалуйста...");
     }
 
+
+    /**
+     * Custom email user login
+     * @param user
+     * @param callback
+     */
     public void loginUserInBackground(User user, ResponseCallback callback) {
         progressDialog.show();
         Map<String, String> postParams = new HashMap<>();
@@ -49,6 +55,13 @@ public class AuthBackendRequests {
         new PostAsyncTask(postParams, GET_TOKEN, callback).execute();
     }
 
+
+    /**
+     * login for social auth
+     * @param accessToken
+     * @param provider
+     * @param callback
+     */
     public void loginUserInBackground(String accessToken, String provider, ResponseCallback callback) {
         progressDialog.show();
         Map<String, String> postParams = new HashMap<>();
@@ -58,6 +71,11 @@ public class AuthBackendRequests {
     }
 
 
+    /**
+     * Password reset for custom email login
+     * @param email
+     * @param callback
+     */
     public void resetPasswordInBackground(String email, ResponseCallback callback) {
         progressDialog.show();
         Map<String, String> postParams = new HashMap<>();

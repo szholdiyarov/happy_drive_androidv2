@@ -19,6 +19,12 @@
             android:paddingTop="10dp"
             android:gravity="center"/>
 
+
+    <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Google+"/>
+
     <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
@@ -26,6 +32,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp" />
+
     <ImageButton
             android:id="@+id/bLogin"
             android:layout_width="match_parent"
