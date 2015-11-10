@@ -60,3 +60,8 @@ tmp
 # Unignore jars from the libs folder
 !libs/*.jar
 !gradle/wrapper/*.jar
+
+# Crashlytics plugin
+com_crashlytics_export_strings.xml
+fabric.properties
+crashlytics-build.properties
