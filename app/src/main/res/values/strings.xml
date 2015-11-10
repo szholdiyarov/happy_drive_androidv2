@@ -14,5 +14,5 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_login">MainLoginActivity</string>
     <string name="title_activity_reset">ResetActivity</string>
-
+    <string name="facebook_app_id">894471510605950</string>
 </resources>

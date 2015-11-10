@@ -21,6 +21,7 @@ public class AuthBackendRequests {
 
     private static final String API_PREFIX = "http://hd.todo.kz";
     private static final String GET_TOKEN = API_PREFIX + "/auth/getToken/";
+    private static final String GET_SOCIAL_TOKEN = API_PREFIX + "/auth/getSocialToken/";
     private static final String AUTH_REGISTER = API_PREFIX + "/auth/register/";
     private static final String AUTH_RESET = API_PREFIX + "/auth/reset/";
 
@@ -47,6 +48,15 @@ public class AuthBackendRequests {
         postParams.put("password", user.getPassword());
         new PostAsyncTask(postParams, GET_TOKEN, callback).execute();
     }
+
+    public void loginUserInBackground(String accessToken, String provider, ResponseCallback callback) {
+        progressDialog.show();
+        Map<String, String> postParams = new HashMap<>();
+        postParams.put("access_token", accessToken);
+        postParams.put("provider", provider);
+        new PostAsyncTask(postParams, GET_SOCIAL_TOKEN, callback).execute();
+    }
+
 
     public void resetPasswordInBackground(String email, ResponseCallback callback) {
         progressDialog.show();
