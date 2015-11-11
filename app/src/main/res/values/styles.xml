@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Base" />
-    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Base.AppTheme.Translucent" />
+    <style name="Base.AppTheme">
+        <item name="mediumButtonStyle">@style/Widget.MediumButton</item>
+    </style>
+
+    <style name="Base.AppTheme.Translucent"/>
     <style name="Base.AppTheme.Translucent.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="Widget"/>
+    <style name="Widget.MediumButton" parent="Widget.AppCompat.Button">
+        <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
 </resources>

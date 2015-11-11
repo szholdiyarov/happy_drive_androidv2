@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
@@ -15,6 +16,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
@@ -106,6 +108,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     protected void deinitToolbar() {
         setSupportActionBar(null);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override
