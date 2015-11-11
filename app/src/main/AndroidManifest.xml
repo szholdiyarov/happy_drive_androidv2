@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".HappyDriveApp"
         android:allowBackup="true"
@@ -39,11 +40,15 @@
             android:name=".ui.auth.ResetActivity"
             android:label="@string/title_activity_reset" >
         </activity>
+
         <activity android:name="com.facebook.FacebookActivity"
                   android:configChanges=
                           "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"
                   android:label="@string/app_name" />
-    </application>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="444a8bc27f1541207a800de39f493a507f9e8708" />
+    </application>
 </manifest>

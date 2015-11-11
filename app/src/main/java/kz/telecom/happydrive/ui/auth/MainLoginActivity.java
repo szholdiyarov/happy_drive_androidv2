@@ -72,7 +72,7 @@ public class MainLoginActivity extends ActionBarActivity implements View.OnClick
         bRegister.setOnClickListener(this);
 
         // ----- GOOGLE PLUS LOGIN -----
-        ((Button)findViewById(R.id.google_login_button)).setOnClickListener(this);
+        findViewById(R.id.google_login_button).setOnClickListener(this);
 
         // ----- END GOOGLE PLUS LOGIN
 
