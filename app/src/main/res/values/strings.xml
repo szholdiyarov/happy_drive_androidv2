@@ -5,6 +5,9 @@
     <!-- auth -->
     <string name="auth_sign_in">войти по e-mail</string>
     <string name="auth_sign_up">регистрация</string>
+    <string name="sign_up_title">Регистрация</string>
+    <string name="sign_up_hint_email">E-mail</string>
+    <string name="sign_up_hint_password">Пароль</string>
 
     <!-- drawer menu -->
     <string name="action_main">Мой Happy-Drive</string>

@@ -39,7 +39,6 @@
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_in"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:text="@string/auth_sign_in"
@@ -47,7 +46,6 @@
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_up"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:text="@string/auth_sign_up"

@@ -24,7 +24,7 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn);
+        ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn_primary);
         Button signInButton = (Button) view.findViewById(R.id.fragment_auth_btn_sign_in);
         ViewCompat.setBackgroundTintList(signInButton, tintList);
         signInButton.setOnClickListener(this);

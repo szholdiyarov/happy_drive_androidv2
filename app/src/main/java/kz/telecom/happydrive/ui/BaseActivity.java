@@ -43,6 +43,33 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @NonNull
+    @SuppressWarnings("unused")
+    public ActionBar initToolbar(int toolbarId) {
+        Toolbar toolbar = (Toolbar) findViewById(toolbarId);
+        if (toolbar == null) {
+            throw new Resources.NotFoundException("Toolbar not found");
+        }
+
+        return initToolbar(toolbar);
+    }
+
+    @NonNull
+    @SuppressWarnings("unused")
+    public ActionBar initToolbar(Toolbar toolbar) {
+        if (toolbar == null) {
+            throw new IllegalArgumentException("toolbar is null");
+        }
+
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) {
+            throw new IllegalStateException("Internal error: toolbar couldn't be settled");
+        }
+
+        return actionBar;
+    }
+
     public void replaceContent(@NonNull BaseFragment fragment,
             boolean stackable, @Transit int transition) {
         @IdRes int viewContainerId = getDefaultContentViewContainerId();
@@ -54,11 +81,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         replaceContent(viewContainerId, fragment, stackable, transition);
     }
 
+    @SuppressWarnings("unused")
     protected void replaceContent(@IdRes int viewContainerId,
             @NonNull BaseFragment fragment, boolean stackable) {
         replaceContent(viewContainerId, fragment, stackable, FragmentTransaction.TRANSIT_NONE);
     }
 
+    @SuppressWarnings("unused")
     protected void replaceContent(@IdRes int viewContainerId, @NonNull BaseFragment fragment,
             boolean stackable, @Transit int transition) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -84,44 +113,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Nullable
+    @SuppressWarnings("unused")
     protected BaseFragment findContent(@IdRes int viewContainerId) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(viewContainerId);
         return fragment instanceof BaseFragment ? (BaseFragment) fragment : null;
     }
 
     @IdRes
+    @SuppressWarnings("unused")
     protected int getDefaultContentViewContainerId() {
         return -1;
-    }
-
-    @NonNull
-    protected ActionBar initToolbar(int toolbarId) {
-        Toolbar toolbar = (Toolbar) findViewById(toolbarId);
-        if (toolbar == null) {
-            throw new Resources.NotFoundException("Toolbar not found");
-        }
-
-        return initToolbar(toolbar);
-    }
-
-    @NonNull
-    protected ActionBar initToolbar(Toolbar toolbar) {
-        if (toolbar == null) {
-            throw new IllegalArgumentException("toolbar is null");
-        }
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar == null) {
-            throw new IllegalStateException("Internal error: toolbar couldn't be settled");
-        }
-
-        return actionBar;
-    }
-
-    @SuppressWarnings("unused")
-    protected void deinitToolbar() {
-        setSupportActionBar(null);
     }
 
     @Override
