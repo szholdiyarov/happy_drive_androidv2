@@ -75,6 +75,7 @@
 
             <TextView
                 android:id="@+id/fragment_sign_in_tv_sign_up"
+                android:textColorLink="@color/auth_tv_password_recovery"
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"

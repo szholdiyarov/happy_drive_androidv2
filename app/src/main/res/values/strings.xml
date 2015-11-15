@@ -17,6 +17,10 @@
     <string name="sign_in_btn">войти</string>
     <string name="sign_in_sign_up">Не зарегистрированы? <u>Регистрация</u></string>
 
+    <string name="password_recovery_title">Восстановление пароля</string>
+    <string name="password_recovery_hint_email">E-mail</string>
+    <string name="password_recovery_btn">отправить</string>
+
     <!-- drawer menu -->
     <string name="action_main">Мой Happy-Drive</string>
     <string name="action_favourite">Избранное</string>
