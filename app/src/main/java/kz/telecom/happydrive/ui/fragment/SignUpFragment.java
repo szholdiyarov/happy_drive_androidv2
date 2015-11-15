@@ -38,7 +38,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         actionBar.setDisplayHomeAsUpEnabled(true);
         toolbar.setTitle(R.string.sign_up_title);
 
-        ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn_secondary);
+        ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn_accent);
         Button button = (Button) view.findViewById(R.id.fragment_sign_up_btn);
         ViewCompat.setBackgroundTintList(button, tintList);
         button.setOnClickListener(this);

@@ -1,7 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
+    <include
+        layout="@layout/layout_toolbar_auth"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="40dp"
+            tools:ignore="MissingPrefix,RtlHardcoded,RtlSymmetry">
+
+            <EditText
+                android:id="@+id/fragment_sign_in_et_email"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="252dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/sign_in_hint_email"
+                android:inputType="text|textEmailAddress"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="8dp"/>
+
+            <EditText
+                android:id="@+id/fragment_sign_in_et_password"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="252dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/sign_in_hint_password"
+                android:inputType="text|textPassword"/>
+
+            <FrameLayout
+                android:layout_width="256dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:id="@+id/fragment_sign_in_tv_password_recovery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:clickable="true"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/sign_in_password_recovery"
+                    android:textColor="@color/auth_tv_password_recovery"/>
+            </FrameLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="4dp"/>
+
+            <Button
+                android:id="@+id/fragment_sign_in_btn_sign_in"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_in_btn"
+                android:textColor="@color/app_white"/>
+
+            <TextView
+                android:id="@+id/fragment_sign_in_tv_sign_up"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/sign_in_sign_up"
+                android:textColor="@color/app_white"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

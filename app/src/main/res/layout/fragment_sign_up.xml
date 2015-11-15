@@ -49,7 +49,6 @@
 
             <Button
                 android:id="@+id/fragment_sign_up_btn"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:text="@string/auth_sign_up"
