@@ -1,7 +1,9 @@
 package kz.telecom.happydrive.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -27,6 +30,17 @@ public abstract class BaseActivity extends AppCompatActivity {
             FragmentTransaction.TRANSIT_FRAGMENT_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
     private @interface Transit {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!(this instanceof AuthActivity) && !User.isAuthenticated()) {
+            Intent intent = new Intent(this, AuthActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void replaceContent(@NonNull BaseFragment fragment,
@@ -76,7 +90,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @IdRes
-    protected  int getDefaultContentViewContainerId() {
+    protected int getDefaultContentViewContainerId() {
         return -1;
     }
 

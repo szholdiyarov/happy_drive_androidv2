@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Happy Drive</string>
+    <string name="app_slogan">Happy MOMENTS, happy BUSINESS</string>
+
+    <!-- auth -->
+    <string name="auth_sign_in">войти по e-mail</string>
+    <string name="auth_sign_up">регистрация</string>
 
     <!-- drawer menu -->
     <string name="action_main">Мой Happy-Drive</string>
@@ -14,7 +19,6 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_login">MainLoginActivity</string>
     <string name="title_activity_reset">ResetActivity</string>
-    <string name="facebook_app_id">894471510605950</string>
     <string name="google_server_client_id">515430945320-i184leck41c60q1s14rjums0v83lj0c8.apps.googleusercontent.com</string>
 
 </resources>

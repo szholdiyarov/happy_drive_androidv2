@@ -4,6 +4,14 @@ package kz.telecom.happydrive.data;
 public class User {
     private String email, password, cardId, token;
 
+    public static boolean isAuthenticated() {
+        return currentUser() != null;
+    }
+
+    public static User currentUser() {
+        return null;
+    }
+
     public String getEmail() {
         return email;
     }
