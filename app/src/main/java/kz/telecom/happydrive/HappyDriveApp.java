@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 
 import io.fabric.sdk.android.Fabric;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.util.Logger;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -25,6 +26,8 @@ public class HappyDriveApp extends Application {
 
         Logger.setLevel(BuildConfig.DEBUG ?
                 Logger.Level.VERBOSE : Logger.Level.WARNING);
+
+        DataManager.init(this);
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Roboto-Regular.ttf")

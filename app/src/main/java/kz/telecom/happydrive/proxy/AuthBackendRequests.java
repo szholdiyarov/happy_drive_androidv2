@@ -48,11 +48,11 @@ public class AuthBackendRequests {
      * @param callback
      */
     public void loginUserInBackground(User user, ResponseCallback callback) {
-        progressDialog.show();
-        Map<String, String> postParams = new HashMap<>();
-        postParams.put("email", user.getEmail());
-        postParams.put("password", user.getPassword());
-        new PostAsyncTask(postParams, GET_TOKEN, callback).execute();
+//        progressDialog.show();
+//        Map<String, String> postParams = new HashMap<>();
+//        postParams.put("email", user.getEmail());
+//        postParams.put("password", user.getPassword());
+//        new PostAsyncTask(postParams, GET_TOKEN, callback).execute();
     }
 
 
@@ -84,11 +84,11 @@ public class AuthBackendRequests {
     }
 
     public void registerUserInBackground(User user, ResponseCallback callback) {
-        progressDialog.show();
-        Map<String, String> postParams = new HashMap<>();
-        postParams.put("email", user.getEmail());
-        postParams.put("password", user.getPassword());
-        new PostAsyncTask(postParams, AUTH_REGISTER, callback).execute();
+//        progressDialog.show();
+//        Map<String, String> postParams = new HashMap<>();
+//        postParams.put("email", user.getEmail());
+//        postParams.put("password", user.getPassword());
+//        new PostAsyncTask(postParams, AUTH_REGISTER, callback).execute();
     }
 
     private class PostAsyncTask extends AsyncTask<Void, Void, JSONObject> {

@@ -21,8 +21,6 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO: Check token expiration time.
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         initToolbar(toolbar);
 
