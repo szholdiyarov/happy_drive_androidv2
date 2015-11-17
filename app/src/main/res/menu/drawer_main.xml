@@ -10,7 +10,7 @@
         <item
             android:id="@+id/action_card"
             android:icon="@drawable/ic_card_24p"
-            android:title="@string/action_main"/>
+            android:title="@string/action_card"/>
         <item
             android:id="@+id/action_favourite"
             android:icon="@drawable/ic_favourite_24p"
