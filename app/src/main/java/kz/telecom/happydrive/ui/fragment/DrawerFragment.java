@@ -8,20 +8,26 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.otto.Subscribe;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.OttoBus;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.MainActivity;
 
 /**
  * Created by Galymzhan Sh on 10/29/15.
  */
 public class DrawerFragment extends BaseFragment {
+    private ImageView mPhotoImageView;
+    private TextView mUsernameTextView;
+    private TextView mEmailTextView;
+
     private Callback mCallback;
-
-    private static final int TEMP_VERSION_1 = 0;
-    private static final int TEMP_VERSION_2 = 1;
-
-    private int mVer = TEMP_VERSION_1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,31 +38,9 @@ public class DrawerFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         final NavigationView navi = (NavigationView) view.findViewById(R.id.fragment_main_navigation_view);
         View headerView = navi.inflateHeaderView(R.layout.layout_drawer_header);
-        navi.inflateMenu(mVer == TEMP_VERSION_1 ?
-                R.menu.drawer_main : R.menu.drawer_temp_main);
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int viewId = v.getId();
-                if (viewId == R.id.temp_drawer_v1) {
-                    if (mVer != TEMP_VERSION_1) {
-                        mVer = TEMP_VERSION_1;
-                        navi.getMenu().clear();
-                        navi.inflateMenu(R.menu.drawer_main);
-                    }
-                } else if (viewId == R.id.temp_drawer_v2) {
-                    if (mVer != TEMP_VERSION_2) {
-                        mVer = TEMP_VERSION_2;
-                        navi.getMenu().clear();
-                        navi.inflateMenu(R.menu.drawer_temp_main);
-                    }
-                }
-            }
-        };
-
-        headerView.findViewById(R.id.temp_drawer_v1).setOnClickListener(listener);
-        headerView.findViewById(R.id.temp_drawer_v2).setOnClickListener(listener);
+        mPhotoImageView = (ImageView) headerView.findViewById(R.id.drawer_header_photo);
+        mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
+        mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
 
         navi.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -64,6 +48,15 @@ public class DrawerFragment extends BaseFragment {
                 return item.isCheckable() && mCallback.onDrawerMenuItemSelected(item.getItemId());
             }
         });
+
+        updateHeaderState();
+        OttoBus.getInstance().register(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        OttoBus.getInstance().unregister(this);
+        super.onDestroyView();
     }
 
     @Override
@@ -82,6 +75,25 @@ public class DrawerFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onCardUpdate(Card.OnCardUpdateEvent ignored) {
+        updateHeaderState();
+    }
+
+    private void updateHeaderState() {
+        User user = User.currentUser();
+        if (user != null) {
+            mEmailTextView.setText(user.email);
+        }
+
+        Card card = Card.getUserCard(getContext());
+        if (card != null) {
+            mUsernameTextView.setText(card.firstName + " " +
+                    card.lastName + " " + card.middleName);
+        }
     }
 
     public interface Callback {

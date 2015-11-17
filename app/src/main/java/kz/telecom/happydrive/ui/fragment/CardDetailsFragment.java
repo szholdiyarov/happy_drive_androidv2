@@ -66,16 +66,12 @@ public class CardDetailsFragment extends BaseFragment {
         progressBar.setVisibility(View.GONE);
 
         if (card == null) {
-            TextView textView = (TextView) view.findViewById(R.id.stub_error_tv_text);
+            TextView textView = (TextView) view.findViewById(R.id.stub_error_tv_msg);
             if (textView == null) {
                 stubView = ((ViewStub) view.findViewById(R.id.stub_error)).inflate();
             }
 
-            textView = (TextView) view.findViewById(R.id.stub_error_tv_text);
-            textView.setText("NO_USER_CARD_MSG");
-
             Button actionButton = (Button) view.findViewById(R.id.stub_error_btn_action);
-            actionButton.setText("СОЗДАТЬ ВИЗИТКУ");
             actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,29 +114,30 @@ public class CardDetailsFragment extends BaseFragment {
             TextView phoneNumber = (TextView) view.findViewById(R.id.phone);
             phoneNumber.setText(card.phoneNumber);
 
-            TextView email = (TextView) view.findViewById(R.id.email);
+            View emailBlock = view.findViewById(R.id.email_block);
             if (!TextUtils.isEmpty(card.email)) {
-                email.setVisibility(View.VISIBLE);
+                TextView email = (TextView) view.findViewById(R.id.email);
                 email.setText(card.email);
+                emailBlock.setVisibility(View.VISIBLE);
             } else {
-                email.setVisibility(View.GONE);
+                emailBlock.setVisibility(View.GONE);
             }
 
-            TextView address = (TextView) view.findViewById(R.id.address);
+            View addressBlock = view.findViewById(R.id.address_block);
             if (!TextUtils.isEmpty(card.workAddress)) {
-                address.setVisibility(View.VISIBLE);
+                TextView address = (TextView) view.findViewById(R.id.address);
                 address.setText(card.workAddress);
+                addressBlock.setVisibility(View.VISIBLE);
             } else {
-                address.setVisibility(View.GONE);
+                addressBlock.setVisibility(View.GONE);
             }
 
-            View aboutBlock = view.findViewById(R.id.about_block);
+            TextView aboutTextView = (TextView) view.findViewById(R.id.about);
             if (!TextUtils.isEmpty(card.about)) {
-                TextView textView = (TextView) view.findViewById(R.id.about);
-                textView.setText(card.about);
-                aboutBlock.setVisibility(View.VISIBLE);
+                aboutTextView.setText(card.about);
+                aboutTextView.setVisibility(View.VISIBLE);
             } else {
-                aboutBlock.setVisibility(View.GONE);
+                aboutTextView.setVisibility(View.GONE);
             }
         }
     }
@@ -152,6 +149,7 @@ public class CardDetailsFragment extends BaseFragment {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdateEvent ignored) {
         updateView(getView());
     }

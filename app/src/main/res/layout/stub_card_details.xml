@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="92dp">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/user_photo"/>
-    </RelativeLayout>
+              android:orientation="vertical"
+              android:padding="16dp"
+              android:background="@color/app_white"
+              tools:ignore="MissingPrefix">
 
     <TextView
         android:id="@+id/username"
+        fontPath="fonts/Roboto-Medium.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:gravity="center_horizontal"
         android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/position"
@@ -38,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:gravity="center_horizontal"
+        android:textColor="@color/app_black"
         android:textSize="16sp"/>
 
     <TextView
@@ -46,96 +33,89 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:gravity="center_horizontal"
+        android:textColor="@color/app_black"
         android:textSize="16sp"
         android:visibility="gone"/>
 
-    <TextView
-        android:id="@+id/phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:drawableLeft="@drawable/phone"
-        android:drawablePadding="12dp"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="2dp"
-        android:drawableLeft="@drawable/mail"
-        android:drawablePadding="12dp"
-        android:textSize="14sp"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="2dp"
-        android:drawableLeft="@drawable/home"
-        android:drawablePadding="12dp"
-        android:textSize="14sp"
-        android:visibility="gone"/>
-
     <LinearLayout
-        android:id="@+id/about_block"
+        android:id="@+id/phone_block"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="8dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_phone"/>
 
-            <View
-                android:layout_width="0px"
-                android:layout_height="1dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:background="#888"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:text="Обо мне"
-                android:textSize="18sp"/>
-
-            <View
-                android:layout_width="0px"
-                android:layout_height="1dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:background="#888"/>
-        </LinearLayout>
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="0px"/>
 
         <TextView
-            android:id="@+id/about"
+            android:id="@+id/phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"/>
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_black"
+            android:textSize="16sp"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="0px"
-        android:layout_height="16dp"
-        android:visibility="invisible"/>
-
-    <View
+    <LinearLayout
+        android:id="@+id/email_block"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ebebeb"/>
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_mail"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="0px"/>
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_black"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/address_block"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:paddingLeft="11dp"
+        android:paddingRight="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_address"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="18dp"
+            android:layout_height="0px"/>
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_black"
+            android:textSize="16sp"/>
+    </LinearLayout>
 </LinearLayout>

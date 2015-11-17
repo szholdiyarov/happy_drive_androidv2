@@ -5,7 +5,11 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/action_main"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/ic_main_24p"
+            android:title="@string/action_main"/>
+        <item
+            android:id="@+id/action_card"
+            android:icon="@drawable/ic_card_24p"
             android:title="@string/action_main"/>
         <item
             android:id="@+id/action_favourite"
@@ -32,5 +36,4 @@
             android:icon="@drawable/ic_about_24p"
             android:title="@string/action_about"/>
     </group>
-
 </menu>

@@ -35,10 +35,10 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bRegister:
-                User user = new User();
-                user.setEmail(etEmail.getText().toString());
-                user.setPassword(etPassword.getText().toString());
-                new AuthBackendRequests(this).registerUserInBackground(user, new ResponseCallBackHandler(this));
+//                User user = new User();
+//                user.setEmail(etEmail.getText().toString());
+//                user.setPassword(etPassword.getText().toString());
+//                new AuthBackendRequests(this).registerUserInBackground(user, new ResponseCallBackHandler(this));
                 break;
 //            case R.id.bBack:
 //                finish();

@@ -55,10 +55,10 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
                 startActivity(new Intent(this, ResetActivity.class));
                 break;
             case R.id.bLogin:
-                User user = new User();
-                user.setEmail(etUsername.getText().toString());
-                user.setPassword(etPassword.getText().toString());
-                authenticate(user);
+//                User user = new User();
+//                user.setEmail(etUsername.getText().toString());
+//                user.setPassword(etPassword.getText().toString());
+//                authenticate(user);
                 break;
             default:
                 break;
@@ -75,7 +75,7 @@ public class EmailLoginActivity extends ActionBarActivity implements View.OnClic
                     switch (obj.optInt("code", -1)) {
                         case ResponseCode.OK:
                             // TODO: Store more data.
-                            user.setToken(obj.optString("token"));
+//                            user.setToken(obj.optString("token"));
                             logUserIn(user);
                             break;
                         default:

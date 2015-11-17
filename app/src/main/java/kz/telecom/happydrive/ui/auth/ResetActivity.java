@@ -47,7 +47,6 @@ public class ResetActivity extends ActionBarActivity implements View.OnClickList
                 if (obj == null || obj.length() == 0) {
                     showErrorMessage(CustomMessages.SERVER_UNREACHABLE);
                 } else {
-                    Log.i(Integer.toString(obj.optInt("code")), " <-- code");
                     switch (obj.optInt("code", -1)) {
                         case ResponseCode.OK:
                             showErrorMessage(CustomMessages.PASSWORD_RESET_EMAIL_SENT);
