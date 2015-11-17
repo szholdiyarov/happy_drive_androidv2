@@ -16,7 +16,7 @@ import android.widget.Toast;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
-import kz.telecom.happydrive.data.OttoBus;
+import kz.telecom.happydrive.data.DataManager;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -131,7 +131,7 @@ public class CardEditParamsFragment extends BaseFragment {
 
             mCard.save(getContext());
             getActivity().onBackPressed();
-            OttoBus.getInstance().post(new Card.OnCardUpdateEvent());
+            DataManager.getInstance().bus.post(new Card.OnCardUpdateEvent());
             return true;
         }
 

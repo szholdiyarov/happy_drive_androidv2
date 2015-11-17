@@ -14,12 +14,11 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.OttoBus;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.ui.CardEditActivity;
 
 /**
@@ -41,7 +40,7 @@ public class CardDetailsFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        OttoBus.getInstance().register(this);
+        DataManager.getInstance().bus.register(this);
         updateView(view);
     }
 
@@ -144,7 +143,7 @@ public class CardDetailsFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        OttoBus.getInstance().unregister(this);
+        DataManager.getInstance().bus.unregister(this);
         super.onDestroyView();
     }
 
