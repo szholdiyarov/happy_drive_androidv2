@@ -47,6 +47,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_login">MainLoginActivity</string>
     <string name="title_activity_reset">ResetActivity</string>
-    <string name="google_server_client_id">515430945320-i184leck41c60q1s14rjums0v83lj0c8.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">897254450327656</string>
+    <string name="google_server_client_id">795940224333-kdk0b2ic3ci0veec8onp92789efvhpd4.apps.googleusercontent.com</string>
 
 </resources>

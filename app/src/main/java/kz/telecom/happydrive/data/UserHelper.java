@@ -15,12 +15,15 @@ import java.util.Map;
  */
 class UserHelper {
     private static final String API_PATH_GET_TOKEN = "/auth/getToken/";
+    private static final String API_PATH_GET_SOCIAL_TOKEN = "/auth/getSocialToken/";
     private static final String API_PATH_REGISTER = "/auth/register/";
     private static final String API_PATH_RESET_PASSWORD = "/auth/reset/";
 
     static final String API_USER_KEY_EMAIL = "email";
     static final String API_USER_KEY_PASSWORD = "password";
     static final String API_USER_KEY_TOKEN = "token";
+    static final String API_USER_KEY_SOCIAL_TOKEN = "access_token";
+    static final String API_USER_KEY_SOCIAL_PROVIDER = "provider";
     static final String API_USER_KEY_CARD = "card";
     static final String API_USER_KEY_CARD_ID = "card_id";
     static final String API_USER_VISIBLE = "visible";
@@ -34,6 +37,17 @@ class UserHelper {
         final String response = NetworkManager.post(API_PATH_REGISTER, requestBody);
         return new ObjectMapper().readTree(response);
     }
+
+    static JsonNode getSocialToken(final String accessToken, final String provider) throws Exception {
+        RequestBody requestBody = new FormEncodingBuilder()
+                .add(API_USER_KEY_SOCIAL_TOKEN, accessToken)
+                .add(API_USER_KEY_SOCIAL_PROVIDER, provider)
+                .build();
+
+        final String response = NetworkManager.post(API_PATH_GET_SOCIAL_TOKEN, requestBody);
+        return new ObjectMapper().readTree(response);
+    }
+
 
     static JsonNode getToken(final String email, final String password) throws Exception {
         RequestBody requestBody = new FormEncodingBuilder()

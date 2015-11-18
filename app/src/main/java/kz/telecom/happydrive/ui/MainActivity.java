@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +35,12 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 mDrawerLayout, toolbar, 0, 0);
         mDrawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

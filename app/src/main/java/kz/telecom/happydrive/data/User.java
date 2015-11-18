@@ -43,6 +43,34 @@ public class User {
 
     @NonNull
     @WorkerThread
+    public static User socialSignIn(final String accessToken, final String provider) throws Exception {
+        JsonNode jsonNode;
+        try {
+            jsonNode = UserHelper.getSocialToken(accessToken, provider);
+        } catch (IOException ioe) {
+            throw new NoConnectionError("no network error", ioe);
+        }
+
+        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
+                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
+                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
+                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
+
+        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
+            throw new ApiResponseError("api response error", responseCode, null);
+        }
+
+        Map<String, Object> rawData = new ObjectMapper().convertValue(jsonNode, Map.class);
+//        rawData.put(UserHelper.API_USER_KEY_EMAIL, email);
+        User user = parseUser(rawData);
+        SharedPreferences prefs = getDefaultSharedPrefs();
+        UserHelper.wipeCredentials(prefs);
+        UserHelper.saveCredentials(user, prefs);
+        return sUser = user;
+    }
+
+    @NonNull
+    @WorkerThread
     public static User signIn(final String email, final String password) throws Exception {
         JsonNode jsonNode;
         try {
@@ -119,7 +147,12 @@ public class User {
     private static User parseUser(Map<String, Object> rawData) throws ObjectParseError {
         String email = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_EMAIL, null, rawData);
         String token = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
-        if (email == null || token == null) {
+        // TODO: Tell backend that email is not passed.
+        if (email == null) {
+            email = "";
+        }
+
+        if (token == null) {
             throw new ObjectParseError("email or token is null");
         }
 

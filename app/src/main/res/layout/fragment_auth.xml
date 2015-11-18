@@ -24,6 +24,19 @@
         <android.support.v4.widget.Space
             android:layout_width="0px"
             android:layout_height="12dp"/>
+        <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp" />
+
+        <com.google.android.gms.common.SignInButton
+                android:id="@+id/google_login_button"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:text="Google+"/>
 
         <TextView
             fontPath="fonts/Roboto-Medium.ttf"
