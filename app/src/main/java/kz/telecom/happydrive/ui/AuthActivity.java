@@ -4,8 +4,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.WindowManager;
-
-
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.ui.fragment.AuthFragment;
 
