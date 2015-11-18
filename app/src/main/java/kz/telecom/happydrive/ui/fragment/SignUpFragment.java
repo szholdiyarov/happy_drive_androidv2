@@ -19,7 +19,7 @@ import android.widget.EditText;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.NoConnectionError;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;

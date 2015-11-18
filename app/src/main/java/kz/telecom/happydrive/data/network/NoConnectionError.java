@@ -1,10 +1,10 @@
-package kz.telecom.happydrive.data;
+package kz.telecom.happydrive.data.network;
 
 /**
  * Created by Galymzhan Sh on 11/16/15.
  */
 public class NoConnectionError extends Exception {
-    NoConnectionError(String msg, Throwable cause) {
+    public NoConnectionError(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

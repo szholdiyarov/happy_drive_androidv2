@@ -1,7 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Looper;
@@ -21,10 +20,9 @@ import android.widget.EditText;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.NoConnectionError;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.ui.MainActivity;
 
 /**
  * Created by Galymzhan Sh on 11/16/15.
