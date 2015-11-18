@@ -52,7 +52,7 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
                                                          .requestEmail()
                                                          .requestIdToken(getString(R.string.google_server_client_id))
                                                          .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                                               .enableAutoManage(getActivity(), this)
                                               .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                                               .build();
