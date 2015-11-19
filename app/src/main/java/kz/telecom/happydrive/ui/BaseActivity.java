@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @NonNull
     @SuppressWarnings("unused")
-    public ActionBar initToolbar(int toolbarId) {
+    public ActionBar initToolbar(@IdRes int toolbarId) {
         Toolbar toolbar = (Toolbar) findViewById(toolbarId);
         if (toolbar == null) {
             throw new Resources.NotFoundException("Toolbar not found");

@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 
+import kz.telecom.happydrive.data.network.NoConnectionError;
+
 
 // TODO more secure way to store passwords (AccountManager)
 // TODO thread safe consistent simultaneous currentUser() calls
@@ -21,7 +23,6 @@ public class User {
     private static User sUser;
 
     public final String email;
-    public final String cardId;
     final String token;
 
 
@@ -162,7 +163,6 @@ public class User {
     private User(String email, String token, String cardId) {
         this.email = email;
         this.token = token;
-        this.cardId = cardId;
     }
 
     public static class SignedInEvent {

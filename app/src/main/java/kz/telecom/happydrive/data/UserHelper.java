@@ -10,6 +10,8 @@ import com.squareup.okhttp.RequestBody;
 import java.util.HashMap;
 import java.util.Map;
 
+import kz.telecom.happydrive.data.network.NetworkManager;
+
 /**
  * Created by Galymzhan Sh on 11/16/15.
  */
@@ -71,7 +73,7 @@ class UserHelper {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(API_USER_KEY_EMAIL, user.email);
         editor.putString(API_USER_KEY_TOKEN, user.token);
-        editor.putString(API_USER_KEY_CARD_ID, user.cardId);
+//        editor.putString(API_USER_KEY_CARD_ID, user.cardId);
         editor.apply();
     }
 

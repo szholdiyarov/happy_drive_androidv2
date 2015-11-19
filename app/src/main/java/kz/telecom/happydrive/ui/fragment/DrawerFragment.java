@@ -15,7 +15,7 @@ import com.squareup.otto.Subscribe;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.OttoBus;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.MainActivity;
 
@@ -50,12 +50,12 @@ public class DrawerFragment extends BaseFragment {
         });
 
         updateHeaderState();
-        OttoBus.getInstance().register(this);
+        DataManager.getInstance().bus.register(this);
     }
 
     @Override
     public void onDestroyView() {
-        OttoBus.getInstance().unregister(this);
+        DataManager.getInstance().bus.unregister(this);
         super.onDestroyView();
     }
 

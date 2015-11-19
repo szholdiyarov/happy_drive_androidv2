@@ -3,12 +3,8 @@ package kz.telecom.happydrive.ui.fragment;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -29,11 +25,10 @@ import android.widget.TextView;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.NoConnectionError;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;
-import kz.telecom.happydrive.util.Logger;
 
 /**
  * Created by Galymzhan Sh on 11/16/15.
