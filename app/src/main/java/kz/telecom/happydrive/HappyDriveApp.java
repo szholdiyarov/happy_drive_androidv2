@@ -36,20 +36,34 @@ public class HappyDriveApp extends Application {
                 Logger.Level.VERBOSE : Logger.Level.WARNING);
         DataManager.init(this);
         NetworkManager.init();
+        
+        Request<String> request = new Request<String>(Request.Method.POST, "auth/getToken/") {
+            @Override
+            public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
+                try {
+                    return new Response<>(new String(networkResponse.data, "UTF-8"), null);
+                } catch (Exception e) {
+                    return new Response<>(null, e);
+                }
+            }
+        };
+        
+        NetworkManager.enqueue(request, new Response.Listener<String>() {
+            @Override
+            public void onResponse(Response<String> response, Exception e) {
+                if (e != null) {
+                    Logger.e("TEST1", e.getLocalizedMessage(), e);
+                    return;
+                }
+
+                Logger.i("TEST1", response.result);
+            }
+        });
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                    Request<String> request2 = new Request<String>(Request.Method.GET, "card/get/") {
-                        @Override
-                        public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
-                            return null;
-                        }
-                    };
-
-                    NetworkManager.execute(request2);
-
                     Request<String> request = new Request<String>(Request.Method.POST, "auth/getToken/") {
                         @Override
                         public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
