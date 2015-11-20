@@ -95,11 +95,6 @@ public class CatalogFragment extends BaseFragment {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        public void setDataAndUpdateView(List<Category> data) {
-            this.data = data;
-            listView.invalidate();
-        }
-
         @Override
         public int getCount() {
             return data.size();
