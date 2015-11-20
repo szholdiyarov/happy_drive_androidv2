@@ -38,6 +38,8 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private Map<String, String> mBody;
 
     private Caller mCaller;
+    private Response.Listener<?> mListener;
+
     private Integer mSequence;
     private Priority mPriority = Priority.NORMAL;
 
@@ -77,6 +79,10 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         mCaller.cancel();
     }
 
+    public boolean isCanceled() {
+        return mCaller.isCanceled();
+    }
+
     public void setPriority(Priority priority) {
         mPriority = priority;
     }
@@ -91,6 +97,14 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     Caller getCaller() {
         return mCaller;
+    }
+
+    void setListener(Response.Listener<?> listener) {
+        mListener = listener;
+    }
+
+    Response.Listener<?> getListener() {
+        return mListener;
     }
 
     void setSequence(Integer sequence) {

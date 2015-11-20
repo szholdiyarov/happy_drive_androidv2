@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
+import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
 
 /**
@@ -53,6 +54,14 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
     @Override
     public boolean onDrawerMenuItemSelected(int itemId) {
         closeDrawer();
+        switch (itemId) {
+            case R.id.action_catalog:
+                replaceContent(new CatalogFragment(), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                break;
+            default:
+                break;
+        }
         return true;
     }
 

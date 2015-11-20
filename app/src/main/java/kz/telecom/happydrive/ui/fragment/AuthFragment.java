@@ -27,7 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.NoConnectionError;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.AuthActivity;
 import kz.telecom.happydrive.ui.BaseActivity;
@@ -121,6 +121,7 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
                                         .post(new User.SignedInEvent(user));
                                 activity.startActivity(new Intent(activity,
                                         MainActivity.class));
+                                activity.finish();
                             }
                         });
                     }

@@ -44,6 +44,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private ActionBar singleActionBar = null;
+
     @NonNull
     @SuppressWarnings("unused")
     public ActionBar initToolbar(@IdRes int toolbarId) {

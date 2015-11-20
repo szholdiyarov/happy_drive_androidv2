@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.data.network;
 
-import android.os.Process;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
@@ -25,6 +26,9 @@ public class NetworkManager {
     private static NetworkManager sManager;
     private final OkHttpClient httpClient;
 
+    private final NetworkDispatcher[] mNetworkDispatchers = new NetworkDispatcher[4];
+    private final ResponsePoster mResponsePoster = new ResponsePoster(new Handler(Looper.getMainLooper()));
+
     private final PriorityBlockingQueue<Request<?>> mQueue = new PriorityBlockingQueue<>();
     private final AtomicInteger mSequenceGenerator = new AtomicInteger();
 
@@ -40,11 +44,15 @@ public class NetworkManager {
         }
     }
 
-    public synchronized static void enqueue(Request<?> request) {
+
+    public synchronized static void enqueue(Request<?> request, Response.Listener<?> listener) {
         try {
             sManager.prepareRequest(request);
+            request.setListener(listener);
             sManager.mQueue.add(request);
         } catch (Exception e) {
+            sManager.mResponsePoster.post(request,
+                    new Response<>(null, e));
         }
     }
 
@@ -95,6 +103,13 @@ public class NetworkManager {
 
     public static boolean init() {
         sManager = new NetworkManager();
+        NetworkDispatcher[] dispatchers = sManager.mNetworkDispatchers;
+        for (int i = 0; i < dispatchers.length; i++) {
+            dispatchers[i] = new NetworkDispatcher(sManager.mQueue,
+                    sManager.mResponsePoster);
+            dispatchers[i].start();
+        }
+
         return true;
     }
 
@@ -102,18 +117,4 @@ public class NetworkManager {
         httpClient = new OkHttpClient();
     }
 
-    private class NetworkDispatcher extends Thread {
-        @Override
-        public void run() {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            while (true) {
-                Request<?> request;
-                try {
-                    request = mQueue.take();
-                } catch (InterruptedException e) {
-                    continue;
-                }
-            }
-        }
-    }
 }

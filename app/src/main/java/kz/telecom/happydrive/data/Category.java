@@ -1,9 +1,14 @@
 package kz.telecom.happydrive.data;
 
 import android.support.annotation.NonNull;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -22,46 +27,51 @@ public class Category {
         return name;
     }
 
-    public static Category categoryById(int id) {
+    public static Category categoryById(int id) throws Exception {
         List<Category> categoryList = getCategoriesListTemp();
         for (Category cat : categoryList) {
             if (cat.id == id) {
                 return cat;
             }
         }
-
         return null;
     }
 
     @NonNull
-    public static List<Category> getCategoriesListTemp() {
-        List<Category> categoryList = new ArrayList<>();
-        categoryList.add(new Category(0, "Не выбрано"));
-        categoryList.add(new Category(1, "IT/Интернет/Телеком"));
-        categoryList.add(new Category(2, "Автомобильный бизнес"));
-        categoryList.add(new Category(3, "Административный персонал"));
-        categoryList.add(new Category(4, "Банки/Инвестиции/Лизинг"));
-        categoryList.add(new Category(5, "Исскуство/Развлечения/Масс-медиа"));
-        categoryList.add(new Category(6, "Консультирование"));
-        categoryList.add(new Category(7, "Логистика/Транспортировка/Закуп"));
-        categoryList.add(new Category(8, "Маркетинг/Реклама"));
-        categoryList.add(new Category(9, "Машиностроение/Инжиниринг"));
-        categoryList.add(new Category(10, "Медицинские услуги"));
-        categoryList.add(new Category(11, "Менеджмент"));
-        categoryList.add(new Category(12, "Наука/Образование"));
-        categoryList.add(new Category(13, "Обучение/тренинг"));
-        categoryList.add(new Category(14, "Охрана/Безопасность"));
-        categoryList.add(new Category(15, "Поддержка"));
-        categoryList.add(new Category(16, "Продажи"));
-        categoryList.add(new Category(17, "Сельское хозяйство"));
-        categoryList.add(new Category(18, "Стажировка"));
-        categoryList.add(new Category(19, "Страхование"));
-        categoryList.add(new Category(20, "Туризм/Гостиница/Рестораны"));
-        categoryList.add(new Category(21, "Управление персоналом"));
-        categoryList.add(new Category(22, "Финансы/Бухгалтерия"));
-        categoryList.add(new Category(23, "Фитнес/Спорт/Косметология"));
-        categoryList.add(new Category(24, "Юриспруденция"));
+    public static List<Category> getCategoriesListTemp() throws Exception {
 
-        return categoryList;
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = CategoryHelper.getCategories();
+        } catch (Exception ioe) {
+            throw new NoConnectionError("no network error", ioe);
+        }
+
+        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
+                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
+                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
+                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
+
+        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
+            throw new ApiResponseError("api response error", responseCode, null);
+        }
+
+        final JsonNode arrNode = jsonNode.get("categories");
+        List<Category> result = new ArrayList<>();
+        for (JsonNode v : arrNode) {
+            result.add(parseCategory(v));
+        }
+        return result;
+    }
+
+    private static Category parseCategory(JsonNode jsonNode) throws ObjectParseError {
+        Integer id = jsonNode.get("category_id").asInt(-1);
+        String name = jsonNode.get("name").asText("");
+
+        if (id == -1 || name == "") {
+            throw new ObjectParseError("email or token is null");
+        }
+
+        return new Category(id, name);
     }
 }

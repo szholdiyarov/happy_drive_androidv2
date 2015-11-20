@@ -11,4 +11,12 @@ public class Response<T> {
         this.result = result;
         this.exception = e;
     }
+
+    public boolean isSuccessful() {
+        return exception == null;
+    }
+
+    public interface Listener<R> {
+        void onResponse(Response<R> response, Exception e);
+    }
 }

@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Приветствуем Вас!"
-        android:textColor="#464646"
+        android:textColor="@color/app_white"
         android:textSize="18sp"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Создайте свою визитку"
-        android:textColor="#464646"
+        android:textColor="@color/app_text"
         android:textSize="16sp"/>
 
     <android.support.v4.widget.Space
