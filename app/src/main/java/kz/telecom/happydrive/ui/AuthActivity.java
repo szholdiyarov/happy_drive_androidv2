@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.WindowManager;
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.ui.fragment.AuthFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 
 /**
@@ -22,7 +23,7 @@ public class AuthActivity extends BaseActivity {
 
         setContentView(R.layout.activity_auth);
         if (savedInstanceState == null) {
-            replaceContent(new CatalogFragment(), false,
+            replaceContent(new AuthFragment(), false,
                     FragmentTransaction.TRANSIT_NONE);
         }
     }

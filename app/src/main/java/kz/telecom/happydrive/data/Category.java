@@ -40,7 +40,7 @@ public class Category {
     @NonNull
     public static List<Category> getCategoriesListTemp() throws Exception {
 
-        JsonNode jsonNode = null;
+        JsonNode jsonNode;
         try {
             jsonNode = CategoryHelper.getCategories();
         } catch (Exception ioe) {
