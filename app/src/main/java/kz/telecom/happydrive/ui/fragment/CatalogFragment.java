@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -27,6 +28,11 @@ public class CatalogFragment extends BaseFragment {
     private ListView listView;
     private CatalogAdapter adapter;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -35,6 +41,12 @@ public class CatalogFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        BaseActivity activity = (BaseActivity) getActivity();
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.layout_toolbar);
+        ActionBar actionBar = activity.initToolbar(toolbar);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle("Каталог");
+
         adapter = new CatalogAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
@@ -81,6 +93,17 @@ public class CatalogFragment extends BaseFragment {
         }.start();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean handled = false;
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            getActivity().onBackPressed();
+            handled = true;
+        }
+
+        return handled || super.onOptionsItemSelected(item);
+    }
 
     class CatalogAdapter extends BaseAdapter {
 

@@ -56,8 +56,7 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         closeDrawer();
         switch (itemId) {
             case R.id.action_catalog:
-                replaceContent(new CatalogFragment(), true,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                startActivity(new Intent(this, CategoryActivity.class));
                 break;
             default:
                 break;
