@@ -24,6 +24,12 @@ import java.util.Map;
 public class CategoryHelper {
     private static final String APT_PATH_GET_CATEGORIES = "card/categories/";
 
+
+    /**
+     * Gets json representation of categories from backend.
+     * @return JsonNode
+     * @throws Exception
+     */
     static JsonNode getCategories() throws Exception {
         Request<String> request = new Request<String>(Request.Method.GET, APT_PATH_GET_CATEGORIES) {
             @Override

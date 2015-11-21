@@ -47,7 +47,6 @@ public class Category {
 
     @NonNull
     public static List<Category> getCategoriesListTemp() throws Exception {
-
         JsonNode jsonNode;
         try {
             jsonNode = CategoryHelper.getCategories();
@@ -64,22 +63,28 @@ public class Category {
             throw new ApiResponseError("api response error", responseCode, null);
         }
         List<Category> result = new ArrayList<>();
+
         final JsonNode arrNode = jsonNode.get("categories");
         if (arrNode != null) {
-            for (JsonNode v : arrNode) {
-                try {
-                    result.add(parseCategory(v));
-                } catch (JsonProcessingException e) {
-                    Logger.d("couldn't parse jsonNode to Category", e.getMessage());
-                }
-            }
+            result = parseCategories(arrNode);
         } else {
             Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
         }
         return result;
     }
 
-    private static Category parseCategory(JsonNode jsonNode) throws JsonProcessingException {
-        return new ObjectMapper().treeToValue(jsonNode, Category.class);
+    private static ArrayList<Category> parseCategories(JsonNode arrNode) {
+        ArrayList<Category> result = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        for (JsonNode v : arrNode) {
+            try {
+                Category c = mapper.treeToValue(v, Category.class);
+                result.add(c);
+            } catch (JsonProcessingException e) {
+                Logger.d("failed to parse jsonNode to Category", e.getMessage());
+            }
+        }
+        return result;
     }
+
 }
