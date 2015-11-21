@@ -31,9 +31,6 @@
             android:name=".ui.CardEditActivity"
             android:label="@string/app_name"/>
         <activity
-                android:name=".ui.CategoryActivity"
-                android:label="@string/app_name"/>
-        <activity
             android:name=".ui.AuthActivity"
             android:label="@string/app_name"/>
 

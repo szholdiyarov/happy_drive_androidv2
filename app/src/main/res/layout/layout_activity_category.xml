@@ -8,8 +8,10 @@
         android:orientation="vertical"
         tools:context="kz.telecom.happydrive.ui.CategoryActivity">
 
-    <FrameLayout
-            android:id="@+id/category_activity_view_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <include layout="@layout/layout_toolbar"/>
+
+        <FrameLayout
+                android:id="@+id/category_activity_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 </LinearLayout>

@@ -3,6 +3,7 @@ package kz.telecom.happydrive.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
@@ -41,18 +42,15 @@ public class CatalogFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        BaseActivity activity = (BaseActivity) getActivity();
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.layout_toolbar);
-        ActionBar actionBar = activity.initToolbar(toolbar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitle("Каталог");
 
         adapter = new CatalogAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Toast.makeText(getActivity(), "Redirect to Galym's view", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Redirect to Galym's view", Toast.LENGTH_LONG).show();
+                ((BaseActivity)getActivity()).replaceContent(new CatalogItemFragment(), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
         loadData();
