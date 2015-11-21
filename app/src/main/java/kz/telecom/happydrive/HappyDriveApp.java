@@ -6,17 +6,9 @@ import android.support.v7.widget.AppCompatButton;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.fabric.sdk.android.Fabric;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.Request;
-import kz.telecom.happydrive.data.network.Response;
-import kz.telecom.happydrive.data.network.StringRequest;
-import kz.telecom.happydrive.data.network.internal.NetworkResponse;
 import kz.telecom.happydrive.util.Logger;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 

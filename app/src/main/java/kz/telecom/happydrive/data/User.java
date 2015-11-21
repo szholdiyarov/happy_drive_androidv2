@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.network.ResponseParseError;
 
 
 // TODO more secure way to store passwords (AccountManager)
@@ -35,7 +36,7 @@ public class User {
         if (sUser == null && (rawData = UserHelper.restoreFromCredentials(getDefaultSharedPrefs())) != null) {
             try {
                 sUser = parseUser(rawData);
-            } catch (ObjectParseError ignored) {
+            } catch (ResponseParseError ignored) {
             }
         }
 
@@ -117,11 +118,11 @@ public class User {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    private static User parseUser(Map<String, Object> rawData) throws ObjectParseError {
+    private static User parseUser(Map<String, Object> rawData) throws ResponseParseError {
         String email = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_EMAIL, null, rawData);
         String token = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
         if (email == null || token == null) {
-            throw new ObjectParseError("email or token is null");
+            throw new ResponseParseError("email or token is null");
         }
 
         return new User(email, token, null);

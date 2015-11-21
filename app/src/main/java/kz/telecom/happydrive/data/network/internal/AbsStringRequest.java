@@ -11,7 +11,7 @@ import kz.telecom.happydrive.data.network.Request;
 /**
  * Created by shgalym on 11/21/15.
  */
-public abstract class AbsStringRequest<T> extends Request<String> {
+public abstract class AbsStringRequest<T> extends Request<T> {
     public AbsStringRequest(Method method, String path) {
         super(method, path);
     }
