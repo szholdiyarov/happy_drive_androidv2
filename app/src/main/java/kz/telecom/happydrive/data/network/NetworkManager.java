@@ -10,9 +10,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,6 +58,26 @@ public class NetworkManager {
             sManager.mResponsePoster.post(request,
                     new Response<>(null, e));
         }
+    }
+
+    public synchronized static void setCookie(String host, String name, String value)
+            throws URISyntaxException, IOException {
+        CookieHandler cookieHandler = sManager.httpClient.getCookieHandler();
+        if (cookieHandler == null) {
+            cookieHandler = new CookieManager();
+        }
+
+        Map<String, List<String>> cookies = new HashMap<>();
+        cookies.put("Set-Cookie", Collections.singletonList(name + "=" + value));
+        cookieHandler.put(new URI(host), cookies);
+
+        sManager.httpClient.setCookieHandler(cookieHandler);
+    }
+
+    public synchronized static void removeCookie(String host)
+            throws URISyntaxException, IOException {
+        // TODO remove host specific cookie only
+        sManager.httpClient.setCookieHandler(null);
     }
 
     private void prepareRequest(Request<?> request) throws MalformedURLException {
@@ -99,6 +124,7 @@ public class NetworkManager {
         }
     }
 
+    @Deprecated
     public static String post(String path, RequestBody body) throws IOException {
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
                 .url(Request.DEFAULT_HOST + path)
