@@ -2,6 +2,7 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
@@ -75,14 +77,19 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         ViewCompat.setBackgroundTintList(signUpButton, tintList);
         signUpButton.setOnClickListener(this);
 
+        SignInButton gSignInButton = (SignInButton) view.findViewById(R.id.google_login_button);
+        gSignInButton.setSize(SignInButton.SIZE_WIDE);
+        gSignInButton.setOnClickListener(this);
+
         LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         loginButton.setFragment(this);
-
         loginButton.registerCallback(callbackManager, this);
-
-        view.findViewById(R.id.google_login_button).setOnClickListener(this);
-
+        // Set appropriate icon size.
+        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.com_facebook_button_icon);
+        drawable.setBounds(0, 0, (int) (drawable.getIntrinsicWidth() * 1.45F),
+                        (int) (drawable.getIntrinsicHeight() * 1.45F));
+        loginButton.setCompoundDrawables(drawable, null, null, null);
     }
 
     @Override
