@@ -1,10 +1,12 @@
 package kz.telecom.happydrive.data;
 
 import android.support.annotation.NonNull;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +16,11 @@ import java.util.Map;
  * Created by Galymzhan Sh on 11/7/15.
  */
 public class Category {
-    public final int id;
+    public final int category_id;
     public final String name;
 
     Category(int id, String name) {
-        this.id = id;
+        this.category_id = id;
         this.name = name;
     }
 
@@ -30,7 +32,7 @@ public class Category {
     public static Category categoryById(int id) throws Exception {
         List<Category> categoryList = getCategoriesListTemp();
         for (Category cat : categoryList) {
-            if (cat.id == id) {
+            if (cat.category_id == id) {
                 return cat;
             }
         }
@@ -55,23 +57,23 @@ public class Category {
         if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
             throw new ApiResponseError("api response error", responseCode, null);
         }
-
-        final JsonNode arrNode = jsonNode.get("categories");
         List<Category> result = new ArrayList<>();
-        for (JsonNode v : arrNode) {
-            result.add(parseCategory(v));
+        final JsonNode arrNode = jsonNode.get("categories");
+        if (arrNode != null) {
+            for (JsonNode v : arrNode) {
+                try {
+                    result.add(parseCategory(v));
+                } catch (JsonProcessingException e) {
+                    Logger.d("couldn't parse jsonNode to Category", e.getMessage());
+                }
+            }
+        } else {
+            Logger.d("Couldn't get json arrayNode", "'categories' tag is null");
         }
         return result;
     }
 
-    private static Category parseCategory(JsonNode jsonNode) throws ObjectParseError {
-        Integer id = jsonNode.get("category_id").asInt(-1);
-        String name = jsonNode.get("name").asText("");
-
-        if (id == -1 || name == "") {
-            throw new ObjectParseError("email or token is null");
-        }
-
-        return new Category(id, name);
+    private static Category parseCategory(JsonNode jsonNode) throws JsonProcessingException {
+        return new ObjectMapper().treeToValue(jsonNode, Category.class);
     }
 }
