@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 
@@ -45,8 +46,8 @@ public class NetworkManager {
 
     public synchronized static void enqueue(Request<?> request, Response.Listener<?> listener) {
         try {
-            sManager.prepareRequest(request);
             request.setListener(listener);
+            sManager.prepareRequest(request);
             sManager.mQueue.add(request);
         } catch (Exception e) {
             sManager.mResponsePoster.post(request,
@@ -65,15 +66,24 @@ public class NetworkManager {
 
             RequestBody requestBody = null;
             if (request.method != Request.Method.GET) {
-                FormEncodingBuilder builder = new FormEncodingBuilder();
-                Map<String, String> body = request.getBody();
-                if (body != null) {
-                    for (Map.Entry<String, String> p : body.entrySet()) {
-                        builder.add(p.getKey(), p.getValue());
+                Request.Body<?> body = request.getBody();
+                if (body instanceof Request.StringBody) {
+                    Map<String, String> bodyValues = ((Request.StringBody) body).value;
+                    FormEncodingBuilder builder = new FormEncodingBuilder();
+                    for (Map.Entry<String, String> v : bodyValues.entrySet()) {
+                        builder.add(v.getKey(), v.getValue());
                     }
-                }
 
-                requestBody = builder.build();
+                    requestBody = builder.build();
+                } else if (body instanceof Request.FileBody) {
+                    Request.FileBody fileBody = (Request.FileBody) body;
+                    requestBody = RequestBody.create(MediaType.parse(fileBody.contentType),
+                            fileBody.value);
+                } else if (body == null) {
+                    requestBody = RequestBody.create(null, new byte[0]);
+                } else {
+                    throw new RuntimeException("unsupported request body type");
+                }
             }
 
             com.squareup.okhttp.Request okHttpRequest = new com.squareup.okhttp.Request
