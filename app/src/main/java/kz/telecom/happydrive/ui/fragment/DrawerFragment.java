@@ -49,7 +49,11 @@ public class DrawerFragment extends BaseFragment {
             }
         });
 
-        updateHeaderState();
+        User user = User.currentUser();
+        if (user != null) {
+            updateHeaderState(user.card);
+        }
+
         DataManager.getInstance().bus.register(this);
     }
 
@@ -79,21 +83,16 @@ public class DrawerFragment extends BaseFragment {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public void onCardUpdate(Card.OnCardUpdateEvent ignored) {
-        updateHeaderState();
+    public void onCardUpdate(Card.OnCardUpdatedEvent event) {
+        if (event.card.compareTo(User.currentUser().card) == 0) {
+            updateHeaderState(event.card);
+        }
     }
 
-    private void updateHeaderState() {
-        User user = User.currentUser();
-        if (user != null) {
-//            mEmailTextView.setText(user.email);
-        }
-
-        Card card = Card.getUserCard(getContext());
-        if (card != null) {
-            mUsernameTextView.setText(card.firstName + " " +
-                    card.lastName + " " + card.middleName);
-        }
+    private void updateHeaderState(Card card) {
+        mUsernameTextView.setText(card.getFirstName() +
+                " " + card.getLastName());
+        mEmailTextView.setText(card.getEmail());
     }
 
     public interface Callback {

@@ -17,6 +17,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.User;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -58,25 +59,21 @@ public class CardEditParamsFragment extends BaseFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCategory.setAdapter(adapter);
 
-        mCard = Card.getUserCard(getContext());
-        if (mCard != null) {
-            mFirstName.setText(mCard.firstName);
-            mLastName.setText(mCard.lastName);
-            mMiddleName.setText(mCard.middleName);
-            mPosition.setText(mCard.position);
-            mCompanyName.setText(mCard.companyName);
-            mPhoneNumber.setText(mCard.phoneNumber);
-            mEmailAddress.setText(mCard.email);
-            mWebsite.setText(mCard.website);
-            mCompanyAddress.setText(mCard.workAddress);
-            mAbout.setText(mCard.about);
+        mCard = User.currentUser().card;
+        mFirstName.setText(mCard.getFirstName());
+        mLastName.setText(mCard.getLastName());
+        mPosition.setText(mCard.getPosition());
+        mCompanyName.setText(mCard.getWorkPlace());
+        mPhoneNumber.setText(mCard.getPhoneNumber());
+        mEmailAddress.setText(mCard.getEmail());
+        mCompanyAddress.setText(mCard.getAddress());
+        mAbout.setText(mCard.getShortDesc());
 
-            for (int i = 0; i < adapter.getCount(); i++) {
-                Category cat = adapter.getItem(i);
-                if (cat.id == mCard.catId) {
-                    mCategory.setSelection(i);
-                    break;
-                }
+        for (int i = 0; i < adapter.getCount(); i++) {
+            Category cat = adapter.getItem(i);
+            if (cat.id == mCard.getCategoryId()) {
+                mCategory.setSelection(i);
+                break;
             }
         }
     }
@@ -93,10 +90,6 @@ public class CardEditParamsFragment extends BaseFragment {
             if (TextUtils.isEmpty(fn)) {
                 Toast.makeText(getContext(), "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
                 return true;
-            }
-
-            if (mCard == null) {
-                mCard = new Card();
             }
 
             final String position = mPosition.getText().toString();
@@ -116,22 +109,19 @@ public class CardEditParamsFragment extends BaseFragment {
                 return true;
             }
 
-            mCard.firstName = fn;
-            mCard.lastName = mLastName.getText().toString();
-            mCard.middleName = mMiddleName.getText().toString();
-            mCard.position = position;
-            mCard.companyName = mCompanyName.getText().toString();
-            mCard.phoneNumber = phoneNumber;
-            mCard.email = mEmailAddress.getText().toString();
-            mCard.website = mWebsite.getText().toString();
-            mCard.catId = ((ArrayAdapter<Category>) mCategory.getAdapter())
-                    .getItem(mCategory.getSelectedItemPosition()).id;
-            mCard.workAddress = mCompanyAddress.getText().toString();
-            mCard.about = mAbout.getText().toString();
+            mCard.setFirstName(fn);
+            mCard.setLastName(mLastName.getText().toString());
+            mCard.setPosition(position);
+            mCard.setWorkPlace(mCompanyName.getText().toString());
+            mCard.setPhoneNumber(phoneNumber);
+            mCard.setEmail(mEmailAddress.getText().toString());
+            mCard.setCategoryId(((ArrayAdapter<Category>) mCategory.getAdapter())
+                    .getItem(mCategory.getSelectedItemPosition()).id);
+            mCard.setAddress(mCompanyAddress.getText().toString());
+            mCard.setShortDesc(mAbout.getText().toString());
 
-            mCard.save(getContext());
             getActivity().onBackPressed();
-            DataManager.getInstance().bus.post(new Card.OnCardUpdateEvent());
+            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
             return true;
         }
 

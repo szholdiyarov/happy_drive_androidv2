@@ -24,7 +24,6 @@ class UserHelper {
     static final String API_USER_KEY_PASSWORD = "password";
     static final String API_USER_KEY_TOKEN = "token";
     static final String API_USER_KEY_CARD = "card";
-    static final String API_USER_KEY_CARD_ID = "card_id";
     static final String API_USER_VISIBLE = "visible";
 
     static JsonNode register(final String email, final String password) throws Exception {
@@ -74,8 +73,12 @@ class UserHelper {
         }
 
         Map<String, Object> raw = new HashMap<>(2);
-        raw.put(API_USER_KEY_EMAIL, prefs.getString(API_USER_KEY_EMAIL, null));
+        Map<String, Object> card = new HashMap<>();
         raw.put(API_USER_KEY_TOKEN, prefs.getString(API_USER_KEY_TOKEN, null));
+        raw.put(API_USER_KEY_CARD, card);
+        card.put(Card.API_KEY_CARD_ID, "8");
+
+
 
         return raw;
     }

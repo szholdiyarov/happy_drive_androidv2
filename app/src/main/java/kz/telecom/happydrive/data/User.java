@@ -25,7 +25,9 @@ public class User {
     private static final String PREFS_NAME = "hd.user";
 
     private static User sUser;
+    @NonNull
     public final Card card;
+    @NonNull
     final String token;
 
 
@@ -125,10 +127,8 @@ public class User {
             throw new ResponseParseError("token is null");
         }
 
-        Card card = new Card();
-        card.firstName = UserHelper.getValue(String.class, )
-
-        return new User(token, null);
+        Card card = new Card((Map<String, Object>) rawData.get("card"));
+        return new User(token, card);
     }
 
     protected static User initStaticUser(User user) {

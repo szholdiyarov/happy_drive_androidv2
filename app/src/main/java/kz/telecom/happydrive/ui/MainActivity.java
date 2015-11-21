@@ -38,8 +38,6 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         drawerToggle.syncState();
 
         if (savedInstanceState == null) {
-            replaceContent(new CardDetailsFragment(), false,
-                    FragmentTransaction.TRANSIT_NONE);
         }
     }
 

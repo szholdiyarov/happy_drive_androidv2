@@ -3,12 +3,14 @@ package kz.telecom.happydrive.ui;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.CardEditParamsFragment;
 
 /**
@@ -20,14 +22,16 @@ public class CardEditActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_edit);
 
+        Card card = User.currentUser().card;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         ActionBar actionBar = initToolbar(toolbar);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(Card.getUserCard(this) == null ?
-                "Создать визитку" : "Редактировать визитку");
+        actionBar.setTitle(card.getCategoryId() > 0 ?
+                "Редактировать визитку" : "Создать визитку");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
         if (savedInstanceState == null) {
