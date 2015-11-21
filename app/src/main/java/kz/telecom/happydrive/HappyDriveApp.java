@@ -15,6 +15,7 @@ import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.Response;
+import kz.telecom.happydrive.data.network.StringRequest;
 import kz.telecom.happydrive.data.network.internal.NetworkResponse;
 import kz.telecom.happydrive.util.Logger;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
