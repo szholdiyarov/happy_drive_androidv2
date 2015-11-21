@@ -57,7 +57,7 @@ class UserHelper {
 
     static void saveCredentials(User user, SharedPreferences prefs) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(API_USER_KEY_EMAIL, user.email);
+//        editor.putString(API_USER_KEY_EMAIL, user.email);
         editor.putString(API_USER_KEY_TOKEN, user.token);
 //        editor.putString(API_USER_KEY_CARD_ID, user.cardId);
         editor.apply();

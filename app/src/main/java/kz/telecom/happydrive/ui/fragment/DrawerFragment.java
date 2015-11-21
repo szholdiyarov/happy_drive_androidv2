@@ -86,7 +86,7 @@ public class DrawerFragment extends BaseFragment {
     private void updateHeaderState() {
         User user = User.currentUser();
         if (user != null) {
-            mEmailTextView.setText(user.email);
+//            mEmailTextView.setText(user.email);
         }
 
         Card card = Card.getUserCard(getContext());

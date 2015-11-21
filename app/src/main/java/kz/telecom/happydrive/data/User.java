@@ -9,9 +9,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.ResponseParseError;
 
 
@@ -22,8 +25,7 @@ public class User {
     private static final String PREFS_NAME = "hd.user";
 
     private static User sUser;
-
-    public final String email;
+    public final Card card;
     final String token;
 
 
@@ -35,7 +37,7 @@ public class User {
         Map<String, Object> rawData;
         if (sUser == null && (rawData = UserHelper.restoreFromCredentials(getDefaultSharedPrefs())) != null) {
             try {
-                sUser = parseUser(rawData);
+                initStaticUser(parseUser(rawData));
             } catch (ResponseParseError ignored) {
             }
         }
@@ -63,12 +65,11 @@ public class User {
         }
 
         Map<String, Object> rawData = new ObjectMapper().convertValue(jsonNode, Map.class);
-        rawData.put(UserHelper.API_USER_KEY_EMAIL, email);
         User user = parseUser(rawData);
         SharedPreferences prefs = getDefaultSharedPrefs();
         UserHelper.wipeCredentials(prefs);
         UserHelper.saveCredentials(user, prefs);
-        return sUser = user;
+        return initStaticUser(user);
     }
 
     @NonNull
@@ -119,18 +120,38 @@ public class User {
     }
 
     private static User parseUser(Map<String, Object> rawData) throws ResponseParseError {
-        String email = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_EMAIL, null, rawData);
         String token = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
-        if (email == null || token == null) {
-            throw new ResponseParseError("email or token is null");
+        if (token == null) {
+            throw new ResponseParseError("token is null");
         }
 
-        return new User(email, token, null);
+        Card card = new Card();
+        card.firstName = UserHelper.getValue(String.class, )
+
+        return new User(token, null);
     }
 
-    private User(String email, String token, String cardId) {
-        this.email = email;
+    protected static User initStaticUser(User user) {
+        try {
+            NetworkManager.setCookie(Request.DEFAULT_HOST, "auth-token", user.token);
+        } catch (URISyntaxException | IOException ignored) {
+        }
+
+        return sUser = user;
+    }
+
+    protected static void deinitStaticUser(User user) {
+        try {
+            NetworkManager.removeCookie(Request.DEFAULT_HOST);
+        } catch (URISyntaxException | IOException ignored) {
+        }
+
+        sUser = null;
+    }
+
+    private User(String token, Card card) {
         this.token = token;
+        this.card = card;
     }
 
     public static class SignedInEvent {
