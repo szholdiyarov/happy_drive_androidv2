@@ -1,5 +1,7 @@
 package kz.telecom.happydrive.data;
 
+import android.support.annotation.WorkerThread;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import kz.telecom.happydrive.data.network.JsonRequest;
@@ -25,7 +29,12 @@ import kz.telecom.happydrive.util.Utils;
  */
 public class ApiClient {
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
+
     private static final String API_PATH_CARD_UPDATE = "card/update/";
+    private static final String API_PATH_FILES_LIST = "files/list";
+
+    public static final String API_KEY_FOLDERS = "folders";
+    public static final String API_KEY_FILES = "files";
 
     private static ObjectMapper sObjectMapper;
 
@@ -102,6 +111,56 @@ public class ApiClient {
         return null;
     }
 
+    @WorkerThread
+    public static Map<String, List<ApiObject>> getFiles(int folderId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        String path = API_PATH_FILES_LIST + "?" + FolderObject.API_IS_PUBLIC + "=false";
+        if (folderId > 0) {
+            path += "&" + FolderObject.API_FOLDER_ID + "=" + folderId;
+        }
+        JsonRequest request = new JsonRequest(Request.Method.GET, path);
+//        Request.StringBody.Builder builder = new Request.StringBody.Builder();
+//        builder.add(FolderObject.API_IS_PUBLIC, "false");
+//        if (folderId > 0) {
+//            builder.add(FolderObject.API_FOLDER_ID, folderId + "");
+//        }
+
+//        request.setBody(builder.build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+
+            Map<String, List<ApiObject>> result = new HashMap<>();
+            JsonNode rootNode = response.result;
+            if (rootNode.hasNonNull(API_KEY_FOLDERS)) {
+                JsonNode folderNode = rootNode.get(API_KEY_FOLDERS);
+                if (folderNode.size() > 0) {
+                    List<ApiObject> folderList = new ArrayList<>(folderNode.size());
+                    for (JsonNode node : folderNode) {
+                        folderList.add(new FolderObject(node));
+                    }
+
+                    result.put(API_KEY_FOLDERS, folderList);
+                }
+            } else if (rootNode.hasNonNull(API_KEY_FILES)) {
+                JsonNode fileNode = rootNode.get(API_KEY_FILES);
+                if (fileNode.size() > 0) {
+                    List<ApiObject> fileList = new ArrayList<>(fileNode.size());
+                    for (JsonNode node : fileNode) {
+                        fileList.add(new FileObject(node));
+                    }
+
+                    result.put(API_KEY_FILES, fileList);
+                }
+            }
+
+            return result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
     static void checkResponseAndThrowIfNeeded(Response<JsonNode> response)
             throws ResponseParseError, ApiResponseError {
         JsonNode jsonNode = response.result;
@@ -130,5 +189,6 @@ public class ApiClient {
         return sObjectMapper;
     }
 
-    private ApiClient() {}
+    private ApiClient() {
+    }
 }

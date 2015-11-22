@@ -7,20 +7,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.FileObject;
+import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.util.Logger;
 
 /**
  * Created by shgalym on 11/22/15.
  */
 public class StoragePhotoFragment extends BaseFragment {
     private PhotoAdapter mAdapter;
+    private List<FileObject> mItems;
     private User mUser;
+
+    private boolean isUpdating = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +52,8 @@ public class StoragePhotoFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if (mAdapter == null) {
-            mAdapter = new PhotoAdapter(null);
+            mAdapter = new PhotoAdapter();
+            updateFiles();
         }
 
         RecyclerView rv = (RecyclerView) view.findViewById(R.id.portfolio_rv);
@@ -54,14 +64,48 @@ public class StoragePhotoFragment extends BaseFragment {
         rv.setAdapter(mAdapter);
     }
 
-    private class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
-        private List<FileObject> mItems;
+    void updateFiles() {
+        if (!isUpdating) {
+            new Thread() {
+                @Override
+                public void run() {
+                    isUpdating = true;
 
-        PhotoAdapter(List<FileObject> items) {
-            super();
-            this.mItems = items;
+                    FolderObject photoFolder = null;
+
+                    try {
+                        Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(0);
+                        List<ApiObject> folderList = objectMap.get(ApiClient.API_KEY_FOLDERS);
+                        if (folderList != null && folderList.size() > 0) {
+                            for (ApiObject obj : folderList) {
+                                FolderObject folder = obj.isFolder() ? (FolderObject) obj : null;
+                                if (folder != null && "фото".equalsIgnoreCase(folder.name)) {
+                                    photoFolder = folder;
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+//                        Toast.makeText(getContext(), "Something went wrong while getting private folder",
+//                                Toast.LENGTH_LONG).show();
+                    }
+
+                    if (photoFolder != null) {
+                        try {
+                            Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id);
+                            Logger.i("TEST", "obj map: " + objectMap);
+                        } catch (Exception e) {
+//                            Toast.makeText(getContext(), "Something went wrong while getting photo files",
+//                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    isUpdating = false;
+                }
+            }.start();
         }
+    }
 
+    private class PhotoAdapter extends RecyclerView.Adapter<PhotoViewHolder> {
         @Override
         public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
