@@ -1,15 +1,23 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +71,46 @@ public class StoragePhotoFragment extends BaseFragment {
 
         List<FileObject> list = new ArrayList<>();
         rv.setAdapter(mAdapter);
+
+        view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_photo_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        updateFiles();
+        return true;
+    }
+
+    void openGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, ""), 1234);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == 1234) {
+                try {
+                    Uri selectedImageUri = data.getData();
+                    File file = new File(new URI(selectedImageUri.toString()));
+                } catch (Exception ee) {
+                    Toast.makeText(getContext(), "something went wrong while parsing photo file",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     void updateFiles() {
@@ -101,7 +149,31 @@ public class StoragePhotoFragment extends BaseFragment {
                     if (photoFolder != null) {
                         try {
                             Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id);
-                            Logger.i("TEST", "obj map: " + objectMap);
+                            if (mItems == null) {
+                                mItems = new ArrayList<>();
+                            } else {
+                                mItems.clear();
+                            }
+
+                            List<ApiObject> fileList = objectMap.get(ApiClient.API_KEY_FILES);
+                            if (fileList != null && fileList.size() > 0) {
+                                for (ApiObject obj : fileList) {
+                                    FileObject file = !obj.isFolder() ? (FileObject) obj : null;
+                                    if (file != null) {
+                                        mItems.add(file);
+                                    }
+                                }
+                            }
+
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            }
                         } catch (Exception e) {
                             Activity activity = getActivity();
                             if (activity != null) {

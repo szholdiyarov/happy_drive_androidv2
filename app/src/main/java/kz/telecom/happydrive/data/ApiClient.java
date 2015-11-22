@@ -112,6 +112,10 @@ public class ApiClient {
     }
 
     @WorkerThread
+    public static void uploadFile(FileObject fileObject) {
+    }
+
+    @WorkerThread
     public static Map<String, List<ApiObject>> getFiles(int folderId)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_FILES_LIST);

@@ -24,6 +24,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -32,6 +33,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public static final String EXTRA_CARD = "extra:card";
 
     private View stubView;
+    private Card mShareCard;
 
     public static BaseFragment newInstance(Card card) {
         Bundle bundle = new Bundle();
@@ -75,12 +77,36 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit) {
             startActivity(new Intent(getContext(), CardEditActivity.class));
+        } else if (item.getItemId() == R.id.action_share) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//            Uri uri = Uri.parse("file:///file");
+            shareIntent.setType("*/*");
+            String bodyString = mShareCard.getFirstName();
+
+            String lastName = mShareCard.getLastName();
+            if (!Utils.isEmpty(lastName)) {
+                if (!Utils.isEmpty(bodyString)) {
+                    bodyString = " " + lastName;
+                } else {
+                    bodyString = lastName;
+                }
+            }
+
+            if (!Utils.isEmpty(mShareCard.getPhone())) {
+                bodyString += ", " + mShareCard.getPhone();
+            }
+
+            shareIntent.putExtra(Intent.EXTRA_TEXT, bodyString);
+//            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+            startActivity(shareIntent);
         }
 
         return false;
     }
 
     public void updateView(View view, final Card card) {
+        mShareCard = card;
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
