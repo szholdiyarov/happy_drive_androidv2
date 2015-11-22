@@ -118,7 +118,7 @@ public class NetworkManager {
                 String tempPath = "?";
                 if (params != null) {
                     for (Map.Entry<String, String> entry : params.entrySet()) {
-                        tempPath += entry.getKey() + "=" + entry.getValue();
+                        tempPath += entry.getKey() + "=" + entry.getValue() + "&";
                     }
 //                    httpBuilder.addPathSegment(tempPath);
                 }
