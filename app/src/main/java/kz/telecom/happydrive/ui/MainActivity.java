@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
+import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
 import kz.telecom.happydrive.ui.fragment.MainFragment;
 
@@ -52,6 +54,12 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         }
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     public boolean onDrawerMenuItemSelected(int itemId) {
         if (itemId == R.id.action_main) {
@@ -67,6 +75,14 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         }
 
         closeDrawer();
+        switch (itemId) {
+            case R.id.action_catalog:
+                replaceContent(new CatalogFragment(), true,
+                        FragmentTransaction.TRANSIT_NONE);
+                break;
+            default:
+                break;
+        }
         return true;
     }
 

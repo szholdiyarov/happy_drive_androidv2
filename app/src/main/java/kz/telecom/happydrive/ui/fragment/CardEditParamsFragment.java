@@ -3,6 +3,7 @@ package kz.telecom.happydrive.ui.fragment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +21,11 @@ import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.DataManager;
+
+import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.MainActivity;
+
+import java.util.List;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 
@@ -32,6 +38,7 @@ public class CardEditParamsFragment extends BaseFragment {
             mCompanyAddress, mAbout;
     private Spinner mCategory;
     private Card mCard;
+    private ArrayAdapter<Category> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,48 @@ public class CardEditParamsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_card_edit_params, parent, false);
+    }
+
+    private void loadData() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final List<Category> data = Category.getCategoriesListTemp();
+                    BaseActivity activity = (BaseActivity) getActivity();
+                    final View view = getView();
+                    if (activity != null && view != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (Category c: data) {
+                                    adapter.add(c);
+                                }
+                                adapter.notifyDataSetChanged();
+                                for (int i = 0; i < adapter.getCount(); i++) {
+                                    Category cat = adapter.getItem(i);
+                                    if (cat.id == mCard.getCategoryId()) {
+                                        mCategory.setSelection(i);
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    BaseActivity activity = (BaseActivity) getActivity();
+                    final View view = getView();
+                    if (activity != null && view != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Snackbar.make(view, R.string.no_connection, Snackbar.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -58,11 +107,12 @@ public class CardEditParamsFragment extends BaseFragment {
         mAbout = (EditText) view.findViewById(R.id.input_about);
 
         mCategory = (Spinner) view.findViewById(R.id.select_category);
-        ArrayAdapter<Category> adapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, Category.getCategoriesListTemp());
+        // TODO: Wait until loads catalog data.
+        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCategory.setAdapter(adapter);
 
+        loadData();
         mCard = User.currentUser().card;
         mFirstName.setText(mCard.getFirstName());
         mLastName.setText(mCard.getLastName());
@@ -73,13 +123,7 @@ public class CardEditParamsFragment extends BaseFragment {
         mCompanyAddress.setText(mCard.getAddress());
         mAbout.setText(mCard.getShortDesc());
 
-        for (int i = 0; i < adapter.getCount(); i++) {
-            Category cat = adapter.getItem(i);
-            if (cat.id == mCard.getCategoryId()) {
-                mCategory.setSelection(i);
-                break;
-            }
-        }
+
     }
 
     @Override

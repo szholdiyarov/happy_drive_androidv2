@@ -30,7 +30,7 @@ public class User {
     @NonNull
     public final Card card;
     @NonNull
-    final String token;
+    public final String token;
 
     @WorkerThread
     public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -56,6 +56,32 @@ public class User {
         }
 
         return sUser;
+    }
+
+    public static User socialSignIn(final String accessToken, final String provider) throws Exception {
+        JsonNode jsonNode;
+        try {
+            jsonNode = UserHelper.getSocialToken(accessToken, provider);
+        } catch (IOException ioe) {
+            throw new NoConnectionError("no network error", ioe);
+        }
+
+        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
+                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
+                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
+                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
+
+        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
+            throw new ApiResponseError("api response error", responseCode, null);
+        }
+
+        Map<String, Object> rawData = new ObjectMapper().convertValue(jsonNode, Map.class);
+//        rawData.put(UserHelper.API_USER_KEY_EMAIL, email);
+        User user = parseUser(rawData);
+        SharedPreferences prefs = getDefaultSharedPrefs();
+        UserHelper.wipeCredentials(prefs);
+        UserHelper.saveCredentials(user, prefs);
+        return sUser = user;
     }
 
     @NonNull
@@ -93,6 +119,7 @@ public class User {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
+
     private static User parseUser(Map<String, Object> rawData) throws ResponseParseError {
         String token = Utils.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
         if (token == null) {
@@ -105,7 +132,7 @@ public class User {
 
     protected static User initStaticUser(User user) {
         try {
-            NetworkManager.setCookie(Request.DEFAULT_HOST, "auth-token", user.token);
+            NetworkManager.setCookie(Request.DEFAULT_HOST, "Auth-Token", user.token);
         } catch (URISyntaxException | IOException ignored) {
         }
 

@@ -37,6 +37,16 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public final String host;
 
     private Map<String, String> mHeaders;
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    private Map<String, String> params;
     private Body<?> mBody;
 
     private Caller mCaller;
@@ -64,6 +74,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public void setBody(Body<?> body) {
         mBody = body;
     }
+
 
     public Body<?> getBody() {
         return mBody;
