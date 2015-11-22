@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,6 +17,7 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.ResponseParseError;
+import kz.telecom.happydrive.util.Utils;
 
 
 // TODO more secure way to store passwords (AccountManager)
@@ -49,71 +51,32 @@ public class User {
 
     @NonNull
     @WorkerThread
-    public static User signIn(final String email, final String password) throws Exception {
-        JsonNode jsonNode;
-        try {
-            jsonNode = UserHelper.getToken(email, password);
-        } catch (IOException ioe) {
-            throw new NoConnectionError("no network error", ioe);
-        }
+    public static User signIn(final String email, final String password)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonNode jsonNode = UserHelper.getToken(email, password);
+        Map<String, Object> rawData = new ObjectMapper()
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .convertValue(jsonNode, Map.class);
 
-        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
-                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
-                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-
-        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-            throw new ApiResponseError("api response error", responseCode, null);
-        }
-
-        Map<String, Object> rawData = new ObjectMapper().convertValue(jsonNode, Map.class);
         User user = parseUser(rawData);
         SharedPreferences prefs = getDefaultSharedPrefs();
-        UserHelper.wipeCredentials(prefs);
         UserHelper.saveCredentials(user, prefs);
+        Card.saveUserCard(user.card, prefs);
         return initStaticUser(user);
     }
 
     @NonNull
     @WorkerThread
-    public static User signUp(final String email, final String password) throws Exception {
-        JsonNode jsonNode;
-        try {
-            jsonNode = UserHelper.register(email, password);
-        } catch (IOException ioe) {
-            throw new NoConnectionError("no network error", ioe);
-        }
-
-        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
-                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
-                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-
-        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-            throw new ApiResponseError("api response error", responseCode, null);
-        }
-
+    public static User signUp(final String email, final String password)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        UserHelper.register(email, password);
         return signIn(email, password);
     }
 
     @WorkerThread
-    public static void restorePassword(final String email) throws Exception {
-        JsonNode jsonNode;
-        try {
-            jsonNode = UserHelper.resetPassword(email);
-        } catch (IOException ioe) {
-            throw new NoConnectionError("no network error", ioe);
-        }
-
-        int responseCode = ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-        if (jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY)) {
-            responseCode = jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                    .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR);
-        }
-
-        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-            throw new ApiResponseError("api response error", responseCode, null);
-        }
+    public static void restorePassword(final String email)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        UserHelper.resetPassword(email);
     }
 
     private static SharedPreferences getDefaultSharedPrefs() {
@@ -122,7 +85,7 @@ public class User {
     }
 
     private static User parseUser(Map<String, Object> rawData) throws ResponseParseError {
-        String token = UserHelper.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
+        String token = Utils.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
         if (token == null) {
             throw new ResponseParseError("token is null");
         }

@@ -123,7 +123,7 @@ public class CardDetailsFragment extends BaseFragment {
             }
 
             TextView phoneNumber = (TextView) view.findViewById(R.id.phone);
-            phoneNumber.setText(card.getPhoneNumber());
+            phoneNumber.setText(card.getPhone());
 
             View emailBlock = view.findViewById(R.id.email_block);
             if (!TextUtils.isEmpty(card.getEmail())) {

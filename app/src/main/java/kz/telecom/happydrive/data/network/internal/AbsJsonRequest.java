@@ -2,6 +2,8 @@ package kz.telecom.happydrive.data.network.internal;
 
 import android.support.annotation.NonNull;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,6 +31,8 @@ public abstract class AbsJsonRequest<T> extends AbsStringRequest<T> {
         String parsed = parseString(networkResponse);
         if (sObjectMapper == null) {
             sObjectMapper = new ObjectMapper();
+            sObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            sObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         }
 
         try {

@@ -18,6 +18,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.MainActivity;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 10/29/15.
@@ -90,8 +91,17 @@ public class DrawerFragment extends BaseFragment {
     }
 
     private void updateHeaderState(Card card) {
-        mUsernameTextView.setText(card.getFirstName() +
-                " " + card.getLastName());
+        String lastName = card.getLastName();
+        String username = card.getFirstName();
+        if (!Utils.isEmpty(lastName)) {
+            if (!Utils.isEmpty(username)) {
+                username = " " + lastName;
+            } else {
+                username = lastName;
+            }
+        }
+
+        mUsernameTextView.setText(username);
         mEmailTextView.setText(card.getEmail());
     }
 

@@ -1,12 +1,14 @@
 package kz.telecom.happydrive.data;
 
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import kz.telecom.happydrive.data.network.ResponseParseError;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -35,7 +37,7 @@ public class Card implements Comparable<Card>, Parcelable {
     private int mCategoryId;
     private String mFirstName;
     private String mLastName;
-    private String mPhoneNumber;
+    private String mPhone;
     private String mEmail;
     private String mAddress;
     private String mWorkPlace;
@@ -54,7 +56,22 @@ public class Card implements Comparable<Card>, Parcelable {
                     API_KEY_CARD_ID + " value");
         }
 
-        this.id = (Integer) data.get(API_KEY_CARD_ID);
+        this.id = Utils.getValue(Integer.class, API_KEY_CARD_ID, -1, data);
+        if (this.id < 0) {
+            throw new IllegalArgumentException("data argument with null card id");
+        }
+
+        this.mCategoryId = Utils.getValue(Integer.class, API_KEY_CATEGORY_ID, -1, data);
+        mFirstName = Utils.getValue(String.class, API_KEY_FIRST_NAME, null, data);
+        mLastName = Utils.getValue(String.class, API_KEY_LAST_NAME, null, data);
+        mPhone = Utils.getValue(String.class, API_KEY_PHONE, null, data);
+        mEmail = Utils.getValue(String.class, API_KEY_EMAIL, null, data);
+        mAddress = Utils.getValue(String.class, API_KEY_ADDRESS, null, data);
+        mWorkPlace = Utils.getValue(String.class, API_KEY_WORK_PLACE, null, data);
+        mPosition = Utils.getValue(String.class, API_KEY_POSITION, null, data);
+        mShortDesc = Utils.getValue(String.class, API_KEY_SHORT_DESC, null, data);
+        mFullDesc = Utils.getValue(String.class, API_KEY_FULL_DESC, null, data);
+        mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
     }
 
     protected Card(Parcel in) {
@@ -62,7 +79,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mCategoryId = in.readInt();
         mFirstName = in.readString();
         mLastName = in.readString();
-        mPhoneNumber = in.readString();
+        mPhone = in.readString();
         mEmail = in.readString();
         mAddress = in.readString();
         mWorkPlace = in.readString();
@@ -108,12 +125,12 @@ public class Card implements Comparable<Card>, Parcelable {
         return mLastName;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        mPhoneNumber = phoneNumber;
+    public void setPhone(String phoneNumber) {
+        mPhone = phoneNumber;
     }
 
-    public String getPhoneNumber() {
-        return mPhoneNumber;
+    public String getPhone() {
+        return mPhone;
     }
 
     public void setEmail(String email) {
@@ -188,7 +205,7 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeInt(mCategoryId);
         dest.writeString(mFirstName);
         dest.writeString(mLastName);
-        dest.writeString(mPhoneNumber);
+        dest.writeString(mPhone);
         dest.writeString(mEmail);
         dest.writeString(mAddress);
         dest.writeString(mWorkPlace);
@@ -196,6 +213,28 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mShortDesc);
         dest.writeString(mFullDesc);
         dest.writeString(mAvatar);
+    }
+
+    static void saveUserCard(Card card, SharedPreferences prefs) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(API_KEY_CARD_ID, card.id);
+        editor.putInt(API_KEY_CATEGORY_ID, card.mCategoryId);
+        editor.putString(API_KEY_FIRST_NAME, card.mFirstName);
+        editor.putString(API_KEY_FIRST_NAME, card.mLastName);
+        editor.putString(API_KEY_PHONE, card.mPhone);
+        editor.putString(API_KEY_EMAIL, card.mEmail);
+        editor.putString(API_KEY_ADDRESS, card.mAddress);
+        editor.putString(API_KEY_WORK_PLACE, card.mWorkPlace);
+        editor.putString(API_KEY_POSITION, card.mPosition);
+        editor.putString(API_KEY_SHORT_DESC, card.mShortDesc);
+        editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
+        editor.putString(API_KEY_AVATAR, card.mAvatar);
+
+        editor.apply();
+    }
+
+    static Map<String, Object> restoreUserCard(SharedPreferences prefs) {
+        return (Map<String, Object>) prefs.getAll();
     }
 
     public static class OnCardUpdatedEvent {

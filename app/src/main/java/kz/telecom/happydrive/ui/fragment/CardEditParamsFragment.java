@@ -64,7 +64,7 @@ public class CardEditParamsFragment extends BaseFragment {
         mLastName.setText(mCard.getLastName());
         mPosition.setText(mCard.getPosition());
         mCompanyName.setText(mCard.getWorkPlace());
-        mPhoneNumber.setText(mCard.getPhoneNumber());
+        mPhoneNumber.setText(mCard.getPhone());
         mEmailAddress.setText(mCard.getEmail());
         mCompanyAddress.setText(mCard.getAddress());
         mAbout.setText(mCard.getShortDesc());
@@ -113,7 +113,7 @@ public class CardEditParamsFragment extends BaseFragment {
             mCard.setLastName(mLastName.getText().toString());
             mCard.setPosition(position);
             mCard.setWorkPlace(mCompanyName.getText().toString());
-            mCard.setPhoneNumber(phoneNumber);
+            mCard.setPhone(phoneNumber);
             mCard.setEmail(mEmailAddress.getText().toString());
             mCard.setCategoryId(((ArrayAdapter<Category>) mCategory.getAdapter())
                     .getItem(mCategory.getSelectedItemPosition()).id);
