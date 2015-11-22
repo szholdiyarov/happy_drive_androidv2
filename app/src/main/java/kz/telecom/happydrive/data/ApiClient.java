@@ -33,7 +33,7 @@ public class ApiClient {
 
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
-    private static final String API_PATH_FILES_LIST = "files/list";
+    private static final String API_PATH_FILES_LIST = "files/list/";
 
     public static final String API_KEY_FOLDERS = "folders";
     public static final String API_KEY_FILES = "files";

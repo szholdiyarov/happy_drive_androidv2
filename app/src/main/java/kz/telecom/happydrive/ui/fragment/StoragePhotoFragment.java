@@ -31,6 +31,9 @@ import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.FileObject;
+import kz.telecom.happydrive.data.FolderObject;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.util.Logger;
 
 /**
@@ -212,6 +215,8 @@ public class StoragePhotoFragment extends BaseFragment {
                                     }
                                 });
                             }
+
+                            Logger.i("TEST", "obj map: " + objectMap);
                         } catch (Exception e) {
                             Activity activity = getActivity();
                             if (activity != null) {

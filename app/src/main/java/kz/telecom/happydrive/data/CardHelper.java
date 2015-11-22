@@ -16,7 +16,8 @@ import java.util.Map;
  * Created by darkhan on 20.11.15.
  */
 public class CardHelper {
-    private static final String APT_PATH_GET_CARDS = "card/list/";
+    private static final String API_PATH_GET_CARDS = "card/list/";
+    private static final String API_CARD_GET = "card/get/";
 
 
     /**
@@ -25,7 +26,7 @@ public class CardHelper {
      * @throws Exception
      */
     static JsonNode getCards(int categoryId) throws Exception {
-        Request<String> request = new Request<String>(Request.Method.GET, APT_PATH_GET_CARDS) {
+        Request<String> request = new Request<String>(Request.Method.GET, API_PATH_GET_CARDS) {
             @Override
             public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
                 try {
@@ -45,4 +46,24 @@ public class CardHelper {
         return new ObjectMapper().readTree(response.result);
     }
 
+    static JsonNode getSingleCard(int cardId) throws Exception {
+        Request<String> request = new Request<String>(Request.Method.GET, API_CARD_GET) {
+            @Override
+            public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
+                try {
+                    return new Response<>(new String(networkResponse.data, "UTF-8"), null);
+                } catch (UnsupportedEncodingException e) {
+                    return new Response<>(null, e);
+                }
+            }
+        };
+
+        Map<String, String> params = new HashMap<>();
+        params.put("card_id", Integer.toString(cardId));
+        request.setParams(params);
+
+        Response<String> response = NetworkManager.execute(request);
+        Logger.i("TEST", "result: " + response.result);
+        return new ObjectMapper().readTree(response.result);
+    }
 }
