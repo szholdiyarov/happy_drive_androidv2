@@ -143,6 +143,8 @@ public class CatalogItemFragment extends BaseFragment {
             if (vi == null)
                 vi = inflater.inflate(R.layout.fragment_catalog_item_row, null);
             TextView text = (TextView) vi.findViewById(R.id.text);
+            Card card = data.get(position);
+            String fullName = card.getFullDesc()
             text.setText(data.get(position).getFirstName());
             return vi;
         }
