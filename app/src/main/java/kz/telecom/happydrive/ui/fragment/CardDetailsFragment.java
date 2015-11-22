@@ -79,7 +79,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         } else if (item.getItemId() == R.id.action_share) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
 //            Uri uri = Uri.parse("file:///file");
-            shareIntent.setType("*/*");
+            shareIntent.setType("text/plain");
             String bodyString = mShareCard.getFirstName();
 
             String lastName = mShareCard.getLastName();
@@ -95,10 +95,14 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 bodyString += ", " + mShareCard.getPhone();
             }
 
+            if (!Utils.isEmpty(mShareCard.getEmail())) {
+                bodyString += ", " + mShareCard.getEmail();
+            }
+
             shareIntent.putExtra(Intent.EXTRA_TEXT, bodyString);
 //            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
-            startActivity(shareIntent);
+            startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
         }
 
         return false;
