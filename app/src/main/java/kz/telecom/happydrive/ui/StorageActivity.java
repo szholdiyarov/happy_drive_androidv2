@@ -9,41 +9,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.ui.fragment.PortfolioPhotoFragment;
+import kz.telecom.happydrive.ui.fragment.StoragePhotoFragment;
 
 /**
  * Created by shgalym on 11/22/15.
  */
-public class PortfolioActivity extends BaseActivity {
+public class StorageActivity extends BaseActivity {
     public static final String EXTRA_TYPE = "extra:type";
     public static final int EXTRA_TYPE_PHOTO = 1;
-    public static final int EXTRA_TYPE_VIDEO = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_portfolio);
+        setContentView(R.layout.activity_storage);
 
-        Card card = User.currentUser().card;
         int type = getIntent().getIntExtra(EXTRA_TYPE, EXTRA_TYPE_PHOTO);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         ActionBar actionBar = initToolbar(toolbar);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(type == EXTRA_TYPE_PHOTO ?
-                "Фотографии" : "Видеозаписи");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
         if (savedInstanceState == null) {
-            replaceContent(type == EXTRA_TYPE_PHOTO ?
-                            PortfolioPhotoFragment.newInstance(card) :
-                            PortfolioPhotoFragment.newInstance(card),
-                    false, FragmentTransaction.TRANSIT_NONE);
+            if (type == EXTRA_TYPE_PHOTO) {
+                actionBar.setTitle("Фотографии");
+                replaceContent(StoragePhotoFragment.newInstance(User.currentUser()),
+                        false, FragmentTransaction.TRANSIT_NONE);
+            }
         }
     }
 
@@ -62,6 +58,6 @@ public class PortfolioActivity extends BaseActivity {
 
     @Override
     protected int getDefaultContentViewContainerId() {
-        return R.id.activity_portfolio_view_container;
+        return R.id.activity_storage_view_container;
     }
 }
