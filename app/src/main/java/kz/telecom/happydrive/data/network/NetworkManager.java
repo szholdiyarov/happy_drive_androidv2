@@ -86,12 +86,12 @@ public class NetworkManager {
     private void prepareRequest(Request<?> request) throws MalformedURLException {
         try {
             URI uri = new URI(request.host);
-            HttpUrl httpUrl = new HttpUrl.Builder()
+            HttpUrl.Builder httpBuilder = new HttpUrl.Builder()
                     .scheme(uri.getScheme())
                     .host(uri.getHost())
-                    .addPathSegment(request.path)
-                    .build();
+                    .addPathSegment(request.path);
 
+            String finalUrl;
             RequestBody requestBody = null;
             if (request.method != Request.Method.GET) {
                 Request.Body<?> body = request.getBody();
@@ -112,11 +112,23 @@ public class NetworkManager {
                 } else {
                     throw new RuntimeException("unsupported request body type");
                 }
+                finalUrl = (httpBuilder.build()).toString();
+            } else {
+                Map<String, String> params = request.getParams();
+                String tempPath = "?";
+                if (params != null) {
+                    for (Map.Entry<String, String> entry : params.entrySet()) {
+                        tempPath += entry.getKey() + "=" + entry.getValue();
+                    }
+//                    httpBuilder.addPathSegment(tempPath);
+                }
+                finalUrl = (httpBuilder.build()).toString() + tempPath;
             }
+
 
             com.squareup.okhttp.Request okHttpRequest = new com.squareup.okhttp.Request
                     .Builder()
-                    .url(httpUrl)
+                    .url(finalUrl)
                     .method(request.method.name(), requestBody)
                     .addHeader("Auth-Token", User.currentUser().token)
                     .build();
