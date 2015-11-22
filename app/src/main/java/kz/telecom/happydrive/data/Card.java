@@ -5,9 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.telecom.happydrive.data.network.*;
-import kz.telecom.happydrive.data.network.internal.NetworkResponse;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
@@ -104,13 +99,18 @@ public class Card implements Comparable<Card>, Parcelable {
     }
 
     @JsonCreator
-    Card(@JsonProperty("last_name")String lastName, @JsonProperty("first_name")String firstName, @JsonProperty("category_id") int categoryId,
-                        @JsonProperty("card_id") int cardId, @JsonProperty("avatar") String avatarUrl) {
+    Card(@JsonProperty("last_name")String lastName,
+         @JsonProperty("first_name")String firstName,
+         @JsonProperty("category_id") int categoryId,
+         @JsonProperty("card_id") int cardId,
+         @JsonProperty("avatar") String avatarUrl,
+         @JsonProperty("position") String position) {
         this.id = cardId;
         this.mFirstName = firstName;
         this.mLastName = lastName;
         this.mAvatar = avatarUrl;
         this.mCategoryId = categoryId;
+        this.mPosition = position;
     }
 
     public static final Creator<Card> CREATOR = new Creator<Card>() {
@@ -272,22 +272,32 @@ public class Card implements Comparable<Card>, Parcelable {
         final JsonNode arrNode = jsonNode.get("cards");
         List<Card> result = new ArrayList<>();
         if (arrNode != null) {
-            result = parseCard(arrNode);
+            result = parseArrayOfCards(arrNode);
         } else {
             Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
         }
         return result;
     }
 
-    public static class OnCardUpdatedEvent {
-        public final Card card;
-
-        public OnCardUpdatedEvent(Card card) {
-            this.card = card;
+    public static Card getSingleCard(int cardId) {
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = CardHelper.getSingleCard(cardId);
+        } catch (Exception e) {
+            Logger.d("Couldn't get json single card", e.getMessage());
         }
+        // TODO: Handle response properly
+        JsonNode cardNode = jsonNode.get("card");
+        if (cardNode != null) {
+            return parseCard(cardNode);
+        } else {
+            Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
+        }
+        return null;
     }
 
-    private static ArrayList<Card> parseCard(JsonNode arrNode) {
+
+    private static ArrayList<Card> parseArrayOfCards(JsonNode arrNode) {
         ArrayList<Card> result = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         for (JsonNode v : arrNode) {
@@ -300,5 +310,26 @@ public class Card implements Comparable<Card>, Parcelable {
         }
         return result;
     }
+
+
+    private static Card parseCard(JsonNode jsonNode) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.treeToValue(jsonNode, Card.class);
+        } catch (JsonProcessingException e) {
+            Logger.d("failed to parse jsonNode to Category", e.getMessage());
+        }
+        return null;
+    }
+
+
+    public static class OnCardUpdatedEvent {
+        public final Card card;
+
+        public OnCardUpdatedEvent(Card card) {
+            this.card = card;
+        }
+    }
+
 
 }

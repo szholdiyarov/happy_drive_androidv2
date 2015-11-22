@@ -46,21 +46,52 @@ public class CatalogItemFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        BaseActivity activity = (BaseActivity) getActivity();
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-//                Toast.makeText(getActivity(), "Redirect to Galym's card Details", Toast.LENGTH_LONG).show();
                 Card card = (Card) adapter.getItem(i);
-                ((BaseActivity)getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ((BaseActivity) getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
+                                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
         loadData();
 
     }
+
+//    private void loadSingleCardAndRedirect(final int cardId) {
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    final Card card = Card.getSingleCard(cardId);
+//                    BaseActivity activity = (BaseActivity) getActivity();
+//                    final View view = getView();
+//                    if (activity != null && view != null) {
+//                        activity.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ((BaseActivity) getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
+//                                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                            }
+//                        });
+//                    }
+//                } catch (final Exception e) {
+//                    BaseActivity activity = (BaseActivity) getActivity();
+//                    final View view = getView();
+//                    if (activity != null && view != null) {
+//                        activity.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Snackbar.make(view, R.string.no_connection, Snackbar.LENGTH_LONG).show();
+//                            }
+//                        });
+//                    }
+//                }
+//            }
+//        }.start();
+//    }
 
 
     @Override
@@ -146,10 +177,9 @@ public class CatalogItemFragment extends BaseFragment {
             TextView name = (TextView) vi.findViewById(R.id.name);
             TextView description = (TextView) vi.findViewById(R.id.description);
             Card card = data.get(position);
-            String fullName = card.getFirstName() != null ? card.getFirstName(): "" +
-                                    card.getLastName() != null ? card.getLastName(): "";
-            name.setText(data.get(position).getFirstName());
-            description.setText("Программист");
+            String fullName = card.getFirstName() != null ? card.getFirstName(): " " + card.getLastName() != null ? card.getLastName(): "";
+            name.setText(fullName);
+            description.setText(card.getPosition());
             return vi;
         }
     }
