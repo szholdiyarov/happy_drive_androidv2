@@ -1,5 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,10 +16,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -120,8 +124,46 @@ public class CardEditParamsFragment extends BaseFragment {
             mCard.setAddress(mCompanyAddress.getText().toString());
             mCard.setShortDesc(mAbout.getText().toString());
 
-            getActivity().onBackPressed();
-            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+            final ProgressDialog dialog = new ProgressDialog(getContext());
+            dialog.setMessage("Сохранение...");
+            dialog.setCancelable(false);
+            dialog.show();
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        User.currentUser().saveCard();
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    getActivity().onBackPressed();
+                                    DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                }
+                            });
+                        }
+                    } catch (final Exception e) {
+                        final Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (e instanceof NoConnectionError) {
+                                        Toast.makeText(activity, "Нет подключения к интернету",
+                                                Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(activity, "Произошла ошибка при сохранении визитки",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }.start();
             return true;
         }
 

@@ -39,7 +39,7 @@ class UserHelper {
 
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
-            checkAndThrowIfNeeded(response);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
             return response.result;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
@@ -56,7 +56,7 @@ class UserHelper {
 
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
-            checkAndThrowIfNeeded(response);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
             return response.result;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
@@ -71,7 +71,7 @@ class UserHelper {
 
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
-            checkAndThrowIfNeeded(response);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
             return response.result;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
@@ -99,23 +99,5 @@ class UserHelper {
         raw.put(API_USER_KEY_CARD, Card.restoreUserCard(prefs));
 
         return raw;
-    }
-
-    private static void checkAndThrowIfNeeded(Response<JsonNode> response)
-            throws ResponseParseError, ApiResponseError {
-        JsonNode jsonNode = response.result;
-        if (response.isSuccessful() && jsonNode != null) {
-            int responseCode = ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-            if (jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY)) {
-                responseCode = jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR);
-            }
-
-            if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-                throw new ApiResponseError("api response error", responseCode, null);
-            }
-        } else if (response.exception != null) {
-            throw new ResponseParseError("response parse error", response.exception);
-        }
     }
 }

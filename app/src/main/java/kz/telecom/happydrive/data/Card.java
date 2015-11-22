@@ -5,7 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import kz.telecom.happydrive.util.Utils;
@@ -220,7 +219,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putInt(API_KEY_CARD_ID, card.id);
         editor.putInt(API_KEY_CATEGORY_ID, card.mCategoryId);
         editor.putString(API_KEY_FIRST_NAME, card.mFirstName);
-        editor.putString(API_KEY_FIRST_NAME, card.mLastName);
+        editor.putString(API_KEY_LAST_NAME, card.mLastName);
         editor.putString(API_KEY_PHONE, card.mPhone);
         editor.putString(API_KEY_EMAIL, card.mEmail);
         editor.putString(API_KEY_ADDRESS, card.mAddress);

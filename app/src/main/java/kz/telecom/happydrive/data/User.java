@@ -32,6 +32,15 @@ public class User {
     @NonNull
     final String token;
 
+    @WorkerThread
+    public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+        ApiClient.updateCard(card);
+        Card.saveUserCard(card, getDefaultSharedPrefs());
+    }
+
+    @WorkerThread
+    public void updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+    }
 
     public static boolean isAuthenticated() {
         return currentUser() != null;

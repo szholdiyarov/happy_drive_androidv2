@@ -1,6 +1,12 @@
 package kz.telecom.happydrive.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.Map;
+
+import kz.telecom.happydrive.data.ApiResponseError;
+import kz.telecom.happydrive.data.network.Response;
+import kz.telecom.happydrive.data.network.ResponseParseError;
 
 /**
  * Created by Galymzhan Sh on 11/16/15.

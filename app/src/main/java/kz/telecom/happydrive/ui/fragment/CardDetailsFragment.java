@@ -54,9 +54,9 @@ public class CardDetailsFragment extends BaseFragment {
         DataManager.getInstance().bus.register(this);
 
         Card card = null;
-        if (getArguments() == null || (card = getArguments().getParcelable(EXTRA_CARD)) == null) {
-            throw new IllegalStateException("Card not set for " +
-                    CardDetailsFragment.class.getSimpleName());
+        Bundle args = getArguments();
+        if (args != null) {
+            card = args.getParcelable(EXTRA_CARD);
         }
 
         updateView(view, card);
@@ -80,7 +80,7 @@ public class CardDetailsFragment extends BaseFragment {
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
-        if (card == null) {
+        if (card == null || card.getFirstName() == null) {
             TextView textView = (TextView) view.findViewById(R.id.stub_error_tv_msg);
             if (textView == null) {
                 stubView = ((ViewStub) view.findViewById(R.id.stub_error)).inflate();
@@ -95,7 +95,8 @@ public class CardDetailsFragment extends BaseFragment {
             });
         } else {
             if (stubView != null) {
-                ((ViewGroup) view).removeView(stubView);
+                ((ViewGroup) stubView.getParent()).removeView(stubView);
+                stubView = null;
             }
 
             TextView userName = (TextView) view.findViewById(R.id.username);

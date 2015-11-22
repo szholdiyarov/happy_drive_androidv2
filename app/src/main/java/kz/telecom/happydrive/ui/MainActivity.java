@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
 
@@ -38,6 +40,14 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         drawerToggle.syncState();
 
         if (savedInstanceState == null) {
+            Card card = null;
+            User user = User.currentUser();
+            if (user != null) {
+                card = user.card;
+            }
+
+            replaceContent(CardDetailsFragment.newInstance(card), false,
+                    FragmentTransaction.TRANSIT_NONE);
         }
     }
 
