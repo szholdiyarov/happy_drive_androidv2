@@ -28,12 +28,15 @@ public class CatalogItemFragment extends BaseFragment {
 
     private ListView listView;
     private ItemAdapter adapter;
+    private int categoryId;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Bundle bundle = this.getArguments();
+        categoryId = bundle.getInt("category_id");
     }
 
     @Override
@@ -76,7 +79,7 @@ public class CatalogItemFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
-                    final List<Card> data = Card.getCards(1);
+                    final List<Card> data = Card.getCards(categoryId);
                     BaseActivity activity = (BaseActivity) getActivity();
                     final View view = getView();
                     if (activity != null && view != null) {

@@ -49,7 +49,11 @@ public class CatalogFragment extends BaseFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
 //                Toast.makeText(getActivity(), "Redirect to Galym's view", Toast.LENGTH_LONG).show();
-                ((BaseActivity)getActivity()).replaceContent(new CatalogItemFragment(), true,
+                Bundle bundle = new Bundle();
+                bundle.putInt("category_id", ((Category) adapter.getItem(i)).id);
+                CatalogItemFragment catalogItemFragment = new CatalogItemFragment();
+                catalogItemFragment.setArguments(bundle);
+                ((BaseActivity)getActivity()).replaceContent(catalogItemFragment, true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
