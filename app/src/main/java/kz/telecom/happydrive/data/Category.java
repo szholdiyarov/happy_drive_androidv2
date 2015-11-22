@@ -23,6 +23,7 @@ public class Category {
     @JsonProperty("category_id")
     public final int id;
     public final String name;
+    private static List<Category> storedCategories = new ArrayList<>();
 
     @JsonCreator
     Category(@JsonProperty("category_id")int id, @JsonProperty("name")String name) {
@@ -36,8 +37,7 @@ public class Category {
     }
 
     public static Category categoryById(int id) throws Exception {
-        List<Category> categoryList = getCategoriesListTemp();
-        for (Category cat : categoryList) {
+        for (Category cat : storedCategories) {
             if (cat.id == id) {
                 return cat;
             }
@@ -67,6 +67,7 @@ public class Category {
         final JsonNode arrNode = jsonNode.get("categories");
         if (arrNode != null) {
             result = parseCategories(arrNode);
+            storedCategories = result;
         } else {
             Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
         }
