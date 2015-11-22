@@ -25,7 +25,18 @@ import kz.telecom.happydrive.ui.CardEditActivity;
  * Created by Galymzhan Sh on 11/7/15.
  */
 public class CardDetailsFragment extends BaseFragment {
+    public static final String EXTRA_CARD = "extra:card";
+
     private View stubView;
+
+    public static BaseFragment newInstance(Card card) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(EXTRA_CARD, card);
+
+        BaseFragment fragment = new CardDetailsFragment();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +52,14 @@ public class CardDetailsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DataManager.getInstance().bus.register(this);
-        updateView(view);
+
+        Card card = null;
+        Bundle args = getArguments();
+        if (args != null) {
+            card = args.getParcelable(EXTRA_CARD);
+        }
+
+        updateView(view, card);
     }
 
     @Override
@@ -58,13 +76,11 @@ public class CardDetailsFragment extends BaseFragment {
         return false;
     }
 
-    public void updateView(View view) {
-        Card card = Card.getUserCard(getContext());
-
+    public void updateView(View view, Card card) {
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
-        if (card == null) {
+        if (card == null || card.getFirstName() == null) {
             TextView textView = (TextView) view.findViewById(R.id.stub_error_tv_msg);
             if (textView == null) {
                 stubView = ((ViewStub) view.findViewById(R.id.stub_error)).inflate();
@@ -79,7 +95,8 @@ public class CardDetailsFragment extends BaseFragment {
             });
         } else {
             if (stubView != null) {
-                ((ViewGroup) view).removeView(stubView);
+                ((ViewGroup) stubView.getParent()).removeView(stubView);
+                stubView = null;
             }
 
             TextView userName = (TextView) view.findViewById(R.id.username);
@@ -87,53 +104,49 @@ public class CardDetailsFragment extends BaseFragment {
                 ((ViewStub) view.findViewById(R.id.fragment_card_details_stub)).inflate();
             }
 
-            String userText = card.firstName;
-            if (!TextUtils.isEmpty(card.lastName)) {
-                userText += " " + card.lastName;
-            }
-
-            if (!TextUtils.isEmpty(card.middleName)) {
-                userText += " " + card.middleName;
+            String userText = card.getFirstName();
+            if (!TextUtils.isEmpty(card.getLastName())) {
+                userText += " " + card.getLastName();
             }
 
             userName = (TextView) view.findViewById(R.id.username);
             userName.setText(userText);
 
             TextView position = (TextView) view.findViewById(R.id.position);
-            position.setText(card.position);
+            position.setText(card.getPosition());
 
             TextView companyName = (TextView) view.findViewById(R.id.company_name);
-            if (!TextUtils.isEmpty(card.companyName)) {
+            if (!TextUtils.isEmpty(card.getWorkPlace())) {
                 companyName.setVisibility(View.VISIBLE);
-                companyName.setText(card.companyName);
+                companyName.setText(card.getWorkPlace());
             } else {
                 companyName.setVisibility(View.GONE);
             }
 
             TextView phoneNumber = (TextView) view.findViewById(R.id.phone);
-            phoneNumber.setText(card.phoneNumber);
+            phoneNumber.setText(card.getPhone());
 
             View emailBlock = view.findViewById(R.id.email_block);
-            if (!TextUtils.isEmpty(card.email)) {
+            if (!TextUtils.isEmpty(card.getEmail())) {
                 TextView email = (TextView) view.findViewById(R.id.email);
-                email.setText(card.email);
+                email.setText(card.getEmail());
                 emailBlock.setVisibility(View.VISIBLE);
             } else {
                 emailBlock.setVisibility(View.GONE);
             }
 
             View addressBlock = view.findViewById(R.id.address_block);
-            if (!TextUtils.isEmpty(card.workAddress)) {
+            if (!TextUtils.isEmpty(card.getAddress())) {
                 TextView address = (TextView) view.findViewById(R.id.address);
-                address.setText(card.workAddress);
+                address.setText(card.getAddress());
                 addressBlock.setVisibility(View.VISIBLE);
             } else {
                 addressBlock.setVisibility(View.GONE);
             }
 
             TextView aboutTextView = (TextView) view.findViewById(R.id.about);
-            if (!TextUtils.isEmpty(card.about)) {
-                aboutTextView.setText(card.about);
+            if (!TextUtils.isEmpty(card.getShortDesc())) {
+                aboutTextView.setText(card.getShortDesc());
                 aboutTextView.setVisibility(View.VISIBLE);
             } else {
                 aboutTextView.setVisibility(View.GONE);
@@ -149,7 +162,7 @@ public class CardDetailsFragment extends BaseFragment {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public void onCardUpdate(Card.OnCardUpdateEvent ignored) {
-        updateView(getView());
+    public void onCardUpdate(Card.OnCardUpdatedEvent event) {
+        updateView(getView(), event.card);
     }
 }

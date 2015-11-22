@@ -18,6 +18,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.MainActivity;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 10/29/15.
@@ -49,7 +50,11 @@ public class DrawerFragment extends BaseFragment {
             }
         });
 
-        updateHeaderState();
+        User user = User.currentUser();
+        if (user != null) {
+            updateHeaderState(user.card);
+        }
+
         DataManager.getInstance().bus.register(this);
     }
 
@@ -79,21 +84,25 @@ public class DrawerFragment extends BaseFragment {
 
     @Subscribe
     @SuppressWarnings("unused")
-    public void onCardUpdate(Card.OnCardUpdateEvent ignored) {
-        updateHeaderState();
+    public void onCardUpdate(Card.OnCardUpdatedEvent event) {
+        if (event.card.compareTo(User.currentUser().card) == 0) {
+            updateHeaderState(event.card);
+        }
     }
 
-    private void updateHeaderState() {
-        User user = User.currentUser();
-        if (user != null) {
-            mEmailTextView.setText(user.email);
+    private void updateHeaderState(Card card) {
+        String lastName = card.getLastName();
+        String username = card.getFirstName();
+        if (!Utils.isEmpty(lastName)) {
+            if (!Utils.isEmpty(username)) {
+                username = " " + lastName;
+            } else {
+                username = lastName;
+            }
         }
 
-        Card card = Card.getUserCard(getContext());
-        if (card != null) {
-            mUsernameTextView.setText(card.firstName + " " +
-                    card.lastName + " " + card.middleName);
-        }
+        mUsernameTextView.setText(username);
+        mEmailTextView.setText(card.getEmail());
     }
 
     public interface Callback {

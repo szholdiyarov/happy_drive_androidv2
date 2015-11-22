@@ -34,18 +34,18 @@
                     android:background="@color/colorPrimary"/>
 
                 <ViewStub
-                    android:id="@+id/stub_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/fragment_card_details_v_header"
-                    android:layout="@layout/stub_error"/>
-
-                <ViewStub
                     android:id="@+id/fragment_card_details_stub"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/fragment_card_details_v_header"
                     android:layout="@layout/stub_card_details"/>
+
+                <ViewStub
+                    android:id="@id/stub_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/fragment_card_details_v_header"
+                    android:layout="@layout/stub_error"/>
 
                 <ImageView
                     android:layout_width="72dp"
@@ -102,6 +102,11 @@
                 android:text="Портфолио"
                 android:textColor="#959595"
                 android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

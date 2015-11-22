@@ -21,8 +21,8 @@ import java.util.Map;
 /**
  * Created by darkhan on 20.11.15.
  */
-public class CategoryHelper {
-    private static final String APT_PATH_GET_CATEGORIES = "card/categories/";
+public class CardHelper {
+    private static final String APT_PATH_GET_CARDS = "card/list/";
 
 
     /**
@@ -30,8 +30,8 @@ public class CategoryHelper {
      * @return JsonNode
      * @throws Exception
      */
-    static JsonNode getCategories() throws Exception {
-        Request<String> request = new Request<String>(Request.Method.GET, APT_PATH_GET_CATEGORIES) {
+    static JsonNode getCards(int categoryId) throws Exception {
+        Request<String> request = new Request<String>(Request.Method.GET, APT_PATH_GET_CARDS) {
             @Override
             public Response<String> parseNetworkResponse(NetworkResponse networkResponse) {
                 try {
@@ -42,8 +42,9 @@ public class CategoryHelper {
             }
         };
 
-//        Map<String, String> body = new HashMap<>();
-        request.setBody(null);
+        request.setBody(new Request.StringBody.Builder()
+                .add("category_id", Integer.toString(categoryId))
+                .build());
 
         Response<String> response = NetworkManager.execute(request);
         Logger.i("TEST", "result: " + response.result);
