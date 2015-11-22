@@ -130,7 +130,6 @@ public class NetworkManager {
                     .Builder()
                     .url(finalUrl)
                     .method(request.method.name(), requestBody)
-                    .addHeader("Auth-Token", User.currentUser().token)
                     .build();
 
             request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(okHttpRequest)));
