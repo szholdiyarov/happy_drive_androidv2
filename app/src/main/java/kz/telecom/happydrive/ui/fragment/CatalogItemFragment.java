@@ -52,9 +52,10 @@ public class CatalogItemFragment extends BaseFragment {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Toast.makeText(getActivity(), "Redirect to Galym's card Details", Toast.LENGTH_LONG).show();
-//                ((BaseActivity)getActivity()).replaceContent(new CatalogItemFragment(), true,
-//                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                Toast.makeText(getActivity(), "Redirect to Galym's card Details", Toast.LENGTH_LONG).show();
+                Card card = (Card) adapter.getItem(i);
+                ((BaseActivity)getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
         loadData();
@@ -142,10 +143,13 @@ public class CatalogItemFragment extends BaseFragment {
             View vi = convertView;
             if (vi == null)
                 vi = inflater.inflate(R.layout.fragment_catalog_item_row, null);
-            TextView text = (TextView) vi.findViewById(R.id.text);
+            TextView name = (TextView) vi.findViewById(R.id.name);
+            TextView description = (TextView) vi.findViewById(R.id.description);
             Card card = data.get(position);
-            String fullName = card.getFullDesc()
-            text.setText(data.get(position).getFirstName());
+            String fullName = card.getFirstName() != null ? card.getFirstName(): "" +
+                                    card.getLastName() != null ? card.getLastName(): "";
+            name.setText(data.get(position).getFirstName());
+            description.setText("Программист");
             return vi;
         }
     }
