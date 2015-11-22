@@ -95,7 +95,7 @@ public class DrawerFragment extends BaseFragment {
         String username = card.getFirstName();
         if (!Utils.isEmpty(lastName)) {
             if (!Utils.isEmpty(username)) {
-                username = " " + lastName;
+                username += " " + lastName;
             } else {
                 username = lastName;
             }

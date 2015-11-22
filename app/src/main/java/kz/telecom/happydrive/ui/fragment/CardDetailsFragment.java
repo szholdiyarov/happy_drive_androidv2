@@ -85,7 +85,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             String lastName = mShareCard.getLastName();
             if (!Utils.isEmpty(lastName)) {
                 if (!Utils.isEmpty(bodyString)) {
-                    bodyString = " " + lastName;
+                    bodyString += " " + lastName;
                 } else {
                     bodyString = lastName;
                 }

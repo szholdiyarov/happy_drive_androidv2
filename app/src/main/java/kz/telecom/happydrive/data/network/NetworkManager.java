@@ -126,13 +126,16 @@ public class NetworkManager {
             }
 
 
-            com.squareup.okhttp.Request okHttpRequest = new com.squareup.okhttp.Request
+            com.squareup.okhttp.Request.Builder builder = new com.squareup.okhttp.Request
                     .Builder()
                     .url(finalUrl)
-                    .method(request.method.name(), requestBody)
-                    .build();
+                    .method(request.method.name(), requestBody);
 
-            request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(okHttpRequest)));
+            if (User.currentUser() != null) {
+                builder.addHeader("Auth-Token", User.currentUser().token);
+            }
+
+            request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(builder.build())));
             request.setSequence(mSequenceGenerator.getAndIncrement());
         } catch (URISyntaxException e) {
             throw new MalformedURLException(e.getLocalizedMessage());
