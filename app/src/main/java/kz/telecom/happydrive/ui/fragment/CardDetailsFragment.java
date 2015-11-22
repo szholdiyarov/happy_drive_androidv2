@@ -1,6 +1,8 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -20,11 +23,12 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.ui.PortfolioActivity;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
  */
-public class CardDetailsFragment extends BaseFragment {
+public class CardDetailsFragment extends BaseFragment implements View.OnClickListener {
     public static final String EXTRA_CARD = "extra:card";
 
     private View stubView;
@@ -76,7 +80,7 @@ public class CardDetailsFragment extends BaseFragment {
         return false;
     }
 
-    public void updateView(View view, Card card) {
+    public void updateView(View view, final Card card) {
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
@@ -93,6 +97,12 @@ public class CardDetailsFragment extends BaseFragment {
                     startActivity(new Intent(getContext(), CardEditActivity.class));
                 }
             });
+
+            view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
+            view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
+            view.findViewById(R.id.about).setVisibility(View.GONE);
+            view.findViewById(R.id.about_block).setVisibility(View.GONE);
+            view.findViewById(R.id.about_divider).setVisibility(View.GONE);
         } else {
             if (stubView != null) {
                 ((ViewGroup) stubView.getParent()).removeView(stubView);
@@ -126,6 +136,13 @@ public class CardDetailsFragment extends BaseFragment {
             TextView phoneNumber = (TextView) view.findViewById(R.id.phone);
             phoneNumber.setText(card.getPhone());
 
+            view.findViewById(R.id.phone_block).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + card.getPhone())));
+                }
+            });
+
             View emailBlock = view.findViewById(R.id.email_block);
             if (!TextUtils.isEmpty(card.getEmail())) {
                 TextView email = (TextView) view.findViewById(R.id.email);
@@ -134,6 +151,19 @@ public class CardDetailsFragment extends BaseFragment {
             } else {
                 emailBlock.setVisibility(View.GONE);
             }
+
+            emailBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("message/rfc822");
+                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{card.getEmail()});
+                    try {
+                        startActivity(Intent.createChooser(i, "Написать"));
+                    } catch (ActivityNotFoundException ex) {
+                    }
+                }
+            });
 
             View addressBlock = view.findViewById(R.id.address_block);
             if (!TextUtils.isEmpty(card.getAddress())) {
@@ -144,6 +174,18 @@ public class CardDetailsFragment extends BaseFragment {
                 addressBlock.setVisibility(View.GONE);
             }
 
+            addressBlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        String uri = "geo:0,0?q=" + card.getAddress();
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                    }
+                }
+            });
+
             TextView aboutTextView = (TextView) view.findViewById(R.id.about);
             if (!TextUtils.isEmpty(card.getShortDesc())) {
                 aboutTextView.setText(card.getShortDesc());
@@ -151,6 +193,14 @@ public class CardDetailsFragment extends BaseFragment {
             } else {
                 aboutTextView.setVisibility(View.GONE);
             }
+
+            view.findViewById(R.id.portfolio_text).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.portfolio_block).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.about_block).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.about_divider).setVisibility(View.VISIBLE);
+
+            view.findViewById(R.id.foto_block).setOnClickListener(this);
+            view.findViewById(R.id.video_block).setOnClickListener(this);
         }
     }
 
@@ -164,5 +214,21 @@ public class CardDetailsFragment extends BaseFragment {
     @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
         updateView(getView(), event.card);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = null;
+        if (v.getId() == R.id.foto_block) {
+            intent = new Intent(getContext(), PortfolioActivity.class);
+            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
+        } else if (v.getId() == R.id.video_block) {
+            intent = new Intent(getContext(), PortfolioActivity.class);
+            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);
+        }
+
+        if (intent != null) {
+            startActivity(intent);
+        }
     }
 }

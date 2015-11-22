@@ -15,6 +15,7 @@ import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
+import kz.telecom.happydrive.ui.fragment.MainFragment;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
@@ -61,6 +62,18 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 
     @Override
     public boolean onDrawerMenuItemSelected(int itemId) {
+        if (itemId == R.id.action_main) {
+            if (!(findDefaultContent() instanceof MainFragment)) {
+                replaceContent(MainFragment.newInstance(User.currentUser().card), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
+        } else if (itemId == R.id.action_card) {
+            if (!(findDefaultContent() instanceof CardDetailsFragment)) {
+                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
+        }
+
         closeDrawer();
         switch (itemId) {
             case R.id.action_catalog:
