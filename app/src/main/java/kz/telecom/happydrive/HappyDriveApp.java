@@ -27,8 +27,8 @@ public class HappyDriveApp extends Application {
 
         Logger.setLevel(BuildConfig.DEBUG ?
                 Logger.Level.VERBOSE : Logger.Level.WARNING);
+        NetworkManager.init(this);
         DataManager.init(this);
-        NetworkManager.init();
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Roboto-Regular.ttf")
