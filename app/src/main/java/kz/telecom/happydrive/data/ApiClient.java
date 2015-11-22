@@ -114,18 +114,14 @@ public class ApiClient {
     @WorkerThread
     public static Map<String, List<ApiObject>> getFiles(int folderId)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
-        String path = API_PATH_FILES_LIST + "?" + FolderObject.API_IS_PUBLIC + "=false";
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_FILES_LIST);
+        Map<String, String> params = new HashMap<>();
+        params.put(FolderObject.API_IS_PUBLIC, "false");
         if (folderId > 0) {
-            path += "&" + FolderObject.API_FOLDER_ID + "=" + folderId;
+            params.put(FolderObject.API_FOLDER_ID, folderId + "");
         }
-        JsonRequest request = new JsonRequest(Request.Method.GET, path);
-//        Request.StringBody.Builder builder = new Request.StringBody.Builder();
-//        builder.add(FolderObject.API_IS_PUBLIC, "false");
-//        if (folderId > 0) {
-//            builder.add(FolderObject.API_FOLDER_ID, folderId + "");
-//        }
 
-//        request.setBody(builder.build());
+        request.setParams(params);
 
         try {
             Response<JsonNode> response = NetworkManager.execute(request);

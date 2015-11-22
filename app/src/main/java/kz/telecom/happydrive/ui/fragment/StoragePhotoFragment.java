@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -85,8 +86,16 @@ public class StoragePhotoFragment extends BaseFragment {
                             }
                         }
                     } catch (Exception e) {
-//                        Toast.makeText(getContext(), "Something went wrong while getting private folder",
-//                                Toast.LENGTH_LONG).show();
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), "Something went wrong while getting private folder",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
 
                     if (photoFolder != null) {
@@ -94,8 +103,16 @@ public class StoragePhotoFragment extends BaseFragment {
                             Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id);
                             Logger.i("TEST", "obj map: " + objectMap);
                         } catch (Exception e) {
-//                            Toast.makeText(getContext(), "Something went wrong while getting photo files",
-//                                    Toast.LENGTH_LONG).show();
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getContext(), "Something went wrong while getting photo files",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
                         }
                     }
 
