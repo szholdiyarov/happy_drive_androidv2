@@ -195,6 +195,7 @@ public class CardEditParamsFragment extends BaseFragment {
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    dialog.dismiss();
                                     if (e instanceof NoConnectionError) {
                                         Toast.makeText(activity, "Нет подключения к интернету",
                                                 Toast.LENGTH_LONG).show();

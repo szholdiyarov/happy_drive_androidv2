@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class ApiClient {
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
 
     private static final String API_PATH_CARD_UPDATE = "card/update/";
+    private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list";
 
     public static final String API_KEY_FOLDERS = "folders";
@@ -112,7 +114,17 @@ public class ApiClient {
     }
 
     @WorkerThread
-    public static void uploadFile(FileObject fileObject) {
+    public static void uploadFile(File file)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
+        request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
     }
 
     @WorkerThread

@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,9 +26,11 @@ import java.util.Map;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiObject;
+import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.util.Logger;
 
 /**
@@ -104,7 +107,42 @@ public class StoragePhotoFragment extends BaseFragment {
             if (requestCode == 1234) {
                 try {
                     Uri selectedImageUri = data.getData();
-                    File file = new File(new URI(selectedImageUri.toString()));
+                    final File file = new File(selectedImageUri.getPath());
+
+                    final ProgressDialog dialog = new ProgressDialog(getContext());
+                    dialog.setMessage("Сохранение...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                ApiClient.uploadFile(file);
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.dismiss();
+                                            Toast.makeText(getContext(), "Something went wrong while uploading file",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }.start();
                 } catch (Exception ee) {
                     Toast.makeText(getContext(), "something went wrong while parsing photo file",
                             Toast.LENGTH_LONG).show();
