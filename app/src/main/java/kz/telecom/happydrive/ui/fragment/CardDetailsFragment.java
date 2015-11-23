@@ -164,8 +164,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 }
             });
 
-            view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
-            view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
             view.findViewById(R.id.about).setVisibility(View.GONE);
             view.findViewById(R.id.about_block).setVisibility(View.GONE);
             view.findViewById(R.id.about_divider).setVisibility(View.GONE);
@@ -311,6 +309,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             } else {
                 userPhoto.setImageDrawable(drawable);
             }
+        }
+
+        if (card == null || Utils.isEmpty(card.getFirstName())
+                || User.currentUser() == null || card.id != User.currentUser().card.id) {
+            view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
+            view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
         }
     }
 

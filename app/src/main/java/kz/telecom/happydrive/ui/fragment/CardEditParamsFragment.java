@@ -61,9 +61,11 @@ public class CardEditParamsFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                adapter.add(new Category(0, "Не выбрана"));
                                 for (Category c: data) {
                                     adapter.add(c);
                                 }
+
                                 adapter.notifyDataSetChanged();
                                 for (int i = 0; i < adapter.getCount(); i++) {
                                     Category cat = adapter.getItem(i);

@@ -26,7 +26,7 @@ public class Category {
     private static List<Category> storedCategories = new ArrayList<>();
 
     @JsonCreator
-    Category(@JsonProperty("category_id")int id, @JsonProperty("name")String name) {
+    public Category(@JsonProperty("category_id")int id, @JsonProperty("name")String name) {
         this.id = id;
         this.name = name;
     }
