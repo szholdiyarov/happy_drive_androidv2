@@ -17,6 +17,11 @@
             android:background="@color/colorPrimary">
 
             <ImageView
+                android:id="@+id/background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ImageView
                 android:id="@+id/user_photo"
                 android:layout_width="90dp"
                 android:layout_height="90dp"

@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <View
+                <ImageView
                     android:id="@+id/fragment_card_details_v_header"
                     android:layout_width="match_parent"
                     android:layout_height="95dp"
@@ -47,6 +47,7 @@
                     android:layout="@layout/stub_error" />
 
                 <ImageView
+                    android:id="@+id/user_photo"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:layout_alignBottom="@id/fragment_card_details_v_header"

@@ -2,6 +2,7 @@ package kz.telecom.happydrive.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
@@ -39,7 +40,24 @@ public class User {
     }
 
     @WorkerThread
-    public void updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+    public boolean updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+        Card other = ApiClient.getCard(card.id);
+        card.setCategoryId(other.getCategoryId());
+        card.setFirstName(other.getFirstName());
+        card.setLastName(other.getLastName());
+        card.setPhone(other.getPhone());
+        card.setEmail(other.getEmail());
+        card.setAddress(other.getAddress());
+        card.setWorkPlace(other.getWorkPlace());
+        card.setPosition(other.getPosition());
+        card.setShortDesc(other.getShortDesc());
+        card.setFullDesc(other.getFullDesc());
+        card.setAvatar(other.getAvatar());
+        card.setBackground(other.getBackground());
+
+        Card.saveUserCard(card, getDefaultSharedPrefs());
+
+        return true;
     }
 
     public static boolean isAuthenticated() {
@@ -112,6 +130,12 @@ public class User {
     public static void restorePassword(final String email)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         UserHelper.resetPassword(email);
+    }
+
+    @MainThread
+    public void signOut() {
+        UserHelper.wipeCredentials(getDefaultSharedPrefs());
+        deinitStaticUser(sUser);
     }
 
     private static SharedPreferences getDefaultSharedPrefs() {

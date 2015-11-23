@@ -133,9 +133,9 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                                         .post(new User.SignedInEvent(user));
                                 activity.startActivity(new Intent(activity,
                                         MainActivity.class));
+                                activity.finish();
                             }
                         });
-                        activity.finish();
                     }
                 } catch (final Exception e) {
                     BaseActivity activity = (BaseActivity) getActivity();

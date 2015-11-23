@@ -1,13 +1,17 @@
 package kz.telecom.happydrive.data.network;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -32,6 +36,7 @@ import kz.telecom.happydrive.data.network.internal.OkHttpCallerWrapper;
 public class NetworkManager {
     private static NetworkManager sManager;
     private final OkHttpClient httpClient;
+    private final Picasso picasso;
 
     private final NetworkDispatcher[] mNetworkDispatchers = new NetworkDispatcher[4];
     private final ResponsePoster mResponsePoster = new ResponsePoster(new Handler(Looper.getMainLooper()));
@@ -61,6 +66,10 @@ public class NetworkManager {
             sManager.mResponsePoster.post(request,
                     new Response<>(null, e));
         }
+    }
+
+    public static Picasso getPicasso() {
+        return sManager.picasso;
     }
 
     public synchronized static void setCookie(String host, String name, String value)
@@ -126,14 +135,12 @@ public class NetworkManager {
             }
 
 
-            com.squareup.okhttp.Request okHttpRequest = new com.squareup.okhttp.Request
+            com.squareup.okhttp.Request.Builder builder = new com.squareup.okhttp.Request
                     .Builder()
                     .url(finalUrl)
-                    .method(request.method.name(), requestBody)
-                    .addHeader("Auth-Token", User.currentUser().token)
-                    .build();
+                    .method(request.method.name(), requestBody);
 
-            request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(okHttpRequest)));
+            request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(builder.build())));
             request.setSequence(mSequenceGenerator.getAndIncrement());
         } catch (URISyntaxException e) {
             throw new MalformedURLException(e.getLocalizedMessage());
@@ -151,8 +158,8 @@ public class NetworkManager {
         return response.body().string();
     }
 
-    public static boolean init() {
-        sManager = new NetworkManager();
+    public static boolean init(Context context) {
+        sManager = new NetworkManager(context);
         NetworkDispatcher[] dispatchers = sManager.mNetworkDispatchers;
         for (int i = 0; i < dispatchers.length; i++) {
             dispatchers[i] = new NetworkDispatcher(sManager.mQueue,
@@ -163,8 +170,21 @@ public class NetworkManager {
         return true;
     }
 
-    private NetworkManager() {
+    private NetworkManager(Context context) {
         httpClient = new OkHttpClient();
+        httpClient.interceptors().add(new Interceptor() {
+            @Override
+            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                com.squareup.okhttp.Request.Builder builder = chain.request().newBuilder();
+                if (User.currentUser() != null) {
+                    builder.addHeader("Auth-Token", User.currentUser().token);
+                }
+
+                return chain.proceed(builder.build());
+            }
+        });
+
+        picasso = new Picasso.Builder(context).downloader(new OkHttpDownloader(httpClient)).build();
     }
 
 }

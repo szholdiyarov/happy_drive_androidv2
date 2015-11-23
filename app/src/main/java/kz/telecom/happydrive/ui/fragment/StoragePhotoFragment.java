@@ -1,15 +1,22 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +28,14 @@ import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.util.Logger;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by shgalym on 11/22/15.
  */
 public class StoragePhotoFragment extends BaseFragment {
+    private static final int INTENT_CODE_GALLERY = 50001;
+
     private PhotoAdapter mAdapter;
     private List<FileObject> mItems;
     private User mUser;
@@ -63,6 +73,74 @@ public class StoragePhotoFragment extends BaseFragment {
 
         List<FileObject> list = new ArrayList<>();
         rv.setAdapter(mAdapter);
+
+        view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.openGallery(getActivity(), "", "image/*", INTENT_CODE_GALLERY);
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_photo_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        updateFiles();
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == INTENT_CODE_GALLERY) {
+                try {
+                    Uri selectedImageUri = data.getData();
+                    final File file = new File(selectedImageUri.getPath());
+
+                    final ProgressDialog dialog = new ProgressDialog(getContext());
+                    dialog.setMessage("Сохранение...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                ApiClient.uploadFile(file);
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.dismiss();
+                                            Toast.makeText(getContext(), "Something went wrong while uploading file",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }.start();
+                } catch (Exception ee) {
+                    Toast.makeText(getContext(), "something went wrong while parsing photo file",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     void updateFiles() {
@@ -101,6 +179,32 @@ public class StoragePhotoFragment extends BaseFragment {
                     if (photoFolder != null) {
                         try {
                             Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id);
+                            if (mItems == null) {
+                                mItems = new ArrayList<>();
+                            } else {
+                                mItems.clear();
+                            }
+
+                            List<ApiObject> fileList = objectMap.get(ApiClient.API_KEY_FILES);
+                            if (fileList != null && fileList.size() > 0) {
+                                for (ApiObject obj : fileList) {
+                                    FileObject file = !obj.isFolder() ? (FileObject) obj : null;
+                                    if (file != null) {
+                                        mItems.add(file);
+                                    }
+                                }
+                            }
+
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+
                             Logger.i("TEST", "obj map: " + objectMap);
                         } catch (Exception e) {
                             Activity activity = getActivity();

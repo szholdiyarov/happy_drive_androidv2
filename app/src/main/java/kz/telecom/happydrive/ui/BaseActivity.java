@@ -15,9 +15,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.squareup.otto.Subscribe;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -42,9 +45,15 @@ public abstract class BaseActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        DataManager.getInstance().bus.register(this);
     }
 
-    private ActionBar singleActionBar = null;
+    @Override
+    public void onDestroy() {
+        DataManager.getInstance().bus.unregister(this);
+        super.onDestroy();
+    }
 
     @NonNull
     @SuppressWarnings("unused")
@@ -131,6 +140,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onUserSignedOut(User.SignedOutEvent ignored) {
+        Intent intent = new Intent(this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        finish();
     }
 
     @Override

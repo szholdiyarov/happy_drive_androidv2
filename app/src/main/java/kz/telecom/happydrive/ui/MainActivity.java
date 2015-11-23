@@ -11,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
 import kz.telecom.happydrive.ui.fragment.MainFragment;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
@@ -43,14 +45,13 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         drawerToggle.syncState();
 
         if (savedInstanceState == null) {
-            Card card = null;
             User user = User.currentUser();
             if (user != null) {
-                card = user.card;
+                replaceContent(Utils.isEmpty(user.card.getFirstName()) ?
+                                CardDetailsFragment.newInstance(user.card) :
+                                MainFragment.newInstance(user.card),
+                        false, FragmentTransaction.TRANSIT_NONE);
             }
-
-            replaceContent(CardDetailsFragment.newInstance(card), false,
-                    FragmentTransaction.TRANSIT_NONE);
         }
     }
 
@@ -72,6 +73,9 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
+        } else if (itemId == R.id.action_settings) {
+            User.currentUser().signOut();
+            onUserSignedOut(null);
         }
 
         closeDrawer();

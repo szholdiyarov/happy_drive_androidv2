@@ -17,13 +17,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.DataManager;
 
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.ui.MainActivity;
 
 import java.util.List;
 import kz.telecom.happydrive.data.User;
@@ -63,9 +61,11 @@ public class CardEditParamsFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                adapter.add(new Category(0, "Не выбрана"));
                                 for (Category c: data) {
                                     adapter.add(c);
                                 }
+
                                 adapter.notifyDataSetChanged();
                                 for (int i = 0; i < adapter.getCount(); i++) {
                                     Category cat = adapter.getItem(i);
@@ -195,6 +195,7 @@ public class CardEditParamsFragment extends BaseFragment {
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    dialog.dismiss();
                                     if (e instanceof NoConnectionError) {
                                         Toast.makeText(activity, "Нет подключения к интернету",
                                                 Toast.LENGTH_LONG).show();

@@ -101,6 +101,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                         .post(new User.SignedUpEvent(user));
                                 activity.startActivity(new Intent(activity,
                                         MainActivity.class));
+                                activity.finish();
                             }
                         });
                     }
