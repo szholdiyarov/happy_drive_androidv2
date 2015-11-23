@@ -274,67 +274,6 @@ public class Card implements Comparable<Card>, Parcelable {
         return (Map<String, Object>) prefs.getAll();
     }
 
-    public static List<Card> getCards(int categoryId) {
-
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = CardHelper.getCards(categoryId);
-        } catch (Exception e) {
-            Logger.d("Couldn't get json cards list", e.getMessage());
-        }
-        final JsonNode arrNode = jsonNode.get("cards");
-        List<Card> result = new ArrayList<>();
-        if (arrNode != null) {
-            result = parseArrayOfCards(arrNode);
-        } else {
-            Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
-        }
-        return result;
-    }
-
-    public static Card getSingleCard(int cardId) {
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = CardHelper.getSingleCard(cardId);
-        } catch (Exception e) {
-            Logger.d("Couldn't get json single card", e.getMessage());
-        }
-        // TODO: Handle response properly
-        JsonNode cardNode = jsonNode.get("card");
-        if (cardNode != null) {
-            return parseCard(cardNode);
-        } else {
-            Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
-        }
-        return null;
-    }
-
-
-    private static ArrayList<Card> parseArrayOfCards(JsonNode arrNode) {
-        ArrayList<Card> result = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        for (JsonNode v : arrNode) {
-            try {
-                Card c = mapper.treeToValue(v, Card.class);
-                result.add(c);
-            } catch (JsonProcessingException e) {
-                Logger.d("failed to parse jsonNode to Category", e.getMessage());
-            }
-        }
-        return result;
-    }
-
-
-    private static Card parseCard(JsonNode jsonNode) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.treeToValue(jsonNode, Card.class);
-        } catch (JsonProcessingException e) {
-            Logger.d("failed to parse jsonNode to Category", e.getMessage());
-        }
-        return null;
-    }
-
 
     public static class OnCardUpdatedEvent {
         public final Card card;
@@ -344,5 +283,19 @@ public class Card implements Comparable<Card>, Parcelable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Card card = (Card) o;
+
+        return id == card.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

@@ -4,16 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.*;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.ui.BaseActivity;
 

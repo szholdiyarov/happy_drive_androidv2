@@ -12,10 +12,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
@@ -34,6 +31,11 @@ public class ApiClient {
 
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
+    private static final String API_PATH_CATEGORY_CARDS = "card/list/";
+    private static final String API_PATH_CARD_STAR = "card/star/";
+    private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
+
+    private static final String API_PATH_CARD_STARRED = "card/starred/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
 
@@ -122,6 +124,80 @@ public class ApiClient {
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }
+    }
+
+    @NonNull
+    public static List<Card> getStars() throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_CARD_STARRED);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            List<Card> result = new ArrayList<>();
+            ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
+            for (Object o: arrayList) {
+                result.add(new Card((Map<String, Object>) o));
+            }
+            return result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @NonNull
+    public static List<Card> getCategoryCards(int categoryId) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        Map<String, String> params = new HashMap<>(1);
+        params.put(Card.API_KEY_CATEGORY_ID, Integer.toString(categoryId));
+
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_CATEGORY_CARDS);
+        request.setParams(params);
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            List<Card> result = new ArrayList<>();
+            ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
+            for (Object o: arrayList) {
+                result.add(new Card((Map<String, Object>) o));
+            }
+            return result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @NonNull
+    public static boolean putStar(int cardId) {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CARD_STAR);
+        request.setBody(new Request.StringBody.Builder()
+                .add(Card.API_KEY_CARD_ID, Integer.toString(cardId))
+                .build());
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            // Successfully stared
+            return true;
+        } catch (Exception ignored) {
+        }
+        // Failed to put star (Maybe already starred?)
+        return false;
+    }
+
+
+    @NonNull
+    public static boolean removeStar(int cardId) {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CARD_UNSTAR);
+        request.setBody(new Request.StringBody.Builder()
+                .add(Card.API_KEY_CARD_ID, Integer.toString(cardId))
+                .build());
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            // Successfully unstarred
+            return true;
+        } catch (Exception ignored) {
+        }
+        // Failed to put star (Maybe already UNstarred?)
+        return false;
     }
 
     @WorkerThread

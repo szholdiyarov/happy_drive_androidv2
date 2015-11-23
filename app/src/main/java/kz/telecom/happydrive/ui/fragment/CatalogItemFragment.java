@@ -4,23 +4,19 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.*;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-import com.squareup.picasso.Picasso;
-
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
@@ -36,6 +32,8 @@ public class CatalogItemFragment extends BaseFragment {
     private ItemAdapter adapter;
     private int categoryId;
 
+    @Deprecated
+    private List<Card> starredCards = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,10 +53,6 @@ public class CatalogItemFragment extends BaseFragment {
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-            }
-        });
         loadData();
 
     }
@@ -80,7 +74,14 @@ public class CatalogItemFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
-                    final List<Card> data = Card.getCards(categoryId);
+                    starredCards = ApiClient.getStars();
+                } catch (NoConnectionError noConnectionError) {
+                    noConnectionError.printStackTrace();
+                } catch (ApiResponseError apiResponseError) {
+                    apiResponseError.printStackTrace();
+                }
+                try {
+                    final List<Card> data = ApiClient.getCategoryCards(categoryId);
                     BaseActivity activity = (BaseActivity) getActivity();
                     final View view = getView();
                     if (activity != null && view != null) {
@@ -164,6 +165,9 @@ public class CatalogItemFragment extends BaseFragment {
             }
 
             ImageView starView = (ImageView) vi.findViewById(R.id.star);
+            if (starredCards.contains(data.get(position))) {
+                starView.setImageResource(R.drawable.favorite_on_icon);
+            }
             starView.setOnClickListener(starClickListener);
             name.setOnClickListener(cardClickListener);
             description.setOnClickListener(cardClickListener);
@@ -178,8 +182,42 @@ public class CatalogItemFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             int position = listView.getPositionForView(v);
-            ImageButton imgBtn = (ImageButton) v;
-            imgBtn.setImageResource(R.drawable.favorite_on_icon);
+            final ImageButton imgBtn = (ImageButton) v;
+            final Card pickedCard = adapter.data.get(position);
+            final boolean inStarred = starredCards.contains(pickedCard);
+            final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
+            final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
+            imgBtn.setImageResource(newImage);
+            new Thread() {
+                @Override
+                public void run() {
+                    final boolean success;
+                    if (inStarred) {
+                        // remove from starred
+                        success = ApiClient.removeStar(pickedCard.id);
+                        starredCards.remove(pickedCard);
+                    } else {
+                        success = ApiClient.putStar(pickedCard.id);
+                        starredCards.add(pickedCard);
+                    }
+                    if (!success) {
+                        BaseActivity activity = (BaseActivity) getActivity();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Roll back everything if query was unsuccessful.
+                                imgBtn.setImageResource(oldImage);
+                                if (inStarred) {
+                                    starredCards.add(pickedCard);
+                                } else {
+                                    starredCards.remove(pickedCard);
+                                }
+                            }
+                        });
+                    }
+                }
+            }.start();
+
         }
     };
 
