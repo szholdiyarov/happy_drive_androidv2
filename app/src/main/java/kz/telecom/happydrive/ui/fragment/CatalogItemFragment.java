@@ -20,6 +20,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
@@ -56,15 +57,11 @@ public class CatalogItemFragment extends BaseFragment {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Card card = (Card) adapter.getItem(i);
-                ((BaseActivity) getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
-                                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
         loadData();
 
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -156,6 +153,7 @@ public class CatalogItemFragment extends BaseFragment {
 
             if (card.getAvatar() != null) {
                 ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
+                imageView.setOnClickListener(cardClickListener);
                 String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
                 NetworkManager.getPicasso().load(tempAvatarUrl)
                         .fit().centerCrop()
@@ -165,10 +163,36 @@ public class CatalogItemFragment extends BaseFragment {
 
             }
 
+            ImageView starView = (ImageView) vi.findViewById(R.id.star);
+            starView.setOnClickListener(starClickListener);
+            name.setOnClickListener(cardClickListener);
+            description.setOnClickListener(cardClickListener);
             name.setText(fullName);
             description.setText(card.getPosition());
             return vi;
         }
     }
+
+    private View.OnClickListener starClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            ImageButton imgBtn = (ImageButton) v;
+            imgBtn.setImageResource(R.drawable.favorite_on_icon);
+        }
+    };
+
+    private View.OnClickListener cardClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            BaseActivity activity = (BaseActivity) getActivity();
+            Card card = (Card) adapter.getItem(position);
+            activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        }
+    };
+
 
 }

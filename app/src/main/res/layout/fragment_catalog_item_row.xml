@@ -35,6 +35,15 @@
             android:layout_alignWithParentIfMissing="true"
             android:layout_toRightOf="@id/avatar"
             android:gravity="center_vertical"
+            android:text="Bob Marley"
             android:textSize="16sp" />
+    <ImageButton
+            android:id="@+id/star"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:layout_marginRight="8dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/favorite_off_icon" />
 
 </RelativeLayout> 
