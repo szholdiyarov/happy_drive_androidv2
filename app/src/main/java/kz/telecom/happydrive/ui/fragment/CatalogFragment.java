@@ -2,8 +2,10 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +40,10 @@ public class CatalogFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        BaseActivity activity = (BaseActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle(R.string.action_catalog);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         adapter = new CatalogAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.listView);
@@ -45,7 +51,8 @@ public class CatalogFragment extends BaseFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("category_id", ((Category) adapter.getItem(i)).id);
+                bundle.putInt("categoryId", ((Category) adapter.getItem(i)).id);
+                bundle.putString("categoryName", ((Category) adapter.getItem(i)).name);
                 CatalogItemFragment catalogItemFragment = new CatalogItemFragment();
                 catalogItemFragment.setArguments(bundle);
                 ((BaseActivity)getActivity()).replaceContent(catalogItemFragment, true,
@@ -53,6 +60,12 @@ public class CatalogFragment extends BaseFragment {
             }
         });
         loadData();
+    }
+
+    @MainThread
+    private void disableProgressBar() {
+        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
+        progressBar.setVisibility(View.GONE);
     }
 
     private void loadData() {
@@ -71,8 +84,7 @@ public class CatalogFragment extends BaseFragment {
                                     adapter.data.add(c);
                                 }
                                 adapter.notifyDataSetChanged();
-                                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_catalog_progress_bar);
-                                progressBar.setVisibility(View.GONE);
+                                disableProgressBar();
                             }
                         });
                     }
@@ -83,6 +95,7 @@ public class CatalogFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                disableProgressBar();
                                 Snackbar.make(view, R.string.no_connection, Snackbar.LENGTH_LONG).show();
                             }
                         });

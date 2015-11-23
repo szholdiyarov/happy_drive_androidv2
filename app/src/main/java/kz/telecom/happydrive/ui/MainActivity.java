@@ -13,10 +13,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
-import kz.telecom.happydrive.ui.fragment.CatalogFragment;
-import kz.telecom.happydrive.ui.fragment.DrawerFragment;
-import kz.telecom.happydrive.ui.fragment.MainFragment;
+import kz.telecom.happydrive.ui.fragment.*;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -78,15 +75,20 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
             onUserSignedOut(null);
         }
 
-        closeDrawer();
         switch (itemId) {
             case R.id.action_catalog:
                 replaceContent(new CatalogFragment(), true,
-                        FragmentTransaction.TRANSIT_NONE);
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                break;
+            case R.id.action_favourite:
+                replaceContent(new StarFragment(), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             default:
                 break;
         }
+
+        closeDrawer();
         return true;
     }
 

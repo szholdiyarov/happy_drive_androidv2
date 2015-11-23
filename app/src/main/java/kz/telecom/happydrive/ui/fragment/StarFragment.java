@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiResponseError;
@@ -24,27 +23,17 @@ import kz.telecom.happydrive.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * Created by Galymzhan Sh on 11/15/15.
+ * Created by darkhan on 24.11.15.
  */
-public class CatalogItemFragment extends BaseFragment {
-
+public class StarFragment extends BaseFragment {
     private ListView listView;
     private ItemAdapter adapter;
-    private int categoryId;
-    private String categoryName;
-
-    @Deprecated
-    private List<Card> starredCards = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Bundle bundle = this.getArguments();
-        categoryId = bundle.getInt("categoryId");
-        categoryName = bundle.getString("categoryName");
     }
 
     @Override
@@ -56,12 +45,20 @@ public class CatalogItemFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setTitle(categoryName);
+        actionBar.setTitle(R.string.action_favourite);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
         loadData();
+
+    }
+
+    @MainThread
+    private void disableProgressBar() {
+        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -76,26 +73,12 @@ public class CatalogItemFragment extends BaseFragment {
         return handled || super.onOptionsItemSelected(item);
     }
 
-    @MainThread
-    private void disableProgressBar() {
-        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
-        progressBar.setVisibility(View.GONE);
-    }
-
-
     private void loadData() {
         new Thread() {
             @Override
             public void run() {
                 try {
-                    starredCards = ApiClient.getStars();
-                } catch (NoConnectionError noConnectionError) {
-                    noConnectionError.printStackTrace();
-                } catch (ApiResponseError apiResponseError) {
-                    apiResponseError.printStackTrace();
-                }
-                try {
-                    final List<Card> data = ApiClient.getCategoryCards(categoryId);
+                    final List<Card> data = ApiClient.getStars();
                     BaseActivity activity = (BaseActivity) getActivity();
                     final View view = getView();
                     if (activity != null && view != null) {
@@ -181,9 +164,7 @@ public class CatalogItemFragment extends BaseFragment {
             }
 
             ImageView starView = (ImageView) vi.findViewById(R.id.star);
-            if (starredCards.contains(data.get(position))) {
-                starView.setImageResource(R.drawable.favorite_on_icon);
-            }
+            starView.setImageResource(R.drawable.favorite_on_icon);
             starView.setOnClickListener(starClickListener);
             name.setOnClickListener(cardClickListener);
             description.setOnClickListener(cardClickListener);
@@ -200,7 +181,7 @@ public class CatalogItemFragment extends BaseFragment {
             int position = listView.getPositionForView(v);
             final ImageButton imgBtn = (ImageButton) v;
             final Card pickedCard = adapter.data.get(position);
-            final boolean inStarred = starredCards.contains(pickedCard);
+            final boolean inStarred = adapter.data.contains(pickedCard);
             final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
             final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
             imgBtn.setImageResource(newImage);
@@ -211,10 +192,10 @@ public class CatalogItemFragment extends BaseFragment {
                     if (inStarred) {
                         // remove from starred
                         success = ApiClient.removeStar(pickedCard.id);
-                        starredCards.remove(pickedCard);
+                        adapter.data.remove(pickedCard);
                     } else {
                         success = ApiClient.putStar(pickedCard.id);
-                        starredCards.add(pickedCard);
+                        adapter.data.add(pickedCard);
                     }
                     if (!success) {
                         BaseActivity activity = (BaseActivity) getActivity();
@@ -224,9 +205,9 @@ public class CatalogItemFragment extends BaseFragment {
                                 // Roll back everything if query was unsuccessful.
                                 imgBtn.setImageResource(oldImage);
                                 if (inStarred) {
-                                    starredCards.add(pickedCard);
+                                    adapter.data.add(pickedCard);
                                 } else {
-                                    starredCards.remove(pickedCard);
+                                    adapter.data.remove(pickedCard);
                                 }
                             }
                         });
@@ -241,12 +222,14 @@ public class CatalogItemFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-        int position = listView.getPositionForView(v);
-        BaseActivity activity = (BaseActivity) getActivity();
-        Card card = (Card) adapter.getItem(position);
-        activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            int position = listView.getPositionForView(v);
+            BaseActivity activity = (BaseActivity) getActivity();
+            Card card = (Card) adapter.getItem(position);
+            activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
+
+
 
 
 }
