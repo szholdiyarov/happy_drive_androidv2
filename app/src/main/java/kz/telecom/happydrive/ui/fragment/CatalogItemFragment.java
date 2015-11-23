@@ -12,10 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import com.squareup.picasso.Picasso;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,11 +178,23 @@ public class CatalogItemFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View vi = convertView;
             if (vi == null)
-                vi = inflater.inflate(R.layout.fragment_catalog_item_row, null);
+                vi = inflater.inflate(R.layout.fragment_catalog_item_row, parent, false);
             TextView name = (TextView) vi.findViewById(R.id.name);
             TextView description = (TextView) vi.findViewById(R.id.description);
             Card card = data.get(position);
-            String fullName = card.getFirstName() != null ? card.getFirstName(): " " + card.getLastName() != null ? card.getLastName(): "";
+            String fullName = card.getFirstName();
+            if (!Utils.isEmpty(card.getLastName())) {
+                fullName += " " + card.getLastName();
+            }
+
+            if (card.getAvatar() != null) {
+                ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
+                NetworkManager.getPicasso().load(card.getAvatar())
+                        .error(R.drawable.user_photo)
+                        .placeholder(R.drawable.user_photo)
+                        .into(imageView);
+            }
+
             name.setText(fullName);
             description.setText(card.getPosition());
             return vi;

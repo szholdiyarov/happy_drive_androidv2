@@ -105,8 +105,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = null;
         if (v.getId() == R.id.photo_image_view) {
-            intent = new Intent(getContext(), StorageActivity.class);
-            intent.putExtra(StorageActivity.EXTRA_TYPE, StorageActivity.EXTRA_TYPE_PHOTO);
+//            intent = new Intent(getContext(), StorageActivity.class);
+//            intent.putExtra(StorageActivity.EXTRA_TYPE, StorageActivity.EXTRA_TYPE_PHOTO);
         }
 
         if (intent != null) {

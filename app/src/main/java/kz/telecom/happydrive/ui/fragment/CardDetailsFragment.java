@@ -2,12 +2,14 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,14 +25,17 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import java.io.File;
+
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -39,9 +44,14 @@ import kz.telecom.happydrive.util.Utils;
 public class CardDetailsFragment extends BaseFragment implements View.OnClickListener {
     public static final String EXTRA_CARD = "extra:card";
 
+    private static final int INTENT_CODE_PHOTO_CAMERA = 40001;
+    private static final int INTENT_CODE_PHOTO_GALLERY = 40002;
+
     private View stubView;
     private Card mCard;
     private boolean isCardUpdating = false;
+
+    private File mTempFile;
 
     public static BaseFragment newInstance(Card card) {
         Bundle bundle = new Bundle();
@@ -74,13 +84,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
         final User user = User.currentUser();
         if (!isCardUpdating && mCard != null && user != null) {
-            if (user.card.compareTo(mCard) == 0) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        isCardUpdating = true;
+            new Thread() {
+                @Override
+                public void run() {
+                    isCardUpdating = true;
 
-                        try {
+                    try {
+                        if (user.card.compareTo(mCard) == 0) {
                             if (user.updateCard()) {
                                 Activity activity = getActivity();
                                 if (activity != null) {
@@ -92,13 +102,24 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     });
                                 }
                             }
-                        } catch (Exception ignored) {
+                        } else {
+                            mCard = ApiClient.getCard(mCard.id);
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                    }
+                                });
+                            }
                         }
-
-                        isCardUpdating = false;
+                    } catch (Exception ignored) {
                     }
-                }.start();
-            }
+
+                    isCardUpdating = false;
+                }
+            }.start();
         }
 
         updateView(view, mCard);
@@ -117,9 +138,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_edit) {
+        final int itemId = item.getItemId();
+        if (itemId == R.id.action_edit) {
             startActivity(new Intent(getContext(), CardEditActivity.class));
-        } else if (item.getItemId() == R.id.action_share) {
+        } else if (itemId == R.id.action_share) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
 //            Uri uri = Uri.parse("file:///file");
             shareIntent.setType("text/plain");
@@ -146,6 +168,28 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 //            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
             startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
+        } else if (itemId == R.id.action_change_photo) {
+            new AlertDialog.Builder(getContext())
+                    .setItems(new String[]{"Снять фото", "Из Галлереи"},
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    if (which == 0) {
+                                        try {
+                                            mTempFile = Utils.tempFileWithNow(getContext());
+                                            Utils.openCamera(CardDetailsFragment.this, mTempFile,
+                                                    INTENT_CODE_PHOTO_CAMERA);
+                                        } catch (Exception ignored) {
+                                            Logger.e("TEST", "couldn't create a file", ignored);
+                                        }
+                                    } else if (which == 1) {
+                                        Utils.openGallery(getActivity(), "", "image/*",
+                                                INTENT_CODE_PHOTO_GALLERY);
+                                    }
+                                }
+                            }).show();
+        } else if (itemId == R.id.action_change_background) {
         }
 
         return false;
@@ -329,6 +373,22 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         super.onDestroyView();
     }
 
+    @Override
+    public void onClick(View v) {
+        Intent intent = null;
+        if (v.getId() == R.id.foto_block) {
+//            intent = new Intent(getContext(), PortfolioActivity.class);
+//            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
+        } else if (v.getId() == R.id.video_block) {
+//            intent = new Intent(getContext(), PortfolioActivity.class);
+//            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);
+        }
+
+        if (intent != null) {
+            startActivity(intent);
+        }
+    }
+
     @Subscribe
     @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
@@ -337,18 +397,17 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {
-        Intent intent = null;
-        if (v.getId() == R.id.foto_block) {
-            intent = new Intent(getContext(), PortfolioActivity.class);
-            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
-        } else if (v.getId() == R.id.video_block) {
-            intent = new Intent(getContext(), PortfolioActivity.class);
-            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);
-        }
-
-        if (intent != null) {
-            startActivity(intent);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
+            if (mTempFile != null) {
+                Drawable drawable = Drawable.createFromPath(mTempFile.getAbsolutePath());
+                View view = getView();
+                if (view != null) {
+                    final ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
+                    userPhoto.setImageDrawable(drawable);
+                }
+            }
+        } else if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
         }
     }
 }

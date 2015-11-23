@@ -28,11 +28,14 @@ import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.util.Logger;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by shgalym on 11/22/15.
  */
 public class StoragePhotoFragment extends BaseFragment {
+    private static final int INTENT_CODE_GALLERY = 50001;
+
     private PhotoAdapter mAdapter;
     private List<FileObject> mItems;
     private User mUser;
@@ -74,7 +77,7 @@ public class StoragePhotoFragment extends BaseFragment {
         view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGallery();
+                Utils.openGallery(getActivity(), "", "image/*", INTENT_CODE_GALLERY);
             }
         });
     }
@@ -90,17 +93,10 @@ public class StoragePhotoFragment extends BaseFragment {
         return true;
     }
 
-    void openGallery() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, ""), 1234);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == 1234) {
+            if (requestCode == INTENT_CODE_GALLERY) {
                 try {
                     Uri selectedImageUri = data.getData();
                     final File file = new File(selectedImageUri.getPath());
