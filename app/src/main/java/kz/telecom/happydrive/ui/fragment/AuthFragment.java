@@ -1,8 +1,10 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
@@ -13,27 +15,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.io.IOException;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.ui.AuthActivity;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;
+import kz.telecom.happydrive.util.Logger;
 
 
 /**
@@ -43,21 +49,12 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
 
     private static final int GOOGLE_SIGN_IN = 999;
     private CallbackManager callbackManager;
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                                         .requestEmail()
-                                                         .requestIdToken(getString(R.string.google_server_client_id))
-                                                         .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                                              .enableAutoManage(getActivity(), this)
-                                              .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                                              .build();
     }
 
 
@@ -101,8 +98,9 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         } else if (viewId == R.id.fragment_auth_btn_sign_up) {
             fragment = new SignUpFragment();
         } else if (viewId == R.id.google_login_button) {
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+                    false, null, null, null, null);
+            startActivityForResult(intent, GOOGLE_SIGN_IN);
         }
 
         if (fragment != null) {
@@ -184,16 +182,36 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount acct = result.getSignInAccount();
-                String accessToken = acct.getIdToken();
-                socialSignIn(accessToken, "Google");
-            } else {
-                onError(null);
-            }
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            new RetrieveTokenTask().execute(accountName);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String accountName = params[0];
+            String scopes = "oauth2:profile email";
+            String token = null;
+            try {
+                token = GoogleAuthUtil.getToken(getContext(), accountName, scopes);
+            } catch (IOException e) {
+                Logger.d("Google Auth", e.getMessage());
+            } catch (UserRecoverableAuthException e) {
+                startActivityForResult(e.getIntent(), GOOGLE_SIGN_IN);
+            } catch (GoogleAuthException e) {
+                Log.d("Google Auth", e.getMessage());
+            }
+            return token;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            socialSignIn(s, "Google");
         }
     }
 
