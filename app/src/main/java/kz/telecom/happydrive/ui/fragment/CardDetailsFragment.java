@@ -278,7 +278,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     @Override
                     public void run() {
                         NetworkManager.getPicasso()
-                                .load(card.getAvatar())
+                                .load(card.getBackground())
                                 .config(Bitmap.Config.RGB_565)
                                 .resize(background.getWidth(), background.getHeight())
                                 .onlyScaleDown()

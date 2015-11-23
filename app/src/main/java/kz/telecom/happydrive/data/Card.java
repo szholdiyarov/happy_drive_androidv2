@@ -265,6 +265,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_SHORT_DESC, card.mShortDesc);
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
+        editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
 
         editor.apply();
     }
