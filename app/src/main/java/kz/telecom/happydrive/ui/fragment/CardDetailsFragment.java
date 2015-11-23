@@ -28,6 +28,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
 import kz.telecom.happydrive.util.Utils;
@@ -39,7 +40,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public static final String EXTRA_CARD = "extra:card";
 
     private View stubView;
-    private Card mShareCard;
+    private Card mCard;
     private boolean isCardUpdating = false;
 
     public static BaseFragment newInstance(Card card) {
@@ -66,15 +67,14 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DataManager.getInstance().bus.register(this);
 
-        Card card = null;
         Bundle args = getArguments();
         if (args != null) {
-            card = args.getParcelable(EXTRA_CARD);
+            mCard = args.getParcelable(EXTRA_CARD);
         }
 
         final User user = User.currentUser();
-        if (!isCardUpdating && card != null && user != null) {
-            if (user.card.compareTo(card) == 0) {
+        if (!isCardUpdating && mCard != null && user != null) {
+            if (user.card.compareTo(mCard) == 0) {
                 new Thread() {
                     @Override
                     public void run() {
@@ -101,12 +101,18 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        updateView(view, card);
+        updateView(view, mCard);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_card_details, menu);
+        User user = User.currentUser();
+        if (mCard != null && user != null) {
+            inflater.inflate(mCard.compareTo(user.card) == 0 ?
+                    !Utils.isEmpty(mCard.getFirstName()) ?
+                            R.menu.fragment_card_details_full : R.menu.fragment_card_details :
+                    R.menu.fragment_card_details_other, menu);
+        }
     }
 
     @Override
@@ -117,9 +123,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
 //            Uri uri = Uri.parse("file:///file");
             shareIntent.setType("text/plain");
-            String bodyString = mShareCard.getFirstName();
+            String bodyString = mCard.getFirstName();
 
-            String lastName = mShareCard.getLastName();
+            String lastName = mCard.getLastName();
             if (!Utils.isEmpty(lastName)) {
                 if (!Utils.isEmpty(bodyString)) {
                     bodyString += " " + lastName;
@@ -128,12 +134,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 }
             }
 
-            if (!Utils.isEmpty(mShareCard.getPhone())) {
-                bodyString += ", " + mShareCard.getPhone();
+            if (!Utils.isEmpty(mCard.getPhone())) {
+                bodyString += ", " + mCard.getPhone();
             }
 
-            if (!Utils.isEmpty(mShareCard.getEmail())) {
-                bodyString += ", " + mShareCard.getEmail();
+            if (!Utils.isEmpty(mCard.getEmail())) {
+                bodyString += ", " + mCard.getEmail();
             }
 
             shareIntent.putExtra(Intent.EXTRA_TEXT, bodyString);
@@ -146,7 +152,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     }
 
     public void updateView(View view, final Card card) {
-        mShareCard = card;
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
@@ -328,6 +333,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
         updateView(getView(), event.card);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
