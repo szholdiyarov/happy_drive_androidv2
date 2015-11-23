@@ -65,39 +65,6 @@ public class CatalogItemFragment extends BaseFragment {
 
     }
 
-//    private void loadSingleCardAndRedirect(final int cardId) {
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                try {
-//                    final Card card = Card.getSingleCard(cardId);
-//                    BaseActivity activity = (BaseActivity) getActivity();
-//                    final View view = getView();
-//                    if (activity != null && view != null) {
-//                        activity.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                ((BaseActivity) getActivity()).replaceContent(CardDetailsFragment.newInstance(card), true,
-//                                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                            }
-//                        });
-//                    }
-//                } catch (final Exception e) {
-//                    BaseActivity activity = (BaseActivity) getActivity();
-//                    final View view = getView();
-//                    if (activity != null && view != null) {
-//                        activity.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Snackbar.make(view, R.string.no_connection, Snackbar.LENGTH_LONG).show();
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        }.start();
-//    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -189,10 +156,13 @@ public class CatalogItemFragment extends BaseFragment {
 
             if (card.getAvatar() != null) {
                 ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
-                NetworkManager.getPicasso().load(card.getAvatar())
+                String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
+                NetworkManager.getPicasso().load(tempAvatarUrl)
+                        .fit().centerCrop()
                         .error(R.drawable.user_photo)
                         .placeholder(R.drawable.user_photo)
                         .into(imageView);
+
             }
 
             name.setText(fullName);
