@@ -76,6 +76,8 @@ public class CatalogFragment extends BaseFragment {
                                     adapter.data.add(c);
                                 }
                                 adapter.notifyDataSetChanged();
+                                ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_catalog_progress_bar);
+                                progressBar.setVisibility(View.GONE);
                             }
                         });
                     }
