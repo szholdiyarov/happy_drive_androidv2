@@ -17,13 +17,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.data.DataManager;
 
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.ui.MainActivity;
 
 import java.util.List;
 import kz.telecom.happydrive.data.User;

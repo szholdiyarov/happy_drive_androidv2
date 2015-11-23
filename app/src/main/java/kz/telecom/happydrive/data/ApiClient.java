@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.data;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,6 +33,7 @@ public class ApiClient {
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
 
     private static final String API_PATH_CARD_UPDATE = "card/update/";
+    private static final String API_PATH_CARD_GET = "card/get/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
 
@@ -85,15 +87,10 @@ public class ApiClient {
 
         String cardJson = null;
         try {
-            ObjectWriter writer = getObjectMapper().writer().withDefaultPrettyPrinter();
+            ObjectWriter writer = getObjectMapper().writer();
             cardJson = writer.writeValueAsString(cardMap);
         } catch (JsonProcessingException e) {
             Logger.e("APIClient", "json parsing error", e);
-        }
-
-        Logger.i(TAG, "cardJson: " + cardJson);
-        if (cardJson == null) {
-            return;
         }
 
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CARD_UPDATE);
@@ -109,8 +106,22 @@ public class ApiClient {
         }
     }
 
-    public static Card getCard() {
-        return null;
+    @NonNull
+    public static Card getCard(int cardId) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        Map<String, String> params = new HashMap<>(1);
+        params.put(Card.API_KEY_CARD_ID, cardId + "");
+
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_CARD_GET);
+        request.setParams(params);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return new Card((Map<String, Object>) getObjectMapper()
+                    .convertValue(response.result, Map.class).get("card"));
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
     }
 
     @WorkerThread

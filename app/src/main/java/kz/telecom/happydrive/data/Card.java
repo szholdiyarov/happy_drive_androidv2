@@ -54,6 +54,7 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mShortDesc;
     private String mFullDesc;
     private String mAvatar;
+    private String mBackground;
 
     public Card(int id) {
         this.id = id;
@@ -81,6 +82,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mShortDesc = Utils.getValue(String.class, API_KEY_SHORT_DESC, null, data);
         mFullDesc = Utils.getValue(String.class, API_KEY_FULL_DESC, null, data);
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
+        mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
     }
 
     protected Card(Parcel in) {
@@ -96,6 +98,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mShortDesc = in.readString();
         mFullDesc = in.readString();
         mAvatar = in.readString();
+        mBackground = in.readString();
     }
 
     @JsonCreator
@@ -213,6 +216,14 @@ public class Card implements Comparable<Card>, Parcelable {
         return mAvatar;
     }
 
+    public void setBackground(String background) {
+        mBackground = background;
+    }
+
+    public String getBackground() {
+        return mBackground;
+    }
+
     @Override
     public int compareTo(@NonNull Card other) {
         return id - other.id;
@@ -237,6 +248,7 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mShortDesc);
         dest.writeString(mFullDesc);
         dest.writeString(mAvatar);
+        dest.writeString(mBackground);
     }
 
     static void saveUserCard(Card card, SharedPreferences prefs) {

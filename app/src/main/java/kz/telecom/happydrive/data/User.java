@@ -39,7 +39,24 @@ public class User {
     }
 
     @WorkerThread
-    public void updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+    public boolean updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
+        Card other = ApiClient.getCard(card.id);
+        card.setCategoryId(other.getCategoryId());
+        card.setFirstName(other.getFirstName());
+        card.setLastName(other.getLastName());
+        card.setPhone(other.getPhone());
+        card.setEmail(other.getEmail());
+        card.setAddress(other.getAddress());
+        card.setWorkPlace(other.getWorkPlace());
+        card.setPosition(other.getPosition());
+        card.setShortDesc(other.getShortDesc());
+        card.setFullDesc(other.getFullDesc());
+        card.setAvatar(other.getAvatar());
+        card.setBackground(other.getBackground());
+
+        Card.saveUserCard(card, getDefaultSharedPrefs());
+
+        return true;
     }
 
     public static boolean isAuthenticated() {

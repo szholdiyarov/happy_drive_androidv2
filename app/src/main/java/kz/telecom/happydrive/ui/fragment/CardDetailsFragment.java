@@ -1,9 +1,13 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,6 +26,8 @@ import com.squareup.otto.Subscribe;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
 import kz.telecom.happydrive.util.Utils;
@@ -33,6 +40,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     private View stubView;
     private Card mShareCard;
+    private boolean isCardUpdating = false;
 
     public static BaseFragment newInstance(Card card) {
         Bundle bundle = new Bundle();
@@ -62,6 +70,35 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         Bundle args = getArguments();
         if (args != null) {
             card = args.getParcelable(EXTRA_CARD);
+        }
+
+        final User user = User.currentUser();
+        if (!isCardUpdating && card != null && user != null) {
+            if (user.card.compareTo(card) == 0) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        isCardUpdating = true;
+
+                        try {
+                            if (user.updateCard()) {
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(user.card));
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (Exception ignored) {
+                        }
+
+                        isCardUpdating = false;
+                    }
+                }.start();
+            }
         }
 
         updateView(view, card);
@@ -132,6 +169,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             view.findViewById(R.id.about).setVisibility(View.GONE);
             view.findViewById(R.id.about_block).setVisibility(View.GONE);
             view.findViewById(R.id.about_divider).setVisibility(View.GONE);
+
+            ImageView background = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+            background.setImageDrawable(null);
+
+            ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
+            userPhoto.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.user_photo));
         } else {
             if (stubView != null) {
                 ((ViewGroup) stubView.getParent()).removeView(stubView);
@@ -230,6 +273,44 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
             view.findViewById(R.id.foto_block).setOnClickListener(this);
             view.findViewById(R.id.video_block).setOnClickListener(this);
+
+            final ImageView background = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+            if (!Utils.isEmpty(card.getBackground())) {
+                background.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkManager.getPicasso()
+                                .load(card.getAvatar())
+                                .config(Bitmap.Config.RGB_565)
+                                .resize(background.getWidth(), background.getHeight())
+                                .onlyScaleDown()
+                                .centerCrop()
+                                .into(background);
+                    }
+                });
+            } else {
+                background.setImageDrawable(null);
+            }
+
+            final Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.user_photo);
+            final ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
+            if (!Utils.isEmpty(card.getAvatar())) {
+                userPhoto.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkManager.getPicasso()
+                                .load(card.getAvatar())
+                                .config(Bitmap.Config.RGB_565)
+                                .resize(userPhoto.getWidth(), userPhoto.getHeight())
+                                .placeholder(drawable)
+                                .error(drawable)
+                                .centerCrop()
+                                .into(userPhoto);
+                    }
+                });
+            } else {
+                userPhoto.setImageDrawable(drawable);
+            }
         }
     }
 
