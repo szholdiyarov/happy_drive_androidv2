@@ -34,7 +34,7 @@ public class ApiClient {
     private static final String API_PATH_CATEGORY_CARDS = "card/list/";
     private static final String API_PATH_CARD_STAR = "card/star/";
     private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
-
+    private static final String API_PATH_CARD_VISIBILITY = "card/visibility/";
     private static final String API_PATH_CARD_STARRED = "card/starred/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
@@ -199,6 +199,24 @@ public class ApiClient {
         // Failed to put star (Maybe already UNstarred?)
         return false;
     }
+
+    @NonNull
+    public static boolean setVisibility(boolean visible) {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CARD_VISIBILITY);
+        request.setBody(new Request.StringBody.Builder()
+                .add(Card.API_KEY_VISIBILITY, Boolean.toString(visible))
+                .build());
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            // Successfully unstarred
+            return true;
+        } catch (Exception ignored) {
+        }
+        // Failed to put star (Maybe already UNstarred?)
+        return false;
+    }
+
 
     @WorkerThread
     public static void uploadFile(File file)

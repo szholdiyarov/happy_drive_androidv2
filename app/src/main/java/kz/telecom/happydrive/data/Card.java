@@ -39,6 +39,7 @@ public class Card implements Comparable<Card>, Parcelable {
     static final String API_KEY_TWITTER = "twitter";
     static final String API_KEY_VKONTAKTE = "vkontakte";
     static final String API_KEY_INSTAGRAM = "instagram";
+    static final String API_KEY_VISIBILITY = "visible";
     static final String API_PATH_GET_CARDS = "card/list/";
 
 

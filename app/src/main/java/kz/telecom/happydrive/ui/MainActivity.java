@@ -70,11 +70,7 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
-        } else if (itemId == R.id.action_settings) {
-            User.currentUser().signOut();
-            onUserSignedOut(null);
         }
-
         switch (itemId) {
             case R.id.action_catalog:
                 replaceContent(new CatalogFragment(), true,
@@ -82,6 +78,10 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 break;
             case R.id.action_favourite:
                 replaceContent(new StarFragment(), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                break;
+            case R.id.action_settings:
+                replaceContent(new SettingsFragment(), true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             default:

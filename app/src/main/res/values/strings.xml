@@ -42,6 +42,9 @@
     <string name="action_settings">Настройки</string>
     <string name="action_help">Помощь</string>
     <string name="action_about">О приложении</string>
+    <string name="action_exit">Выйти</string>
+    <string name="action_hide">Показать визитку</string>
+
 
     <string name="title_activity_login">LoginActivity</string>
 
