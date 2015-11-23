@@ -98,8 +98,7 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         } else if (viewId == R.id.fragment_auth_btn_sign_up) {
             fragment = new SignUpFragment();
         } else if (viewId == R.id.google_login_button) {
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
-                    false, null, null, null, null);
+            Intent intent = AccountPicker.zza(null, null, new String[]{"com.google"}, false, null, null, null, null, false, 1, 0);
             startActivityForResult(intent, GOOGLE_SIGN_IN);
         }
 
