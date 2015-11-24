@@ -153,7 +153,7 @@ public class StoragePhotoFragment extends BaseFragment {
                     FolderObject photoFolder = null;
 
                     try {
-                        Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(0);
+                        Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(0, false, null);
                         List<ApiObject> folderList = objectMap.get(ApiClient.API_KEY_FOLDERS);
                         if (folderList != null && folderList.size() > 0) {
                             for (ApiObject obj : folderList) {
@@ -178,7 +178,7 @@ public class StoragePhotoFragment extends BaseFragment {
 
                     if (photoFolder != null) {
                         try {
-                            Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id);
+                            Map<String, List<ApiObject>> objectMap = ApiClient.getFiles(photoFolder.id, false, null);
                             if (mItems == null) {
                                 mItems = new ArrayList<>();
                             } else {

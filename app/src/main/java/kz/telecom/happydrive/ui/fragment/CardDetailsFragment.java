@@ -400,8 +400,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View v) {
         Intent intent = null;
         if (v.getId() == R.id.foto_block) {
-//            intent = new Intent(getContext(), PortfolioActivity.class);
-//            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
+            intent = new Intent(getContext(), PortfolioActivity.class);
+            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
         } else if (v.getId() == R.id.video_block) {
 //            intent = new Intent(getContext(), PortfolioActivity.class);
 //            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);

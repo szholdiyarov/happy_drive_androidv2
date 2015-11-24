@@ -233,13 +233,20 @@ public class ApiClient {
     }
 
     @WorkerThread
-    public static Map<String, List<ApiObject>> getFiles(int folderId)
+    public static Map<String, List<ApiObject>> getFiles(int folderId, boolean isPublic, String tokenIfNeeded)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_FILES_LIST);
         Map<String, String> params = new HashMap<>();
         params.put(FolderObject.API_IS_PUBLIC, "false");
         if (folderId > 0) {
             params.put(FolderObject.API_FOLDER_ID, folderId + "");
+        }
+        if (isPublic) {
+            params.put(FolderObject.API_IS_PUBLIC, "true");
+        }
+
+        if (!Utils.isEmpty(tokenIfNeeded)) {
+            request.setHeaders(Collections.singletonMap("Auth-Token", tokenIfNeeded));
         }
 
         request.setParams(params);

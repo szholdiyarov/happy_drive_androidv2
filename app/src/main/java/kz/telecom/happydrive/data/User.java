@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 import kz.telecom.happydrive.data.network.NetworkManager;
@@ -34,6 +35,8 @@ public class User {
     public final Card card;
     @NonNull
     public final String token;
+    public final int photoFolderId;
+    public final int videoFolderId;
 
     @WorkerThread
     public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -123,6 +126,22 @@ public class User {
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .convertValue(jsonNode, Map.class);
 
+        String token = Utils.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
+        Map<String, List<ApiObject>> mapOfFolders = ApiClient.getFiles(-1, true, token);
+        List<ApiObject> publicFolders = mapOfFolders.get(ApiClient.API_KEY_FOLDERS);
+        if (publicFolders != null) {
+            for (ApiObject obj : publicFolders) {
+                if (obj instanceof FolderObject) {
+                    FolderObject folder = (FolderObject) obj;
+                    if ("фотографии".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, folder.id);
+                    } else if ("Видеозаписи".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, folder.id);
+                    }
+                }
+            }
+        }
+
         User user = parseUser(rawData);
         SharedPreferences prefs = getDefaultSharedPrefs();
         UserHelper.saveCredentials(user, prefs);
@@ -163,7 +182,9 @@ public class User {
         }
 
         Card card = new Card((Map<String, Object>) rawData.get("card"));
-        return new User(token, card);
+        int photoFolderId = (Integer) rawData.get(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID);
+        int videoFolderId = (Integer) rawData.get(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID);
+        return new User(token, card, photoFolderId, videoFolderId);
     }
 
     protected static User initStaticUser(User user) {
@@ -184,9 +205,11 @@ public class User {
         sUser = null;
     }
 
-    private User(String token, Card card) {
+    private User(String token, Card card, int photoFolderId, int videoFolderId) {
         this.token = token;
         this.card = card;
+        this.photoFolderId = photoFolderId;
+        this.videoFolderId = videoFolderId;
     }
 
     public static class SignedInEvent {

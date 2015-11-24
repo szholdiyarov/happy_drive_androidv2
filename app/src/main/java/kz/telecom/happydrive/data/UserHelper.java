@@ -40,6 +40,9 @@ class UserHelper {
     static final String API_USER_KEY_CARD = "card";
     static final String API_USER_VISIBLE = "visible";
 
+    static final String PREFS_KEY_PHOTO_FOLDER_ID = "hd.user.photoFolderId";
+    static final String PREFS_KEY_VIDEO_FOLDER_ID = "hd.user.videoFolderId";
+
     static JsonNode register(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_REGISTER);
@@ -137,6 +140,8 @@ class UserHelper {
     static void saveCredentials(User user, SharedPreferences prefs) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(API_USER_KEY_TOKEN, user.token);
+        editor.putInt(PREFS_KEY_PHOTO_FOLDER_ID, user.photoFolderId);
+        editor.putInt(PREFS_KEY_VIDEO_FOLDER_ID, user.videoFolderId);
         editor.apply();
     }
 
@@ -152,6 +157,8 @@ class UserHelper {
 
         Map<String, Object> raw = new HashMap<>(2);
         raw.put(API_USER_KEY_TOKEN, prefs.getString(API_USER_KEY_TOKEN, null));
+        raw.put(PREFS_KEY_PHOTO_FOLDER_ID, prefs.getInt(PREFS_KEY_PHOTO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_VIDEO_FOLDER_ID, prefs.getInt(PREFS_KEY_VIDEO_FOLDER_ID, -1));
         raw.put(API_USER_KEY_CARD, Card.restoreUserCard(prefs));
 
         return raw;

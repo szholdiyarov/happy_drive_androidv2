@@ -1,5 +1,7 @@
 package kz.telecom.happydrive.data;
 
+import android.os.Parcel;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -23,6 +25,13 @@ public class FolderObject extends ApiObject {
         this.timestamp = timestamp;
     }
 
+    protected FolderObject(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.isPublic = in.readInt() != 0;
+        this.timestamp = in.readLong();
+    }
+
     FolderObject(JsonNode node) {
         this.id = node.get(API_FOLDER_ID).asInt(-1);
         if (this.id < 0) {
@@ -37,5 +46,18 @@ public class FolderObject extends ApiObject {
     @Override
     public boolean isFolder() {
         return true;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeInt(isPublic ? 1 : 0);
+        dest.writeLong(timestamp);
     }
 }
