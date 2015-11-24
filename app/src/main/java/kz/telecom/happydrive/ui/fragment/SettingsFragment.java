@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import com.facebook.login.LoginManager;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
@@ -86,6 +89,11 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             case R.id.tvExit:
                 User.currentUser().signOut();
                 ((BaseActivity)getActivity()).onUserSignedOut(null);
+                try {
+                    LoginManager.getInstance().logOut();
+                } catch (Exception ignored) {
+                }
+
                 break;
             default:
                 break;
