@@ -38,14 +38,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     private Map<String, String> mHeaders;
 
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
-
     private Map<String, String> params;
     private Body<?> mBody;
 
@@ -78,6 +70,22 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     public Body<?> getBody() {
         return mBody;
+    }
+
+    public Map<String, String> getHeaders() {
+        return mHeaders;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        mHeaders = headers;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
     }
 
     public void cancel() {

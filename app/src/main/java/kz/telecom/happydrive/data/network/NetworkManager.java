@@ -140,22 +140,18 @@ public class NetworkManager {
                     .url(finalUrl)
                     .method(request.method.name(), requestBody);
 
+            Map<String, String> headers = request.getHeaders();
+            if (headers != null) {
+                for (Map.Entry<String, String> h : headers.entrySet()) {
+                    builder.addHeader(h.getKey(), h.getValue());
+                }
+            }
+
             request.setCaller(new OkHttpCallerWrapper(httpClient.newCall(builder.build())));
             request.setSequence(mSequenceGenerator.getAndIncrement());
         } catch (URISyntaxException e) {
             throw new MalformedURLException(e.getLocalizedMessage());
         }
-    }
-
-    @Deprecated
-    public static String post(String path, RequestBody body) throws IOException {
-        com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
-                .url(Request.DEFAULT_HOST + path)
-                .post(body)
-                .build();
-
-        com.squareup.okhttp.Response response = sManager.httpClient.newCall(request).execute();
-        return response.body().string();
     }
 
     public static boolean init(Context context) {
