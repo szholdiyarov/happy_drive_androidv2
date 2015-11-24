@@ -75,6 +75,19 @@ public class User {
         return false;
     }
 
+    @WorkerThread
+    public synchronized boolean changeBackground(File file) throws NoConnectionError,
+            ApiResponseError, ResponseParseError {
+        JsonNode jsonNode = UserHelper.changeBackground(file);
+        if (jsonNode.hasNonNull("url")) {
+            card.setBackground(jsonNode.get("url").asText());
+            Card.saveUserCard(card, getDefaultSharedPrefs());
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean isAuthenticated() {
         return currentUser() != null;
     }

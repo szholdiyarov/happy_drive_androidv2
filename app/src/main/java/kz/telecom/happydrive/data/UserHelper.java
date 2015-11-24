@@ -30,6 +30,7 @@ class UserHelper {
     private static final String API_PATH_REGISTER = "auth/register/";
     private static final String API_PATH_RESET_PASSWORD = "auth/reset/";
     private static final String API_PATH_UPDATE_AVATAR = "card/avatar/";
+    private static final String API_PATH_UPDATE_BACKGROUND = "card/background/";
 
     static final String API_USER_KEY_EMAIL = "email";
     static final String API_USER_KEY_PASSWORD = "password";
@@ -106,12 +107,21 @@ class UserHelper {
     }
 
     static JsonNode changeAvatar(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
-        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_UPDATE_AVATAR);
+        return uploadFile(file, API_PATH_UPDATE_AVATAR, "Image-Type");
+    }
+
+    static JsonNode changeBackground(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        return uploadFile(file, API_PATH_UPDATE_AVATAR, "Image-Type");
+    }
+
+    private static JsonNode uploadFile(File file, String path, String headerName)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, path);
         request.setBody(new Request.FileBody("*/*", file));
 
         String[] comps = file.getAbsolutePath().split("\\.");
         if (comps.length > 0) {
-            request.setHeaders(Collections.singletonMap("Image-Type",
+            request.setHeaders(Collections.singletonMap(headerName,
                     comps[comps.length - 1]));
         }
 

@@ -58,8 +58,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     private static final int INTENT_CODE_PHOTO_CAMERA = 40001;
     private static final int INTENT_CODE_PHOTO_GALLERY = 40002;
-    private static final int INTENT_CODE_BACKGROUND_CAMERA = 40001;
-    private static final int INTENT_CODE_BACKGROUND_GALLERY = 40002;
+    private static final int INTENT_CODE_BACKGROUND_CAMERA = 40003;
+    private static final int INTENT_CODE_BACKGROUND_GALLERY = 40004;
 
     private View stubView;
     private Card mCard;
@@ -200,14 +200,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                             mTempFile = Utils.tempFileWithNow(getContext());
                                             Utils.openCamera(CardDetailsFragment.this, mTempFile,
                                                     itemId == R.id.action_change_photo ?
-                                                            INTENT_CODE_PHOTO_CAMERA : INTENT_CODE_BACKGROUND_CAMERA);
+                                                            INTENT_CODE_PHOTO_CAMERA :
+                                                            INTENT_CODE_BACKGROUND_CAMERA);
                                         } catch (Exception ignored) {
                                             Logger.e("TEST", "couldn't create a file", ignored);
                                         }
                                     } else if (which == 1) {
                                         Utils.openGallery(CardDetailsFragment.this, "", "image/*",
-                                                itemId == R.id.action_change_background ?
-                                                        INTENT_CODE_PHOTO_GALLERY : INTENT_CODE_BACKGROUND_GALLERY);
+                                                itemId == R.id.action_change_photo ?
+                                                        INTENT_CODE_PHOTO_GALLERY :
+                                                        INTENT_CODE_BACKGROUND_GALLERY);
                                     }
                                 }
                             }).show();
@@ -418,7 +420,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
 //        switch (requestCode) {
 //            case INTENT_CODE_PHOTO_CAMERA:
@@ -455,8 +457,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
         }
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == INTENT_CODE_PHOTO_GALLERY ||
-                    requestCode == INTENT_CODE_BACKGROUND_GALLERY) {
+            if (requestCode == INTENT_CODE_PHOTO_GALLERY || requestCode == INTENT_CODE_BACKGROUND_GALLERY) {
                 try {
                     String path = null;
                     if (Build.VERSION.SDK_INT < 11) {
@@ -478,7 +479,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                         public void run() {
                             boolean isSuccessful = false;
                             try {
-                                isSuccessful = User.currentUser().changeAvatar(file);
+                                isSuccessful = requestCode == INTENT_CODE_PHOTO_GALLERY ?
+                                        User.currentUser().changeAvatar(file) :
+                                        User.currentUser().changeBackground(file);
                             } catch (Exception e) {
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
@@ -491,12 +494,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
-                                            Uri uriFromPath = Uri.fromFile(file);
-
+                                            ImageView imageView = null;
                                             View view = getView();
                                             if (view != null) {
-                                                final ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
-                                                userPhoto.setImageURI(uriFromPath);
+                                                imageView = requestCode == INTENT_CODE_PHOTO_GALLERY ?
+                                                        (ImageView) view.findViewById(R.id.user_photo) :
+                                                        (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+                                            }
+
+                                            if (imageView != null) {
+                                                imageView.setImageURI(Uri.fromFile(file));
                                             }
                                         }
                                     }
