@@ -494,15 +494,21 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
+                                            String invalidateKey = null;
                                             ImageView imageView = null;
                                             View view = getView();
                                             if (view != null) {
-                                                imageView = requestCode == INTENT_CODE_PHOTO_GALLERY ?
-                                                        (ImageView) view.findViewById(R.id.user_photo) :
-                                                        (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+                                                if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
+                                                    imageView = (ImageView) view.findViewById(R.id.user_photo);
+                                                    invalidateKey = mCard.getAvatar();
+                                                } else {
+                                                    imageView = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+                                                    invalidateKey = mCard.getBackground();
+                                                }
                                             }
 
                                             if (imageView != null) {
+                                                NetworkManager.getPicasso().invalidate(invalidateKey);
                                                 imageView.setImageURI(Uri.fromFile(file));
                                             }
                                         }
