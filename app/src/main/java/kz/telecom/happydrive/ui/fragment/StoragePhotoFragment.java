@@ -62,24 +62,24 @@ public class StoragePhotoFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (mAdapter == null) {
-            mAdapter = new PhotoAdapter();
-            updateFiles();
-        }
-
-        RecyclerView rv = (RecyclerView) view.findViewById(R.id.portfolio_rv);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(new GridLayoutManager(getContext(), 3));
-
-        List<FileObject> list = new ArrayList<>();
-        rv.setAdapter(mAdapter);
-
-        view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.openGallery(StoragePhotoFragment.this, "", "image/*", INTENT_CODE_GALLERY);
-            }
-        });
+//        if (mAdapter == null) {
+//            mAdapter = new PhotoAdapter();
+//            updateFiles();
+//        }
+//
+//        RecyclerView rv = (RecyclerView) view.findViewById(R.id.portfolio_rv);
+//        rv.setHasFixedSize(true);
+//        rv.setLayoutManager(new GridLayoutManager(getContext(), 3));
+//
+//        List<FileObject> list = new ArrayList<>();
+//        rv.setAdapter(mAdapter);
+//
+//        view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Utils.openGallery(StoragePhotoFragment.this, "", "image/*", INTENT_CODE_GALLERY);
+//            }
+//        });
     }
 
     @Override
@@ -110,7 +110,7 @@ public class StoragePhotoFragment extends BaseFragment {
                         @Override
                         public void run() {
                             try {
-                                ApiClient.uploadFile(file);
+                                ApiClient.uploadFile(0, file);
                                 Activity activity = getActivity();
                                 if (activity != null) {
                                     activity.runOnUiThread(new Runnable() {

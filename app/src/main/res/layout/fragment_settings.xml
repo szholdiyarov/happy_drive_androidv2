@@ -51,6 +51,13 @@
                 android:id="@+id/textView1"/>
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_margin="4dp"
+        android:layout_height="1dp"
+        android:background="#aaa"/>
+
     <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"

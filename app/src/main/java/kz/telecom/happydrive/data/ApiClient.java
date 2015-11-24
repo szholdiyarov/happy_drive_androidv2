@@ -217,16 +217,25 @@ public class ApiClient {
         return false;
     }
 
-
+    @NonNull
     @WorkerThread
-    public static void uploadFile(File file)
+    public static FileObject uploadFile(int folderId, File file)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
         request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
 
+        Map<String, String> headers = new HashMap<>(2);
+        headers.put("File-Name", file.getName());
+        if (folderId > 0) {
+            headers.put("Folder-ID", folderId + "");
+        }
+
+        request.setHeaders(headers);
+
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
+            return new FileObject(response.result.get("file"));
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }
@@ -267,7 +276,9 @@ public class ApiClient {
 
                     result.put(API_KEY_FOLDERS, folderList);
                 }
-            } else if (rootNode.hasNonNull(API_KEY_FILES)) {
+            }
+
+            if (rootNode.hasNonNull(API_KEY_FILES)) {
                 JsonNode fileNode = rootNode.get(API_KEY_FILES);
                 if (fileNode.size() > 0) {
                     List<ApiObject> fileList = new ArrayList<>(fileNode.size());
