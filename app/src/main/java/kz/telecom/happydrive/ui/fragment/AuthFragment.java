@@ -111,7 +111,7 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
 
 
     private void socialSignIn(final String accessToken, final String provider) {
-        new Thread() {
+            new Thread() {
             @Override
             public void run() {
                 try {
@@ -181,8 +181,10 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_SIGN_IN) {
-            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            new RetrieveTokenTask().execute(accountName);
+            if (data != null) {
+                String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                new RetrieveTokenTask().execute(accountName);
+            }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
