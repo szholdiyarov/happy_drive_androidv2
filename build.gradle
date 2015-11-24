@@ -18,17 +18,17 @@ project(':app') {
         maven { url 'https://maven.fabric.io/public' }
     }
 
-    if ('zipalignRelease' in gradle.startParameter.taskNames) {
-        apply plugin: 'com.android.application'
-        android.signingConfigs.release.keyPassword = System.console().readPassword('alias password: ')
-    }
+//    if ('zipalignRelease' in gradle.startParameter.taskNames) {
+//        apply plugin: 'com.android.application'
+//        android.signingConfigs.release.keyPassword = System.console().readPassword('alias password: ')
+//    }
 }
 
 buildscript {
     ext {
         compileSdkVersion = 23
         buildToolsVersion = '23.0.2'
-        targetSdkVersion = compileSdkVersion
+        targetSdkVersion = 22
     }
 
     repositories {

@@ -77,7 +77,7 @@ public class StoragePhotoFragment extends BaseFragment {
         view.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.openGallery(getActivity(), "", "image/*", INTENT_CODE_GALLERY);
+                Utils.openGallery(StoragePhotoFragment.this, "", "image/*", INTENT_CODE_GALLERY);
             }
         });
     }

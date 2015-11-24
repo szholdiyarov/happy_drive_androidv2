@@ -1,17 +1,23 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +33,10 @@ import android.widget.TextView;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
+import io.fabric.sdk.android.services.common.CommonUtils;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
@@ -49,6 +58,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     private static final int INTENT_CODE_PHOTO_CAMERA = 40001;
     private static final int INTENT_CODE_PHOTO_GALLERY = 40002;
+    private static final int INTENT_CODE_BACKGROUND_CAMERA = 40001;
+    private static final int INTENT_CODE_BACKGROUND_GALLERY = 40002;
 
     private View stubView;
     private Card mCard;
@@ -177,7 +188,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 //            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
             startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
-        } else if (itemId == R.id.action_change_photo) {
+        } else if (itemId == R.id.action_change_photo || itemId == R.id.action_change_background) {
             new AlertDialog.Builder(getContext())
                     .setItems(new String[]{"Снять фото", "Из Галлереи"},
                             new DialogInterface.OnClickListener() {
@@ -188,17 +199,18 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                         try {
                                             mTempFile = Utils.tempFileWithNow(getContext());
                                             Utils.openCamera(CardDetailsFragment.this, mTempFile,
-                                                    INTENT_CODE_PHOTO_CAMERA);
+                                                    itemId == R.id.action_change_photo ?
+                                                            INTENT_CODE_PHOTO_CAMERA : INTENT_CODE_BACKGROUND_CAMERA);
                                         } catch (Exception ignored) {
                                             Logger.e("TEST", "couldn't create a file", ignored);
                                         }
                                     } else if (which == 1) {
-                                        Utils.openGallery(getActivity(), "", "image/*",
-                                                INTENT_CODE_PHOTO_GALLERY);
+                                        Utils.openGallery(CardDetailsFragment.this, "", "image/*",
+                                                itemId == R.id.action_change_background ?
+                                                        INTENT_CODE_PHOTO_GALLERY : INTENT_CODE_BACKGROUND_GALLERY);
                                     }
                                 }
                             }).show();
-        } else if (itemId == R.id.action_change_background) {
         }
 
         return false;
@@ -407,8 +419,33 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode) {
+//            case INTENT_CODE_PHOTO_CAMERA:
+//                Uri u;
+//                if (hasImageCaptureBug()) {
+//                    File fi = new File("/sdcard/tmp");
+//                    try {
+//                        u = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContext()
+//                                .getContentResolver(), fi.getAbsolutePath(), null, null));
+//                        if (!fi.delete()) {
+//                            Log.i("logMarker", "Failed to delete " + fi);
+//                        }
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    u = data.getData();
+//                }
+//        }
         if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
             if (mTempFile != null) {
+                if (mTempFile.exists()) {
+                    Logger.i("TEST", "the file exists");
+
+                    Logger.i("TEST", "fileSize: " + Integer.parseInt(String.valueOf(mTempFile.length() / 1024)));
+                }
+
                 Drawable drawable = Drawable.createFromPath(mTempFile.getAbsolutePath());
                 View view = getView();
                 if (view != null) {
@@ -416,7 +453,75 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     userPhoto.setImageDrawable(drawable);
                 }
             }
-        } else if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
         }
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == INTENT_CODE_PHOTO_GALLERY ||
+                    requestCode == INTENT_CODE_BACKGROUND_GALLERY) {
+                try {
+                    String path = null;
+                    if (Build.VERSION.SDK_INT < 11) {
+                        path = Utils.getRealPathFromURI_BelowAPI11(getContext(), data.getData());
+                    } else if (Build.VERSION.SDK_INT < 19) {
+                        path = Utils.getRealPathFromURI_API11to18(getContext(), data.getData());
+                    } else {
+                        path = Utils.getRealPathFromURI_API19(getContext(), data.getData());
+                    }
+
+                    final File file = new File(path);
+                    final ProgressDialog dialog = new ProgressDialog(getContext());
+                    dialog.setMessage("Сохранение...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            boolean isSuccessful = false;
+                            try {
+                                isSuccessful = User.currentUser().changeAvatar(file);
+                            } catch (Exception e) {
+                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                            }
+
+                            final boolean success = isSuccessful;
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        if (success) {
+                                            Uri uriFromPath = Uri.fromFile(file);
+
+                                            View view = getView();
+                                            if (view != null) {
+                                                final ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
+                                                userPhoto.setImageURI(uriFromPath);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+                } catch (Exception e) {
+                    Logger.e("TEST", e.getLocalizedMessage(), e);
+                }
+            }
+        }
+    }
+
+    public boolean hasImageCaptureBug() {
+        // list of known devices that have the bug
+        ArrayList<String> devices = new ArrayList<String>();
+        devices.add("android-devphone1/dream_devphone/dream");
+        devices.add("generic/sdk/generic");
+        devices.add("vodafone/vfpioneer/sapphire");
+        devices.add("tmobile/kila/dream");
+        devices.add("verizon/voles/sholes");
+        devices.add("google_ion/google_ion/sapphire");
+
+        return devices.contains(android.os.Build.BRAND + "/" + android.os.Build.PRODUCT + "/"
+                + android.os.Build.DEVICE);
     }
 }

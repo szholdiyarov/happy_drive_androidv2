@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -18,6 +19,7 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.ResponseParseError;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 
@@ -58,6 +60,19 @@ public class User {
         Card.saveUserCard(card, getDefaultSharedPrefs());
 
         return true;
+    }
+
+    @WorkerThread
+    public synchronized boolean changeAvatar(File file) throws NoConnectionError,
+            ApiResponseError, ResponseParseError {
+        JsonNode jsonNode = UserHelper.changeAvatar(file);
+        if (jsonNode.hasNonNull("url")) {
+            card.setAvatar(jsonNode.get("url").asText());
+            Card.saveUserCard(card, getDefaultSharedPrefs());
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isAuthenticated() {

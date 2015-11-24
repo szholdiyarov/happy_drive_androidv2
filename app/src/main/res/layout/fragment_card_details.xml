@@ -53,6 +53,7 @@
                     android:layout_alignBottom="@id/fragment_card_details_v_header"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="-8dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/user_photo" />
             </RelativeLayout>
 

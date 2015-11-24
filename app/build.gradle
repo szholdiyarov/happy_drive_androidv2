@@ -25,7 +25,7 @@ android {
             storeFile file('keystore.jks')
             storePassword 'P@$$w0rd'
             keyAlias 'release'
-            keyPassword ''
+            keyPassword 'AIzaSyC9v3_WfDcWIOyMQ22ejqTz_gABL8Kz_Q0'
         }
     }
 

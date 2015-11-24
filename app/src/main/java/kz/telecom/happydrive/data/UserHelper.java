@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ class UserHelper {
     private static final String API_PATH_GET_TOKEN = "auth/getToken/";
     private static final String API_PATH_REGISTER = "auth/register/";
     private static final String API_PATH_RESET_PASSWORD = "auth/reset/";
+    private static final String API_PATH_UPDATE_AVATAR = "card/avatar/";
 
     static final String API_USER_KEY_EMAIL = "email";
     static final String API_USER_KEY_PASSWORD = "password";
@@ -92,6 +95,25 @@ class UserHelper {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_RESET_PASSWORD);
         request.setBody(new Request.StringBody.Builder()
                 .add(API_USER_KEY_EMAIL, email).build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
+            return response.result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    static JsonNode changeAvatar(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_UPDATE_AVATAR);
+        request.setBody(new Request.FileBody("*/*", file));
+
+        String[] comps = file.getAbsolutePath().split("\\.");
+        if (comps.length > 0) {
+            request.setHeaders(Collections.singletonMap("Image-Type",
+                    comps[comps.length - 1]));
+        }
 
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
