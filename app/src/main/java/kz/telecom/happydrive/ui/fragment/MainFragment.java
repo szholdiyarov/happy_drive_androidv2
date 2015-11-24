@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
 import kz.telecom.happydrive.util.Utils;
 
@@ -39,6 +42,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        MainActivity activity = (MainActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle(R.string.app_name);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        activity.getDrawerToggle().setDrawerIndicatorEnabled(true);
+        activity.getDrawerToggle().syncState();
+
         final Card card = getArguments().getParcelable(EXTRA_CARD);
 
         TextView usernameTextView = (TextView) view.findViewById(R.id.user_name);

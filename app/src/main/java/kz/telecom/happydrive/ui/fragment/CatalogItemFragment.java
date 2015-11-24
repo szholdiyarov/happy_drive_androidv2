@@ -16,6 +16,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
@@ -128,7 +129,7 @@ public class CatalogItemFragment extends BaseFragment {
     }
 
     class ItemAdapter extends BaseAdapter {
-
+        private Card myCard = User.currentUser().card;
         Context context;
         List<Card> data;
         LayoutInflater inflater = null;
@@ -181,10 +182,18 @@ public class CatalogItemFragment extends BaseFragment {
             }
 
             ImageView starView = (ImageView) vi.findViewById(R.id.star);
-            if (starredCards.contains(data.get(position))) {
-                starView.setImageResource(R.drawable.favorite_on_icon);
+            if (card.compareTo(myCard) == 0) {
+                starView.setVisibility(View.INVISIBLE);
+            } else {
+                starView.setVisibility(View.VISIBLE);
+                if (starredCards.contains(data.get(position))) {
+                    starView.setImageResource(R.drawable.favorite_on_icon);
+                } else {
+                    starView.setImageResource(R.drawable.favorite_off_icon);
+                }
+                starView.setOnClickListener(starClickListener);
             }
-            starView.setOnClickListener(starClickListener);
+
             name.setOnClickListener(cardClickListener);
             description.setOnClickListener(cardClickListener);
             name.setText(fullName);

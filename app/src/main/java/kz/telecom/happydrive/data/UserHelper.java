@@ -11,6 +11,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.RequestBody;
+
 import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
@@ -22,7 +23,7 @@ import kz.telecom.happydrive.data.network.ResponseParseError;
  * Created by Galymzhan Sh on 11/16/15.
  */
 class UserHelper {
-    private static final String API_PATH_GET_SOCIAL_TOKEN = "/auth/getSocialToken/";
+    private static final String API_PATH_GET_SOCIAL_TOKEN = "auth/getSocialToken/";
     private static final String API_PATH_GET_TOKEN = "auth/getToken/";
     private static final String API_PATH_REGISTER = "auth/register/";
     private static final String API_PATH_RESET_PASSWORD = "auth/reset/";
@@ -52,14 +53,21 @@ class UserHelper {
         }
     }
 
-    static JsonNode getSocialToken(final String accessToken, final String provider) throws Exception {
-        RequestBody requestBody = new FormEncodingBuilder()
+    static JsonNode getSocialToken(final String accessToken, final String provider)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_GET_SOCIAL_TOKEN);
+        request.setBody(new Request.StringBody.Builder()
                 .add(API_USER_KEY_SOCIAL_TOKEN, accessToken)
                 .add(API_USER_KEY_SOCIAL_PROVIDER, provider)
-                .build();
+                .build());
 
-        final String response = NetworkManager.post(API_PATH_GET_SOCIAL_TOKEN, requestBody);
-        return new ObjectMapper().readTree(response);
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
+            return response.result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
     }
 
     static JsonNode getToken(final String email, final String password)

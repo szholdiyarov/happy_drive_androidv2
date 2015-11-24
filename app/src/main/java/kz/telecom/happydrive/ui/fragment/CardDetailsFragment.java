@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,7 +34,9 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
@@ -76,6 +79,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DataManager.getInstance().bus.register(this);
+        MainActivity activity = (MainActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle(R.string.app_name);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        activity.getDrawerToggle().setDrawerIndicatorEnabled(true);
+        activity.getDrawerToggle().syncState();
 
         Bundle args = getArguments();
         if (args != null) {

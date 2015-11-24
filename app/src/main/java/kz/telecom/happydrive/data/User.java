@@ -77,36 +77,20 @@ public class User {
     }
 
     public static User socialSignIn(final String accessToken, final String provider) throws Exception {
-        JsonNode jsonNode;
-        try {
-            jsonNode = UserHelper.getSocialToken(accessToken, provider);
-        } catch (IOException ioe) {
-            throw new NoConnectionError("no network error", ioe);
-        }
-
-        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
-                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
-                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-
-        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-            throw new ApiResponseError("api response error", responseCode, null);
-        }
-
-        Map<String, Object> rawData = new ObjectMapper().convertValue(jsonNode, Map.class);
-//        rawData.put(UserHelper.API_USER_KEY_EMAIL, email);
-        User user = parseUser(rawData);
-        SharedPreferences prefs = getDefaultSharedPrefs();
-        UserHelper.wipeCredentials(prefs);
-        UserHelper.saveCredentials(user, prefs);
-        return sUser = user;
+        return signIn(accessToken, provider, true);
     }
 
     @NonNull
     @WorkerThread
     public static User signIn(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
-        JsonNode jsonNode = UserHelper.getToken(email, password);
+        return signIn(email, password, false);
+    }
+
+    private static User signIn(final String arg1, final String arg2, boolean isSocial)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonNode jsonNode = isSocial ? UserHelper.getSocialToken(arg1, arg2) :
+                UserHelper.getToken(arg1, arg2);
         Map<String, Object> rawData = new ObjectMapper()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .convertValue(jsonNode, Map.class);

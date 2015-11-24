@@ -21,6 +21,7 @@ import kz.telecom.happydrive.util.Utils;
  */
 public class MainActivity extends BaseActivity implements DrawerFragment.Callback {
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,10 +37,10 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
             mDrawerLayout.setFitsSystemWindows(false);
         }
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,
+        mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout, toolbar, 0, 0);
-        mDrawerLayout.setDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
         if (savedInstanceState == null) {
             User user = User.currentUser();
@@ -90,6 +91,10 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 
         closeDrawer();
         return true;
+    }
+
+    public ActionBarDrawerToggle getDrawerToggle() {
+        return mDrawerToggle;
     }
 
     @SuppressWarnings("unused")
