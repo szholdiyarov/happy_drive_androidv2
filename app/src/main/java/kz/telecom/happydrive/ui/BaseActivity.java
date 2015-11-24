@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.facebook.login.LoginManager;
 import com.squareup.otto.Subscribe;
 
 import java.lang.annotation.Retention;
@@ -29,6 +30,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by Galymzhan Sh on 10/27/15.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    protected Object busEventListener;
+
     @IntDef({FragmentTransaction.TRANSIT_NONE,
             FragmentTransaction.TRANSIT_FRAGMENT_OPEN,
             FragmentTransaction.TRANSIT_FRAGMENT_CLOSE})
@@ -46,12 +50,34 @@ public abstract class BaseActivity extends AppCompatActivity {
             finish();
         }
 
-        DataManager.getInstance().bus.register(this);
+        busEventListener = new Object() {
+
+            @Subscribe
+            @SuppressWarnings("unused")
+            public void onUserSignedOut(User.SignedOutEvent ignored) {
+                BaseActivity.this.onUserSignOut();
+            }
+
+        };
+        
+        DataManager.getInstance().bus.register(busEventListener);
+    }
+
+    protected void onUserSignOut() {
+        User.currentUser().signOut();
+        Intent intent = new Intent(this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        try {
+            LoginManager.getInstance().logOut();
+        } catch (Exception ignored) {
+        }
+        finish();
     }
 
     @Override
     public void onDestroy() {
-        DataManager.getInstance().bus.unregister(this);
+        DataManager.getInstance().bus.unregister(busEventListener);
         super.onDestroy();
     }
 
@@ -141,16 +167,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
-
-    @Subscribe
-    @SuppressWarnings("unused")
-    public void onUserSignedOut(User.SignedOutEvent ignored) {
-        Intent intent = new Intent(this, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
-        finish();
-    }
-
+    
     @Override
     public void onBackPressed() {
         BaseFragment fragment = findContent(getDefaultContentViewContainerId());

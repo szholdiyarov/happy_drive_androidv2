@@ -22,10 +22,8 @@ public class AuthActivity extends BaseActivity {
         }
 
         setContentView(R.layout.activity_auth);
-        if (savedInstanceState == null) {
-            replaceContent(new AuthFragment(), false,
-                    FragmentTransaction.TRANSIT_NONE);
-        }
+
+        replaceContent(new AuthFragment(), false, FragmentTransaction.TRANSIT_NONE);
     }
 
     @Override

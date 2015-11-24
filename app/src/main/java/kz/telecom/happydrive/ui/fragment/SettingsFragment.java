@@ -17,6 +17,7 @@ import com.facebook.login.LoginManager;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
@@ -87,13 +88,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 }.start();
                 break;
             case R.id.tvExit:
-                User.currentUser().signOut();
-                ((BaseActivity)getActivity()).onUserSignedOut(null);
-                try {
-                    LoginManager.getInstance().logOut();
-                } catch (Exception ignored) {
-                }
-
+                DataManager.getInstance().bus.post(new User.SignedOutEvent());
                 break;
             default:
                 break;
