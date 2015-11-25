@@ -79,6 +79,7 @@
         <TextView
                 android:id="@+id/tvExit"
                 android:singleLine="true"
+                android:clickable="true"
                 android:ellipsize="marquee"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
