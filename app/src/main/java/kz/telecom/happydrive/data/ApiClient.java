@@ -41,6 +41,7 @@ public class ApiClient {
 
     public static final String API_KEY_FOLDERS = "folders";
     public static final String API_KEY_FILES = "files";
+    public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
 
     private static ObjectMapper sObjectMapper;
 
@@ -214,6 +215,22 @@ public class ApiClient {
         } catch (Exception ignored) {
         }
         // Failed to put star (Maybe already UNstarred?)
+        return false;
+    }
+
+    @NonNull
+    public static boolean changePassword(String currentPassword, String newPassword) {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CHANGE_PASSWORD);
+        request.setBody(new Request.StringBody.Builder()
+                .add(User.API_KEY_CURRENT_PASSWORD, currentPassword)
+                .add(User.API_KEY_NEW_PASSWORD, newPassword)
+                .build());
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return true;
+        } catch (Exception ignored) {
+        }
         return false;
     }
 
