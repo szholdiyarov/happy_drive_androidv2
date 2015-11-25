@@ -20,6 +20,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -82,6 +83,8 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         loginButton.setReadPermissions("email");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, this);
+
+//        loginButton.
         // Set appropriate icon size.
         Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.com_facebook_button_icon);
         drawable.setBounds(0, 0, (int) (drawable.getIntrinsicWidth() * 1.45F),

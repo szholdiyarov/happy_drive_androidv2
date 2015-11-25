@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.squareup.otto.Subscribe;
 
@@ -61,6 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         };
         
         DataManager.getInstance().bus.register(busEventListener);
+        FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
     protected void onUserSignOut() {
