@@ -16,6 +16,8 @@
     <string name="sign_up_title">Регистрация</string>
     <string name="sign_up_hint_email">E-mail</string>
     <string name="sign_up_hint_password">Пароль</string>
+    <string name="change_pwd_hint_password1">Текущий пароль</string>
+    <string name="change_pwd_hint_password2">Новый пароль</string>
     <string name="sign_up_user_already_taken">Пользователь с таким e-mail уже существует</string>
     <string name="sign_up_user_cred_invalid">Неправильно указан e-mail или пароль</string>
 
@@ -44,6 +46,7 @@
     <string name="action_about">О приложении</string>
     <string name="action_exit">Выйти</string>
     <string name="action_hide">Показать визитку</string>
+    <string name="action_change_pwd">Сменить пароль</string>
 
 
     <string name="title_activity_login">LoginActivity</string>

@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,8 @@ import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.ChangePasswordActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
@@ -57,6 +60,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         ibShow = (ImageButton) view.findViewById(R.id.ibShow);
         ibShow.setOnClickListener(this);
         view.findViewById(R.id.tvExit).setOnClickListener(this);
+        view.findViewById(R.id.tvChangePwd).setOnClickListener(this);
     }
 
     @Override
@@ -90,6 +94,8 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             case R.id.tvExit:
                 DataManager.getInstance().bus.post(new User.SignedOutEvent());
                 break;
+            case R.id.tvChangePwd:
+                getActivity().startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
             default:
                 break;
         }
