@@ -56,6 +56,7 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mFullDesc;
     private String mAvatar;
     private String mBackground;
+    public boolean visible;
 
     public Card(int id) {
         this.id = id;
@@ -84,6 +85,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mFullDesc = Utils.getValue(String.class, API_KEY_FULL_DESC, null, data);
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
+        visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
     }
 
     protected Card(Parcel in) {

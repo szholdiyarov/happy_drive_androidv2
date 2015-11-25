@@ -120,8 +120,10 @@ public class ApiClient {
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
-            return new Card((Map<String, Object>) getObjectMapper()
-                    .convertValue(response.result, Map.class).get("card"));
+            Card cCard = new Card((Map<String, Object>) getObjectMapper()
+                                    .convertValue(response.result, Map.class).get("card"));
+            cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
+            return cCard;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }
