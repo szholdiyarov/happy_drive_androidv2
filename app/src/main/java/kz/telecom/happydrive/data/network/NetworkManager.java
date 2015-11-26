@@ -10,6 +10,7 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.picasso.Downloader;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -37,6 +38,7 @@ import kz.telecom.happydrive.data.network.internal.OkHttpCallerWrapper;
 public class NetworkManager {
     private static NetworkManager sManager;
     private final OkHttpClient httpClient;
+    private final OkHttpDownloader httpDownloader;
     private final Picasso picasso;
 
     private final NetworkDispatcher[] mNetworkDispatchers = new NetworkDispatcher[4];
@@ -71,6 +73,10 @@ public class NetworkManager {
 
     public static Picasso getPicasso() {
         return sManager.picasso;
+    }
+
+    static Downloader getDownloader() {
+        return sManager.httpDownloader;
     }
 
     public synchronized static void setCookie(String host, String name, String value)
@@ -181,9 +187,9 @@ public class NetworkManager {
             }
         });
 
+        httpDownloader = new OkHttpDownloader(httpClient);
         picasso = new Picasso.Builder(context)
-                .downloader(new OkHttpDownloader(httpClient))
-                .loggingEnabled(BuildConfig.DEBUG)
+                .downloader(httpDownloader)
                 .indicatorsEnabled(BuildConfig.DEBUG)
                 .build();
     }

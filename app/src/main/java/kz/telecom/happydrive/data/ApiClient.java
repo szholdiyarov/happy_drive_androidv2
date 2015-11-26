@@ -38,6 +38,8 @@ public class ApiClient {
     private static final String API_PATH_CARD_STARRED = "card/starred/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
+    private static final String API_PATH_COMMENTS_LIST = "comments/list/";
+    private static final String API_PATH_COMMENTS_POST = "comments/add/";
 
     public static final String API_KEY_FOLDERS = "folders";
     public static final String API_KEY_FILES = "files";
@@ -121,7 +123,7 @@ public class ApiClient {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
             Card cCard = new Card((Map<String, Object>) getObjectMapper()
-                                    .convertValue(response.result, Map.class).get("card"));
+                    .convertValue(response.result, Map.class).get("card"));
             cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
             return cCard;
         } catch (MalformedURLException e) {
@@ -138,7 +140,7 @@ public class ApiClient {
             checkResponseAndThrowIfNeeded(response);
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
-            for (Object o: arrayList) {
+            for (Object o : arrayList) {
                 result.add(new Card((Map<String, Object>) o));
             }
             return result;
@@ -159,7 +161,7 @@ public class ApiClient {
             checkResponseAndThrowIfNeeded(response);
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
-            for (Object o: arrayList) {
+            for (Object o : arrayList) {
                 result.add(new Card((Map<String, Object>) o));
             }
             return result;
@@ -261,10 +263,52 @@ public class ApiClient {
     }
 
     @WorkerThread
+    public static List<Comment> getComments(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_COMMENTS_LIST);
+        Map<String, String> params = Collections.singletonMap(FileObject.API_FILE_ID, fileId + "");
+        request.setParams(params);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            List<Comment> comments = new ArrayList<>();
+            JsonNode node = response.result.get("comments");
+            if (node != null) {
+                for (JsonNode c : node) {
+                    comments.add(new Comment(c));
+                }
+            }
+
+            return comments;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static boolean postComment(int fileId, String text)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_COMMENTS_POST);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FileObject.API_FILE_ID, fileId + "")
+                .add(Comment.API_TEXT, text)
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return true;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
     public static Map<String, List<ApiObject>> getFiles(int folderId, boolean isPublic, String tokenIfNeeded)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_FILES_LIST);
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new LinkedHashMap<>();
         params.put(FolderObject.API_IS_PUBLIC, "false");
         if (folderId > 0) {
             params.put(FolderObject.API_FOLDER_ID, folderId + "");
@@ -333,7 +377,7 @@ public class ApiClient {
         }
     }
 
-    private static ObjectMapper getObjectMapper() {
+    static ObjectMapper getObjectMapper() {
         if (sObjectMapper == null) {
             sObjectMapper = new ObjectMapper();
             sObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);

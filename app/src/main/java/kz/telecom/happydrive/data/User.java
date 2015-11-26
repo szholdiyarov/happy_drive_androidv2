@@ -124,8 +124,7 @@ public class User {
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonNode jsonNode = isSocial ? UserHelper.getSocialToken(arg1, arg2) :
                 UserHelper.getToken(arg1, arg2);
-        Map<String, Object> rawData = new ObjectMapper()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        Map<String, Object> rawData = ApiClient.getObjectMapper()
                 .convertValue(jsonNode, Map.class);
 
         String token = Utils.getValue(String.class, UserHelper.API_USER_KEY_TOKEN, null, rawData);
