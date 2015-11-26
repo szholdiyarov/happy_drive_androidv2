@@ -40,6 +40,7 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn_primary);
         BaseActivity activity = (BaseActivity) getActivity();
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.layout_toolbar_auth);
         ActionBar actionBar = activity.initToolbar(toolbar);
@@ -49,7 +50,9 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
         etOldPassword = (EditText) view.findViewById(R.id.etOldPassword);
         etPassword1 = (EditText) view.findViewById(R.id.etPassword1);
         etPassword2 = (EditText) view.findViewById(R.id.etPassword2);
-        view.findViewById(R.id.bChangePassword).setOnClickListener(this);
+        Button changeBtn = (Button) view.findViewById(R.id.bChangePassword);
+        ViewCompat.setBackgroundTintList(changeBtn, tintList);
+        changeBtn.setOnClickListener(this);
     }
 
     @Override

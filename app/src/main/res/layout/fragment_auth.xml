@@ -83,6 +83,7 @@
                 android:layout_width="0px"
                 android:layout_height="3dp"/>
 
+
         <Button
             android:id="@+id/fragment_auth_btn_sign_up"
             android:layout_width="260dp"

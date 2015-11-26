@@ -104,21 +104,6 @@ public class Card implements Comparable<Card>, Parcelable {
         mBackground = in.readString();
     }
 
-    @JsonCreator
-    Card(@JsonProperty("last_name")String lastName,
-         @JsonProperty("first_name")String firstName,
-         @JsonProperty("category_id") int categoryId,
-         @JsonProperty("card_id") int cardId,
-         @JsonProperty("avatar") String avatarUrl,
-         @JsonProperty("position") String position) {
-        this.id = cardId;
-        this.mFirstName = firstName;
-        this.mLastName = lastName;
-        this.mAvatar = avatarUrl;
-        this.mCategoryId = categoryId;
-        this.mPosition = position;
-    }
-
     public static final Creator<Card> CREATOR = new Creator<Card>() {
         @Override
         public Card createFromParcel(Parcel in) {
@@ -269,6 +254,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
+        editor.putBoolean(API_KEY_VISIBILITY, card.visible);
 
         editor.apply();
     }

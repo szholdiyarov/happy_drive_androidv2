@@ -24,11 +24,13 @@
     <style name="Widget.EditText"/>
     <style name="Widget.EditText.Auth">
         <item name="android:background">@color/app_white</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingTop">10dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColorHint">#acacac</item>
+        <item name="android:textSize">14sp</item>
+
     </style>
 </resources>

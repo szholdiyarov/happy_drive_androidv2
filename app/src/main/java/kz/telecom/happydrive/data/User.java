@@ -61,6 +61,7 @@ public class User {
         card.setFullDesc(other.getFullDesc());
         card.setAvatar(other.getAvatar());
         card.setBackground(other.getBackground());
+        card.visible = other.visible;
 
         Card.saveUserCard(card, getDefaultSharedPrefs());
 
