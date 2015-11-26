@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import kz.telecom.happydrive.BuildConfig;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.internal.NetworkResponse;
 import kz.telecom.happydrive.data.network.internal.OkHttpCallerWrapper;
@@ -180,7 +181,11 @@ public class NetworkManager {
             }
         });
 
-        picasso = new Picasso.Builder(context).downloader(new OkHttpDownloader(httpClient)).build();
+        picasso = new Picasso.Builder(context)
+                .downloader(new OkHttpDownloader(httpClient))
+                .loggingEnabled(BuildConfig.DEBUG)
+                .indicatorsEnabled(BuildConfig.DEBUG)
+                .build();
     }
 
 }

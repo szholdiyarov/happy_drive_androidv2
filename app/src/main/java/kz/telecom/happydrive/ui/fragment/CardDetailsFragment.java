@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import io.fabric.sdk.android.services.common.CommonUtils;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
@@ -134,7 +136,20 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                 });
                             }
                         }
-                    } catch (Exception ignored) {
+                    } catch (final Exception ignored) {
+                        final Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (ignored instanceof ApiResponseError && ((ApiResponseError) ignored)
+                                            .apiErrorCode == ApiResponseError.API_RESPONSE_CODE_CARD_INVISIBLE) {
+                                        Toast.makeText(activity, "Визитка закрыта из общего доступа",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
                     }
 
                     isCardUpdating = false;
@@ -275,8 +290,15 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 companyName.setVisibility(View.GONE);
             }
 
-            TextView phoneNumber = (TextView) view.findViewById(R.id.phone);
-            phoneNumber.setText(card.getPhone());
+            View phoneBlock = view.findViewById(R.id.phone_block);
+            if (!Utils.isEmpty(card.getPhone())) {
+                phoneBlock.setVisibility(View.GONE);
+                TextView phoneNumber = (TextView) phoneBlock.findViewById(R.id.phone);
+                phoneNumber.setText(card.getPhone());
+            } else {
+                phoneBlock.setVisibility(View.GONE);
+            }
+
 
             view.findViewById(R.id.phone_block).setOnClickListener(new View.OnClickListener() {
                 @Override
