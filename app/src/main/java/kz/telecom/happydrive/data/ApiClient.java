@@ -36,8 +36,9 @@ public class ApiClient {
     private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
     private static final String API_PATH_CARD_VISIBILITY = "card/visibility/";
     private static final String API_PATH_CARD_STARRED = "card/starred/";
-    private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
+    private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
+    private static final String API_PATH_FILE_DELETE = "files/file/delete/";
     private static final String API_PATH_COMMENTS_LIST = "comments/list/";
     private static final String API_PATH_COMMENTS_POST = "comments/add/";
 
@@ -122,8 +123,10 @@ public class ApiClient {
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
-            Card cCard = new Card((Map<String, Object>) getObjectMapper()
-                    .convertValue(response.result, Map.class).get("card"));
+            Map<String, Object> nodeMap = getObjectMapper()
+                    .convertValue(response.result, Map.class);
+            Card cCard = new Card((Map<String, Object>) nodeMap.get("card"),
+                    (List<FolderObject>) nodeMap.get(API_KEY_FOLDERS));
             cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
             return cCard;
         } catch (MalformedURLException e) {
@@ -141,7 +144,7 @@ public class ApiClient {
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
             for (Object o : arrayList) {
-                result.add(new Card((Map<String, Object>) o));
+                result.add(new Card((Map<String, Object>) o, new ArrayList<FolderObject>()));
             }
             return result;
         } catch (MalformedURLException e) {
@@ -162,7 +165,7 @@ public class ApiClient {
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
             for (Object o : arrayList) {
-                result.add(new Card((Map<String, Object>) o));
+                result.add(new Card((Map<String, Object>) o, new ArrayList<FolderObject>()));
             }
             return result;
         } catch (MalformedURLException e) {
@@ -354,6 +357,22 @@ public class ApiClient {
             }
 
             return result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static void deleteFile(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_DELETE);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FileObject.API_FILE_ID, fileId + "")
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }

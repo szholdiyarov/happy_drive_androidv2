@@ -17,6 +17,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.util.Utils;
 
@@ -24,6 +25,7 @@ import kz.telecom.happydrive.util.Utils;
  * Created by Galymzhan Sh on 10/29/15.
  */
 public class DrawerFragment extends BaseFragment {
+    private ImageView mBackgroundImageView;
     private ImageView mPhotoImageView;
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
@@ -39,6 +41,7 @@ public class DrawerFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         final NavigationView navi = (NavigationView) view.findViewById(R.id.fragment_main_navigation_view);
         View headerView = navi.inflateHeaderView(R.layout.layout_drawer_header);
+        mBackgroundImageView = (ImageView) headerView.findViewById(R.id.drawer_header_background_img);
         mPhotoImageView = (ImageView) headerView.findViewById(R.id.drawer_header_photo);
         mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
         mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
@@ -90,7 +93,7 @@ public class DrawerFragment extends BaseFragment {
         }
     }
 
-    private void updateHeaderState(Card card) {
+    private void updateHeaderState(final Card card) {
         String lastName = card.getLastName();
         String username = card.getFirstName();
         if (!Utils.isEmpty(lastName)) {
@@ -103,6 +106,27 @@ public class DrawerFragment extends BaseFragment {
 
         mUsernameTextView.setText(username);
         mEmailTextView.setText(card.getEmail());
+
+        if (!Utils.isEmpty(card.getAvatar()) ||
+                !Utils.isEmpty(card.getBackground())) {
+            mPhotoImageView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (!Utils.isEmpty(card.getAvatar())) {
+                        NetworkManager.getPicasso()
+                                .load(card.getAvatar())
+                                .error(R.drawable.user_photo)
+                                .placeholder(R.drawable.user_photo)
+                                .into(mPhotoImageView);
+                    }
+                    if (!Utils.isEmpty(card.getBackground())) {
+                        NetworkManager.getPicasso()
+                                .load(card.getBackground())
+                                .into(mBackgroundImageView);
+                    }
+                }
+            });
+        }
     }
 
     public interface Callback {

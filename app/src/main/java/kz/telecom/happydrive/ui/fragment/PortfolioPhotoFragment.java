@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.FileObject;
+import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
@@ -50,6 +52,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
 
     private boolean isUpdating = false;
     private PhotoAdapter mAdapter;
+    private Card mCard;
 
     public static BaseFragment newInstance(Card card) {
         Bundle bundle = new Bundle();
@@ -83,33 +86,39 @@ public class PortfolioPhotoFragment extends BaseFragment {
             updateItems();
         }
 
+        mCard = getArguments().getParcelable(EXTRA_CARD);
+
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setItems(new String[]{"Снять фото", "Из Галлереи", "Из облачного хранилища"},
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        try {
-                                            if (which == 0) {
-                                                Utils.openCamera(PortfolioPhotoFragment.this,
-                                                        Utils.tempFileWithNow(getContext()),
-                                                        INTENT_CODE_PHOTO_CAMERA);
-                                            } else if (which == 1) {
-                                                Utils.openGallery(PortfolioPhotoFragment.this, "", "image/*",
-                                                        INTENT_CODE_PHOTO_GALLERY);
-                                            } else {
+        if (User.currentUser().card.id != mCard.id) {
+            fab.setVisibility(View.GONE);
+        } else {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(getContext())
+                            .setItems(new String[]{"Снять фото", "Из Галлереи", "Из облачного хранилища"},
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            try {
+                                                if (which == 0) {
+                                                    Utils.openCamera(PortfolioPhotoFragment.this,
+                                                            Utils.tempFileWithNow(getContext()),
+                                                            INTENT_CODE_PHOTO_CAMERA);
+                                                } else if (which == 1) {
+                                                    Utils.openGallery(PortfolioPhotoFragment.this, "", "image/*",
+                                                            INTENT_CODE_PHOTO_GALLERY);
+                                                } else {
+                                                }
+                                            } catch (Exception e) {
+                                                Logger.e("TEST", e.getLocalizedMessage(), e);
                                             }
-                                        } catch (Exception e) {
-                                            Logger.e("TEST", e.getLocalizedMessage(), e);
                                         }
-                                    }
-                                }).show();
-            }
-        });
+                                    }).show();
+                }
+            });
+        }
 
         final GridView gridView = (GridView) view.findViewById(R.id.grid_view);
         gridView.setAdapter(mAdapter);
@@ -122,6 +131,71 @@ public class PortfolioPhotoFragment extends BaseFragment {
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+                new AlertDialog.Builder(getContext())
+                        .setItems(new String[]{"Удалить"},
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        try {
+                                            if (which == 0) {
+                                                deletePhoto((int) id);
+                                            }
+                                        } catch (Exception e) {
+                                            Logger.e("TEST", e.getLocalizedMessage(), e);
+                                        }
+                                    }
+                                }).show();
+
+                return true;
+            }
+        });
+    }
+
+    private void deletePhoto(final int fileId) {
+        final ProgressDialog dialog = new ProgressDialog(getContext());
+        dialog.setMessage("Удаление...");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    ApiClient.deleteFile(fileId);
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                                mAdapter.removeByFileId(fileId, true);
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    final Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                                if (e instanceof NoConnectionError) {
+                                    Toast.makeText(activity, "Нет подключения к интернету",
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(activity, "Произошла ошибка при удалении файла",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -154,19 +228,25 @@ public class PortfolioPhotoFragment extends BaseFragment {
                 boolean isSuccessful = false;
 
                 try {
-                    Map<String, List<ApiObject>> mapOfFolders =
-                            ApiClient.getFiles(User.currentUser().photoFolderId, true, null);
-                    List<ApiObject> apiObjects = mapOfFolders.get(ApiClient.API_KEY_FILES);
-                    if (apiObjects != null) {
-                        isSuccessful = true;
-                        List<FileObject> files = new ArrayList<>(apiObjects.size());
-                        for (ApiObject obj : apiObjects) {
-                            if (obj instanceof FileObject) {
-                                files.add((FileObject) obj);
-                            }
-                        }
+                    for (FolderObject fo : mCard.publicFolders) {
+                        if ("фотографии".equalsIgnoreCase(fo.name)) {
+                            Map<String, List<ApiObject>> mapOfFolders =
+                                    ApiClient.getFiles(fo.id, true, null);
+                            List<ApiObject> apiObjects = mapOfFolders.get(ApiClient.API_KEY_FILES);
+                            if (apiObjects != null) {
+                                isSuccessful = true;
+                                List<FileObject> files = new ArrayList<>(apiObjects.size());
+                                for (ApiObject obj : apiObjects) {
+                                    if (obj instanceof FileObject) {
+                                        files.add((FileObject) obj);
+                                    }
+                                }
 
-                        mAdapter.setItems(files, false);
+                                mAdapter.setItems(files, false);
+                            }
+
+                            break;
+                        }
                     }
                 } catch (Exception e) {
                     if (e instanceof NoConnectionError) {
@@ -230,9 +310,14 @@ public class PortfolioPhotoFragment extends BaseFragment {
                         public void run() {
                             boolean isSuccessful = false;
                             try {
-                                FileObject fileObject = ApiClient.uploadFile(User.currentUser().photoFolderId, file);
-                                mAdapter.addItem(fileObject, false);
-                                isSuccessful = true;
+                                for (FolderObject fo : mCard.publicFolders) {
+                                    if ("фотографии" .equalsIgnoreCase(fo.name)) {
+                                        FileObject fileObject = ApiClient.uploadFile(fo.id, file);
+                                        mAdapter.addItem(fileObject, false);
+                                        isSuccessful = true;
+                                        break;
+                                    }
+                                }
                             } catch (Exception e) {
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
@@ -287,6 +372,19 @@ public class PortfolioPhotoFragment extends BaseFragment {
             mItems.add(item);
             if (dispatchChanges) {
                 notifyDataSetChanged();
+            }
+        }
+
+        void removeByFileId(int fileId, boolean dispatchChanges) {
+            for (int i = 0, size = getCount(); i < size; i++) {
+                if (mItems.get(i).id == fileId) {
+                    mItems.remove(i);
+                    if (dispatchChanges) {
+                        notifyDataSetChanged();
+                    }
+
+                    break;
+                }
             }
         }
 

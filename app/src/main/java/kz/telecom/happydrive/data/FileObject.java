@@ -66,4 +66,16 @@ public class FileObject extends ApiObject {
         dest.writeLong(timestamp);
         dest.writeString(url);
     }
+
+    public static final Creator<FileObject> CREATOR = new Creator<FileObject>() {
+        @Override
+        public FileObject createFromParcel(Parcel in) {
+            return new FileObject(in);
+        }
+
+        @Override
+        public FileObject[] newArray(int size) {
+            return new FileObject[size];
+        }
+    };
 }

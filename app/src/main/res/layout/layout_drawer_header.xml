@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                tools:ignore="MissingPrefix">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/drawer_height"
+    android:background="@color/colorPrimary"
+    tools:ignore="MissingPrefix">
+
+    <ImageView
+        android:id="@+id/drawer_header_background_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/drawer_header_photo"
@@ -14,8 +20,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="@dimen/system_margin_16p"
-        android:fitsSystemWindows="true"
-        android:src="@drawable/user_photo"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/user_photo" />
 
     <TextView
         android:id="@+id/drawer_header_username"
@@ -26,7 +32,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="#fff"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/drawer_header_email"
@@ -38,5 +44,5 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="#fff"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 </RelativeLayout>

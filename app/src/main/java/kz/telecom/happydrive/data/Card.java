@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
@@ -58,11 +59,9 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mBackground;
     public boolean visible;
 
-    public Card(int id) {
-        this.id = id;
-    }
+    public final List<FolderObject> publicFolders;
 
-    public Card(Map<String, Object> data) {
+    public Card(Map<String, Object> data, List<FolderObject> folders) {
         if (data == null || !data.containsKey(API_KEY_CARD_ID)) {
             throw new IllegalArgumentException("data argument is null or it doesn't contain " +
                     API_KEY_CARD_ID + " value");
@@ -86,6 +85,23 @@ public class Card implements Comparable<Card>, Parcelable {
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
         visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
+
+        if (folders != null) {
+            publicFolders = folders;
+        } else {
+            publicFolders = new ArrayList<>(2);
+            int photoFolderId = Utils.getValue(Integer.class,
+                    UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, -1, data);
+            if (photoFolderId > 0) {
+                publicFolders.add(new FolderObject(photoFolderId, "Фотографии", true, 0));
+            }
+
+            int videoFolderId = Utils.getValue(Integer.class,
+                    UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, -1, data);
+            if (videoFolderId > 0) {
+                publicFolders.add(new FolderObject(videoFolderId, "Видеозаписи", true, 0));
+            }
+        }
     }
 
     protected Card(Parcel in) {
@@ -102,21 +118,8 @@ public class Card implements Comparable<Card>, Parcelable {
         mFullDesc = in.readString();
         mAvatar = in.readString();
         mBackground = in.readString();
-    }
-
-    @JsonCreator
-    Card(@JsonProperty("last_name")String lastName,
-         @JsonProperty("first_name")String firstName,
-         @JsonProperty("category_id") int categoryId,
-         @JsonProperty("card_id") int cardId,
-         @JsonProperty("avatar") String avatarUrl,
-         @JsonProperty("position") String position) {
-        this.id = cardId;
-        this.mFirstName = firstName;
-        this.mLastName = lastName;
-        this.mAvatar = avatarUrl;
-        this.mCategoryId = categoryId;
-        this.mPosition = position;
+        publicFolders = in.readArrayList(getClass()
+                .getClassLoader());
     }
 
     public static final Creator<Card> CREATOR = new Creator<Card>() {
@@ -252,6 +255,7 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mFullDesc);
         dest.writeString(mAvatar);
         dest.writeString(mBackground);
+        dest.writeList(publicFolders);
     }
 
     static void saveUserCard(Card card, SharedPreferences prefs) {
@@ -269,6 +273,14 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
+
+        for (FolderObject fo : card.publicFolders) {
+            if ("фотографии".equalsIgnoreCase(fo.name)) {
+                editor.putInt(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, fo.id);
+            } else if ("видеозаписи".equalsIgnoreCase(fo.name)) {
+                editor.putInt(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, fo.id);
+            }
+        }
 
         editor.apply();
     }

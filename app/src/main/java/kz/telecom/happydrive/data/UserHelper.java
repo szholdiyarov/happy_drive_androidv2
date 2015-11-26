@@ -140,8 +140,6 @@ class UserHelper {
     static void saveCredentials(User user, SharedPreferences prefs) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(API_USER_KEY_TOKEN, user.token);
-        editor.putInt(PREFS_KEY_PHOTO_FOLDER_ID, user.photoFolderId);
-        editor.putInt(PREFS_KEY_VIDEO_FOLDER_ID, user.videoFolderId);
         editor.apply();
     }
 

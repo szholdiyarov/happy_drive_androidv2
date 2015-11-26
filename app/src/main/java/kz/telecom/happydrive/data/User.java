@@ -37,8 +37,6 @@ public class User {
     public final Card card;
     @NonNull
     public final String token;
-    public final int photoFolderId;
-    public final int videoFolderId;
 
     @WorkerThread
     public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -182,10 +180,9 @@ public class User {
             throw new ResponseParseError("token is null");
         }
 
-        Card card = new Card((Map<String, Object>) rawData.get("card"));
-        int photoFolderId = (Integer) rawData.get(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID);
-        int videoFolderId = (Integer) rawData.get(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID);
-        return new User(token, card, photoFolderId, videoFolderId);
+        Card card = new Card((Map<String, Object>) rawData.get("card"),
+                (List<FolderObject>) rawData.get("folders"));
+        return new User(token, card);
     }
 
     protected static User initStaticUser(User user) {
@@ -206,11 +203,9 @@ public class User {
         sUser = null;
     }
 
-    private User(String token, Card card, int photoFolderId, int videoFolderId) {
+    private User(String token, Card card) {
         this.token = token;
         this.card = card;
-        this.photoFolderId = photoFolderId;
-        this.videoFolderId = videoFolderId;
     }
 
     public static class SignedInEvent {

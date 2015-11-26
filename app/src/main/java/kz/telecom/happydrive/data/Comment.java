@@ -3,6 +3,7 @@ package kz.telecom.happydrive.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -35,6 +36,7 @@ public class Comment {
         this.text = node.get(API_TEXT).asText(null);
         this.date = node.get(API_DATE).asText(null);
         this.author = new Card(ApiClient.getObjectMapper()
-                .convertValue(node.get(API_AUTHOR), Map.class));
+                .convertValue(node.get(API_AUTHOR), Map.class),
+                new ArrayList<FolderObject>());
     }
 }

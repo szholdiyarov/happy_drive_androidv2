@@ -533,6 +533,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                 NetworkManager.getPicasso().invalidate(invalidateKey);
                                                 imageView.setImageURI(Uri.fromFile(file));
                                             }
+
+                                            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
                                         }
                                     }
                                 });

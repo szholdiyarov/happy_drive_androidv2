@@ -60,4 +60,16 @@ public class FolderObject extends ApiObject {
         dest.writeInt(isPublic ? 1 : 0);
         dest.writeLong(timestamp);
     }
+
+    public static final Creator<FolderObject> CREATOR = new Creator<FolderObject>() {
+        @Override
+        public FolderObject createFromParcel(Parcel in) {
+            return new FolderObject(in);
+        }
+
+        @Override
+        public FolderObject[] newArray(int size) {
+            return new FolderObject[size];
+        }
+    };
 }
