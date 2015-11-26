@@ -45,10 +45,8 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         if (savedInstanceState == null) {
             User user = User.currentUser();
             if (user != null) {
-                replaceContent(Utils.isEmpty(user.card.getFirstName()) ?
-                                CardDetailsFragment.newInstance(user.card) :
-                                MainFragment.newInstance(user.card),
-                        false, FragmentTransaction.TRANSIT_NONE);
+                replaceContent(MainFragment.newInstance(user.card), false,
+                        FragmentTransaction.TRANSIT_NONE);
             }
         }
     }
