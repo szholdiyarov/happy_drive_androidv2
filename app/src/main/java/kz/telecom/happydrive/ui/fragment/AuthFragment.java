@@ -20,6 +20,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -82,6 +84,8 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         loginButton.setReadPermissions("email");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, this);
+
+//        loginButton.
         // Set appropriate icon size.
         Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.com_facebook_button_icon);
         drawable.setBounds(0, 0, (int) (drawable.getIntrinsicWidth() * 1.45F),
@@ -136,6 +140,10 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                try {
+                                    LoginManager.getInstance().logOut();
+                                } catch (Exception e) {
+                                }
                                 if (e instanceof NoConnectionError) {
                                     Snackbar.make(view, R.string.no_connection, Snackbar.LENGTH_LONG)
                                             .setAction(R.string.retry, new View.OnClickListener() {

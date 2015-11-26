@@ -114,7 +114,7 @@ class UserHelper {
     }
 
     static JsonNode changeBackground(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
-        return uploadFile(file, API_PATH_UPDATE_AVATAR, "Image-Type");
+        return uploadFile(file, API_PATH_UPDATE_BACKGROUND, "Image-Type");
     }
 
     private static JsonNode uploadFile(File file, String path, String headerName)

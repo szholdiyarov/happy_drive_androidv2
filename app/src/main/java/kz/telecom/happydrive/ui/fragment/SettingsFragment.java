@@ -1,29 +1,17 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-
-import com.facebook.login.LoginManager;
-
+import android.widget.ImageButton;
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.ApiClient;
-import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.data.*;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
+import kz.telecom.happydrive.ui.ChangePasswordActivity;
 
 /**
  * Created by darkhan on 24.11.15.
@@ -33,8 +21,6 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
     private ImageButton ibShow;
 
-    // TODO: Tell backend to add API for current visibility status.
-    @Deprecated
     private boolean visible = true;
 
     @Override
@@ -56,7 +42,28 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         ibShow = (ImageButton) view.findViewById(R.id.ibShow);
         ibShow.setOnClickListener(this);
         view.findViewById(R.id.tvExit).setOnClickListener(this);
+        view.findViewById(R.id.tvChangePwd).setOnClickListener(this);
+        visible = User.currentUser().card.visible;
+        int newImage = visible ? R.drawable.btn_switch_pressed : R.drawable.btn_switch_normal;
+        ibShow.setImageResource(newImage);
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Card mCard = ApiClient.getCard(User.currentUser().card.id);
+//                    visible = mCard.visible;
+//                    BaseActivity activity = (BaseActivity) getActivity();
+//                    activity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                        }
+//                    });
+//                } catch (Exception e) {
+//                }
+//            }
+//        }.start();
     }
+
 
     @Override
     public void onClick(View v) {
@@ -87,14 +94,10 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 }.start();
                 break;
             case R.id.tvExit:
-                User.currentUser().signOut();
-                ((BaseActivity)getActivity()).onUserSignedOut(null);
-                try {
-                    LoginManager.getInstance().logOut();
-                } catch (Exception ignored) {
-                }
-
+                DataManager.getInstance().bus.post(new User.SignedOutEvent());
                 break;
+            case R.id.tvChangePwd:
+                getActivity().startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
             default:
                 break;
         }

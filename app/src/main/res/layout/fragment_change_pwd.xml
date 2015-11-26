@@ -5,14 +5,14 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <include
+<include
         layout="@layout/layout_toolbar_auth"/>
 
-    <ScrollView
+<ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -23,37 +23,49 @@
             android:paddingTop="40dp"
             tools:ignore="MissingPrefix">
 
-            <EditText
-                android:id="@+id/fragment_sign_up_et_email"
+        <EditText
+                android:id="@+id/etOldPassword"
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="252dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/sign_up_hint_email"
-                android:inputType="text|textEmailAddress"/>
+                android:hint="@string/change_pwd_hint_password1"
+                android:inputType="text|textPassword"/>
 
-            <android.support.v4.widget.Space
+        <android.support.v4.widget.Space
                 android:layout_width="0px"
                 android:layout_height="8dp"/>
 
-            <EditText
-                android:id="@+id/fragment_sign_up_et_password"
+        <EditText
+                android:id="@+id/etPassword1"
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="252dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/sign_up_hint_password"
+                android:hint="@string/change_pwd_hint_password2"
                 android:inputType="text|textPassword"/>
 
-            <android.support.v4.widget.Space
+        <android.support.v4.widget.Space
                 android:layout_width="0px"
                 android:layout_height="16dp"/>
 
-            <Button
-                android:id="@+id/fragment_sign_up_btn"
+        <EditText
+                android:id="@+id/etPassword2"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="252dp"
+                android:layout_height="wrap_content"
+                android:hint="Повторите новый пароль"
+                android:inputType="text|textPassword"/>
+
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="16dp"/>
+
+        <Button
+                android:id="@+id/bChangePassword"
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:text="@string/auth_sign_up"
-                android:textAllCaps="false"
+                android:text="Сменить"
                 android:textColor="@color/app_white"/>
-        </LinearLayout>
-    </ScrollView>
+
+    </LinearLayout>
+</ScrollView>
 </LinearLayout>

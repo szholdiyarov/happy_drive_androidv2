@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+<<<<<<< HEAD
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,4 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.getSupportActionBar().setTitle(mFileObject.name);
     }
-
-
 }

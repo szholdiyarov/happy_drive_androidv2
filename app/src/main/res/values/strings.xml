@@ -10,12 +10,14 @@
     <string name="retry">Повторить</string>
 
     <!-- auth -->
-    <string name="auth_sign_in">войти по e-mail</string>
-    <string name="auth_sign_up">регистрация</string>
+    <string name="auth_sign_in">Войти по Е-mail</string>
+    <string name="auth_sign_up">Регистрация</string>
 
     <string name="sign_up_title">Регистрация</string>
     <string name="sign_up_hint_email">E-mail</string>
     <string name="sign_up_hint_password">Пароль</string>
+    <string name="change_pwd_hint_password1">Текущий пароль</string>
+    <string name="change_pwd_hint_password2">Новый пароль</string>
     <string name="sign_up_user_already_taken">Пользователь с таким e-mail уже существует</string>
     <string name="sign_up_user_cred_invalid">Неправильно указан e-mail или пароль</string>
 
@@ -23,14 +25,14 @@
     <string name="sign_in_title">Войти по E-mail</string>
     <string name="sign_in_hint_email">@string/sign_up_hint_email</string>
     <string name="sign_in_hint_password">@string/sign_up_hint_password</string>
-    <string name="sign_in_password_recovery"><u>Забыли пароль?</u></string>
-    <string name="sign_in_btn">войти</string>
+    <string name="sign_in_password_recovery">Забыли пароль?</string>
+    <string name="sign_in_btn">Войти</string>
     <string name="sign_in_sign_up">Не зарегистрированы? <u>Регистрация</u></string>
     <string name="sign_in_user_cred_invalid">Неправильно указан e-mail или пароль</string>
 
     <string name="password_recovery_title">Восстановление пароля</string>
     <string name="password_recovery_hint_email">E-mail</string>
-    <string name="password_recovery_btn">отправить</string>
+    <string name="password_recovery_btn">Отправить</string>
     <string name="password_recovery_successful_msg">На указанную вами электронную почту отправлено
         письмо с дальнейшими инструкциями для восстановления пароля</string>
 
@@ -44,6 +46,7 @@
     <string name="action_about">О приложении</string>
     <string name="action_exit">Выйти</string>
     <string name="action_hide">Показать визитку</string>
+    <string name="action_change_pwd">Сменить пароль</string>
 
 
     <string name="title_activity_login">LoginActivity</string>

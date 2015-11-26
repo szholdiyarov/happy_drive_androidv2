@@ -29,6 +29,8 @@ import kz.telecom.happydrive.util.Utils;
 public class User {
     @SuppressWarnings("unused")
     private static final String PREFS_NAME = "hd.user";
+    public static final String API_KEY_CURRENT_PASSWORD = "current_password";
+    public static final String API_KEY_NEW_PASSWORD = "new_password";
 
     private static User sUser;
     @NonNull
