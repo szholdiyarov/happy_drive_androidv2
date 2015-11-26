@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.*;
-import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.ChangePasswordActivity;
 

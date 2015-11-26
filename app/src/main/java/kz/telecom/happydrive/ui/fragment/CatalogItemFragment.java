@@ -173,6 +173,7 @@ public class CatalogItemFragment extends BaseFragment {
                 String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
                 NetworkManager.getPicasso().load(tempAvatarUrl)
                         .fit()
+                        .transform(new Utils.RoundedTransformation(10, 0))
                         .error(R.drawable.user_photo)
                         .placeholder(R.drawable.user_photo)
                         .into(imageView);
