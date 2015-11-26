@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
@@ -72,6 +74,10 @@ public class PortfolioPhotoFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        BaseActivity activity = (BaseActivity) getActivity();
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activity.getSupportActionBar().setTitle("Фотографии");
+
         if (mAdapter == null) {
             mAdapter = new PhotoAdapter(null);
             updateItems();
@@ -110,6 +116,10 @@ public class PortfolioPhotoFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FileObject fileObject = (FileObject) mAdapter.getItem(position);
+                ((BaseActivity) getActivity()).replaceContent(
+                        PortfolioPhotoDetailsFragment.newInstance(fileObject), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
     }
