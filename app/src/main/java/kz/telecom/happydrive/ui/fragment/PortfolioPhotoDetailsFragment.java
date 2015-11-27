@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -32,6 +34,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -265,15 +268,18 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                     public void run() {
                         final boolean isOwner = User.currentUser().card.compareTo(comment.author) == 0;
                         final String tempUrl = "http://hd.todo.kz/card/download/avatar/" + comment.author.id;
+                        DisplayMetrics dm = getResources().getDisplayMetrics();
                         NetworkManager.getGlide()
                                 .load(tempUrl)
                                 .signature(isOwner ? GlideCacheSignature.ownerAvatarKey(tempUrl)
                                         : GlideCacheSignature.foreignCacheKey(tempUrl))
+                                .bitmapTransform(new CenterCrop(getContext()),
+                                        new GlideRoundedCornersTransformation(getContext(),
+                                                Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                                 .error(R.drawable.user_photo)
                                 .placeholder(R.drawable.user_photo)
                                 .override(imageView.getWidth(),
                                         imageView.getHeight())
-                                .centerCrop()
                                 .into(imageView);
                     }
                 });

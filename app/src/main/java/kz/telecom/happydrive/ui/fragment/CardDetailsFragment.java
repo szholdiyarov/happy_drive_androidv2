@@ -156,6 +156,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     if (imageUrl != null && photoBlockImageView != null) {
                                         NetworkManager.getGlide()
                                                 .load(imageUrl)
+                                                .placeholder(R.drawable.image_album)
+                                                .error(R.drawable.image_album)
                                                 .into(photoBlockImageView);
                                     }
                                 }

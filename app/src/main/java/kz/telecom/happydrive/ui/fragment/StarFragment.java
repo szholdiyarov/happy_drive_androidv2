@@ -6,11 +6,14 @@ import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
@@ -20,6 +23,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
@@ -160,12 +164,15 @@ public class StarFragment extends BaseFragment {
                     @Override
                     public void run() {
                         String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
+                        DisplayMetrics dm = getResources().getDisplayMetrics();
                         NetworkManager.getGlide()
                                 .load(tempAvatarUrl)
                                 .signature(GlideCacheSignature.foreignCacheKey(tempAvatarUrl))
                                 .override(imageView.getWidth(),
                                         imageView.getHeight())
-                                .centerCrop()
+                                .bitmapTransform(new CenterCrop(getContext()),
+                                        new GlideRoundedCornersTransformation(getContext(),
+                                                Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                                 .error(R.drawable.user_photo)
                                 .placeholder(R.drawable.user_photo)
                                 .into(imageView);
