@@ -13,10 +13,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,19 +34,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.signature.StringSignature;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import io.fabric.sdk.android.services.common.CommonUtils;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.FileObject;
+import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
@@ -52,6 +62,7 @@ import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
@@ -67,6 +78,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     private static final int INTENT_CODE_BACKGROUND_GALLERY = 40004;
 
     private View stubView;
+    private ImageView photoBlockImageView;
     private Card mCard;
     private boolean isCardUpdating = false;
 
@@ -118,27 +130,36 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                         if (user.card.compareTo(mCard) == 0) {
                             if (user.updateCard()) {
                                 mCard = user.card;
-                                Activity activity = getActivity();
-                                if (activity != null) {
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(user.card));
-                                        }
-                                    });
-                                }
                             }
                         } else {
                             mCard = ApiClient.getCard(mCard.id);
-                            Activity activity = getActivity();
-                            if (activity != null) {
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
-                                    }
-                                });
+                        }
+
+                        String url = null;
+                        for (FolderObject fo : mCard.publicFolders) {
+                            if ("фотографии" .equalsIgnoreCase(fo.name)) {
+                                try {
+                                    url = getFirstImageUrl(fo.id);
+                                } catch (Exception ignored) {
+                                }
+                                break;
                             }
+                        }
+
+                        final String imageUrl = url;
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                    if (imageUrl != null && photoBlockImageView != null) {
+                                        NetworkManager.getGlide()
+                                                .load(imageUrl)
+                                                .into(photoBlockImageView);
+                                    }
+                                }
+                            });
                         }
                     } catch (final Exception ignored) {
                         final Activity activity = getActivity();
@@ -162,6 +183,21 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         updateView(view, mCard);
+    }
+
+    @WorkerThread
+    private String getFirstImageUrl(final int folderId) throws Exception {
+        Map<String, List<ApiObject>> dir = ApiClient.getFiles(folderId, true, null);
+        List<ApiObject> files = dir.get(ApiClient.API_KEY_FILES);
+        if (files != null && files.size() > 0) {
+            for (ApiObject obj : files) {
+                if (!obj.isFolder()) {
+                    return ((FileObject) obj).url;
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -397,13 +433,18 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 userPhoto.post(new Runnable() {
                     @Override
                     public void run() {
+                        DisplayMetrics dm = getResources().getDisplayMetrics();
                         NetworkManager.getGlide()
                                 .load(card.getAvatar())
                                 .signature(card.compareTo(User.currentUser().card) == 0 ?
                                         GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
                                         GlideCacheSignature.foreignCacheKey(card.getAvatar()))
+                                .bitmapTransform(new CenterCrop(getContext()),
+                                        new GlideRoundedCornersTransformation(getContext(),
+                                                Utils.dipToPixels(6f, dm), Utils.dipToPixels(1f, dm)))
                                 .override(userPhoto.getWidth(), userPhoto.getHeight())
-                                .centerCrop()
+                                .skipMemoryCache(true)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .error(drawable)
                                 .placeholder(drawable)
                                 .into(userPhoto);
@@ -421,6 +462,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             view.findViewById(R.id.portfolio_text).setVisibility(View.VISIBLE);
             view.findViewById(R.id.portfolio_block).setVisibility(View.VISIBLE);
         }
+
+        photoBlockImageView = (ImageView) view.findViewById(R.id.portfolio_photo);
     }
 
     @Override

@@ -120,7 +120,7 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                                             imageView.setImage(ImageSource.bitmap(resource));
                                         }
                                     });
-                            
+
                             mListView.addHeaderView(headerView);
 
                             View footerView = inflater.inflate(R.layout.portfolio_photo_footer, mListView, false);

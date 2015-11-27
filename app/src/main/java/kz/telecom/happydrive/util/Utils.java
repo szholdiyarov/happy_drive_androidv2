@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,6 +126,10 @@ public class Utils {
         }
 
         return fallback;
+    }
+
+    public static int dipToPixels(float dp, DisplayMetrics dm) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, dm);
     }
 
     private Utils() {
