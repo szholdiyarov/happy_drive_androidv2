@@ -7,7 +7,6 @@ import com.bumptech.glide.signature.StringSignature;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import kz.telecom.happydrive.util.Logger;
 
 /**
  * Created by shgalym on 11/27/15.
@@ -38,13 +37,11 @@ public class GlideCacheSignature {
     public static StringSignature foreignCacheKey(String base) {
         if (System.currentTimeMillis() > sCacheSignature.previousCacheTime + DEFAULT_FOREIGN_CACHE_TIME) {
             sCacheSignature.previousCacheTime = System.currentTimeMillis();
-            sCacheSignature.foreginCacheIncrementer.incrementAndGet();
-            if (sCacheSignature.foreginCacheIncrementer.get() > 10000) {
+            if (sCacheSignature.foreginCacheIncrementer.incrementAndGet() > 10000) {
                 sCacheSignature.foreginCacheIncrementer.set(0);
             }
             sCacheSignature.sharedPrefs.edit().putInt(PREFS_FOREIGN_KEY,
                     sCacheSignature.foreginCacheIncrementer.get()).apply();
-            Logger.i("TEST", "foreign cache incremented");
         }
 
         return new StringSignature(base + sCacheSignature.foreginCacheIncrementer.get());
