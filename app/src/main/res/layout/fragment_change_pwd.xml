@@ -20,13 +20,13 @@
             android:paddingBottom="16dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="40dp"
+            android:paddingTop="30dp"
             tools:ignore="MissingPrefix">
 
         <EditText
                 android:id="@+id/etOldPassword"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password1"
                 android:inputType="text|textPassword"/>
@@ -38,22 +38,23 @@
         <EditText
                 android:id="@+id/etPassword1"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password2"
                 android:inputType="text|textPassword"/>
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
-                android:layout_height="16dp"/>
+                android:layout_height="8dp"/>
 
         <EditText
                 android:id="@+id/etPassword2"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="Повторите новый пароль"
-                android:inputType="text|textPassword"/>
+                android:inputType="text|textPassword"
+                />
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
@@ -63,6 +64,7 @@
                 android:id="@+id/bChangePassword"
                 android:layout_width="260dp"
                 android:layout_height="wrap_content"
+                android:textAllCaps="false"
                 android:text="Сменить"
                 android:textColor="@color/app_white"/>
 

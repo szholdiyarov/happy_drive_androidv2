@@ -2,14 +2,18 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.*;
-import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.ApiClient;
+import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.ChangePasswordActivity;
 
@@ -34,6 +38,13 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         return inflater.inflate(R.layout.fragment_settings, parent, false);
     }
 
+    @MainThread
+    private void disableProgressBar() {
+        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_settings_progress_bar);
+        progressBar.setVisibility(View.GONE);
+        getView().findViewById(R.id.main_linear_layout).setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
@@ -46,22 +57,25 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         visible = User.currentUser().card.visible;
         int newImage = visible ? R.drawable.btn_switch_pressed : R.drawable.btn_switch_normal;
         ibShow.setImageResource(newImage);
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Card mCard = ApiClient.getCard(User.currentUser().card.id);
-//                    visible = mCard.visible;
-//                    BaseActivity activity = (BaseActivity) getActivity();
-//                    activity.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                }
-//            }
-//        }.start();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Card mCard = ApiClient.getCard(User.currentUser().card.id);
+                    User.currentUser().card.visible = mCard.visible;
+                    visible = mCard.visible;
+                } catch (Exception e) {
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int newImage = visible ? R.drawable.btn_switch_pressed : R.drawable.btn_switch_normal;
+                        ibShow.setImageResource(newImage);
+                        disableProgressBar();
+                    }
+                });
+            }
+        }.start();
     }
 
 

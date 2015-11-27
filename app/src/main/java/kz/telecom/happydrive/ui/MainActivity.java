@@ -83,6 +83,13 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 replaceContent(new SettingsFragment(), true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
+            case R.id.action_help:
+                replaceContent(new HelpFragment(), true,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                break;
+            case R.id.action_about:
+                this.startActivity(new Intent(this, AboutActivity.class));
+                break;
             default:
                 break;
         }

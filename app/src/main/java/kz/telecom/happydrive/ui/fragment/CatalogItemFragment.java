@@ -14,13 +14,12 @@ import android.widget.*;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
-import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class CatalogItemFragment extends BaseFragment {
     private int categoryId;
     private String categoryName;
 
-    @Deprecated
     private List<Card> starredCards = new ArrayList<>();
 
     @Override
@@ -91,10 +89,8 @@ public class CatalogItemFragment extends BaseFragment {
             public void run() {
                 try {
                     starredCards = ApiClient.getStars();
-                } catch (NoConnectionError noConnectionError) {
-                    noConnectionError.printStackTrace();
-                } catch (ApiResponseError apiResponseError) {
-                    apiResponseError.printStackTrace();
+                } catch (Exception e) {
+                    Logger.d("getStars API failed", e.getMessage());
                 }
                 try {
                     final List<Card> data = ApiClient.getCategoryCards(categoryId);

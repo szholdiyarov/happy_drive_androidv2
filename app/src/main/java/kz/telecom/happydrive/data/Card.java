@@ -9,13 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -282,6 +275,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
+        editor.putBoolean(API_KEY_VISIBILITY, card.visible);
 
         for (FolderObject fo : card.publicFolders) {
             if ("фотографии".equalsIgnoreCase(fo.name)) {

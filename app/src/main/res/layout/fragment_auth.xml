@@ -33,6 +33,7 @@
             android:layout_width="0px"
             android:layout_height="30dp"/>
 
+
         <TextView
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="255dp"
@@ -41,19 +42,22 @@
                 android:text="Войти через..."
                 android:paddingBottom="3dp"
                 android:textColor="@color/app_white"/>
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="3dp"/>
 
         <com.facebook.login.widget.LoginButton
                 android:id="@+id/login_button"
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
-                android:paddingTop="11sp"
+                android:paddingTop="12sp"
                 android:paddingBottom="11sp"/>
 
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
-                android:layout_height="6dp"/>
+                android:layout_height="12dp"/>
 
         <com.google.android.gms.common.SignInButton
                 android:id="@+id/google_login_button"
@@ -74,6 +78,11 @@
             android:textColor="@color/app_white"
             android:textAllCaps="false"
             android:textSize="15sp"/>
+
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="3dp"/>
+
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_up"

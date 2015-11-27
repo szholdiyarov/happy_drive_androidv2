@@ -110,7 +110,6 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                             View headerView = inflater.inflate(R.layout.portfolio_photo_header, mListView, false);
                             final SubsamplingScaleImageView imageView = (SubsamplingScaleImageView)
                                     headerView.findViewById(R.id.portfolio_photo_header_image_view);
-                            imageView.setImage(ImageSource.uri(mFileObject.url));
                             NetworkManager.getGlide()
                                     .load(mFileObject.url)
                                     .asBitmap()

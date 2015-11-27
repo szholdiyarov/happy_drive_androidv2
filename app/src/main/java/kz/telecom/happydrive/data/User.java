@@ -64,6 +64,7 @@ public class User {
         card.setFullDesc(other.getFullDesc());
         card.setAvatar(other.getAvatar());
         card.setBackground(other.getBackground());
+        card.visible = other.visible;
 
         card.publicFolders.clear();
         card.publicFolders.addAll(other.publicFolders);
