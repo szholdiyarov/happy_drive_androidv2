@@ -5,6 +5,8 @@ import android.support.v7.widget.AppCompatButton;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.parse.Parse;
+import com.parse.ParseInstallation;
 
 import io.fabric.sdk.android.Fabric;
 import kz.telecom.happydrive.data.DataManager;
@@ -20,6 +22,9 @@ public class HappyDriveApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Parse.initialize(this, "1WwMUe8XF7XU3BEoaWnfw5w8d3MnRJDRaXTDZCrW", "I8cyLdx3K9Pfm5usuDWL5a15YTN6eDI2WlMfo3Wo");
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
         Fabric.with(this, new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder()
                         .disabled(BuildConfig.DEBUG)

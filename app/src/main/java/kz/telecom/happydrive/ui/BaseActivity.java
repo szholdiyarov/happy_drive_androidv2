@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.parse.ParseInstallation;
 import com.squareup.otto.Subscribe;
 
 import java.lang.annotation.Retention;
@@ -52,7 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         busEventListener = new Object() {
-
             @Subscribe
             @SuppressWarnings("unused")
             public void onUserSignedOut(User.SignedOutEvent ignored) {
@@ -71,6 +71,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         try {
+            ParseInstallation.getCurrentInstallation().remove("email");
+            ParseInstallation.getCurrentInstallation().saveInBackground();
             LoginManager.getInstance().logOut();
         } catch (Exception ignored) {
         }

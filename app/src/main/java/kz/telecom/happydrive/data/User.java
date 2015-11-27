@@ -9,6 +9,11 @@ import android.support.annotation.WorkerThread;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.PushService;
+import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,6 +153,9 @@ public class User {
         SharedPreferences prefs = getDefaultSharedPrefs();
         UserHelper.saveCredentials(user, prefs);
         Card.saveUserCard(user.card, prefs);
+        ParseInstallation.getCurrentInstallation()
+                .put("email", isSocial ? rawData.get("login") : arg1);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
         return initStaticUser(user);
     }
 
