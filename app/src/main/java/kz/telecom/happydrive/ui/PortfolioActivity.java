@@ -4,13 +4,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.PortfolioPhotoFragment;
 
 /**
@@ -41,7 +38,6 @@ public class PortfolioActivity extends BaseActivity {
                     false, FragmentTransaction.TRANSIT_NONE);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.ui.BaseActivity;
@@ -23,7 +24,6 @@ import java.util.List;
  * Created by Galymzhan Sh on 11/15/15.
  */
 public class CatalogFragment extends BaseFragment {
-
     private ListView listView;
     private CatalogAdapter adapter;
 
@@ -50,12 +50,13 @@ public class CatalogFragment extends BaseFragment {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                Category category = (Category) adapter.getItem(i);
                 Bundle bundle = new Bundle();
-                bundle.putInt("categoryId", ((Category) adapter.getItem(i)).id);
-                bundle.putString("categoryName", ((Category) adapter.getItem(i)).name);
+                bundle.putInt("categoryId", category.id);
+                bundle.putString("categoryName", category.name);
                 CatalogItemFragment catalogItemFragment = new CatalogItemFragment();
                 catalogItemFragment.setArguments(bundle);
-                ((BaseActivity)getActivity()).replaceContent(catalogItemFragment, true,
+                ((BaseActivity) getActivity()).replaceContent(catalogItemFragment, false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
@@ -80,7 +81,7 @@ public class CatalogFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (Category c: data) {
+                                for (Category c : data) {
                                     adapter.data.add(c);
                                 }
                                 adapter.notifyDataSetChanged();
@@ -155,6 +156,4 @@ public class CatalogFragment extends BaseFragment {
             return vi;
         }
     }
-
-
 }

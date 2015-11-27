@@ -17,11 +17,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
-import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
@@ -236,15 +234,13 @@ public class StarFragment extends BaseFragment {
     };
 
     private View.OnClickListener cardClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             int position = listView.getPositionForView(v);
             BaseActivity activity = (BaseActivity) getActivity();
             Card card = (Card) adapter.getItem(position);
-            activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            activity.replaceContent(CardDetailsFragment.newInstance(card),
+                    false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
-
-
 }

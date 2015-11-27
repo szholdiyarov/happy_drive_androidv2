@@ -73,8 +73,8 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                ((BaseActivity) getActivity()).replaceContent(
-                        new SignUpFragment(), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ((BaseActivity) getActivity()).replaceContent(new SignUpFragment(),
+                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         };
 
@@ -113,7 +113,8 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                     mPasswordEditText.getText().toString());
         } else if (viewId == R.id.fragment_sign_in_tv_password_recovery) {
             ((BaseActivity) getActivity()).replaceContent(
-                    new PasswordRecoveryFragment(), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    new PasswordRecoveryFragment(), true,
+                    FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     }
 

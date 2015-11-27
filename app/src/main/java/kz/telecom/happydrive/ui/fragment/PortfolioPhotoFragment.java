@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -127,7 +126,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FileObject fileObject = (FileObject) mAdapter.getItem(position);
                 ((BaseActivity) getActivity()).replaceContent(
-                        PortfolioPhotoDetailsFragment.newInstance(fileObject), true,
+                        PortfolioPhotoDetailsFragment.newInstance(fileObject), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });

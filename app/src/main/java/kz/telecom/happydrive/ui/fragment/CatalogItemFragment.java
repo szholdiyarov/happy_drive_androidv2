@@ -34,7 +34,6 @@ import java.util.List;
  * Created by Galymzhan Sh on 11/15/15.
  */
 public class CatalogItemFragment extends BaseFragment {
-
     private ListView listView;
     private ItemAdapter adapter;
     private int categoryId;
@@ -85,7 +84,6 @@ public class CatalogItemFragment extends BaseFragment {
         ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
         progressBar.setVisibility(View.GONE);
     }
-
 
     private void loadData() {
         new Thread() {
@@ -268,9 +266,8 @@ public class CatalogItemFragment extends BaseFragment {
             int position = listView.getPositionForView(v);
             BaseActivity activity = (BaseActivity) getActivity();
             Card card = (Card) adapter.getItem(position);
-            activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            activity.replaceContent(CardDetailsFragment.newInstance(card),
+                    false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
-
-
 }

@@ -10,11 +10,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.*;
-import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
@@ -51,7 +48,6 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -61,30 +57,30 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
     public boolean onDrawerMenuItemSelected(int itemId) {
         if (itemId == R.id.action_main) {
             if (!(findDefaultContent() instanceof MainFragment)) {
-                replaceContent(MainFragment.newInstance(User.currentUser().card), true,
+                replaceContent(MainFragment.newInstance(User.currentUser().card), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         } else if (itemId == R.id.action_card) {
             if (!(findDefaultContent() instanceof CardDetailsFragment)) {
-                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), true,
+                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         }
         switch (itemId) {
             case R.id.action_catalog:
-                replaceContent(new CatalogFragment(), true,
+                replaceContent(new CatalogFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             case R.id.action_favourite:
-                replaceContent(new StarFragment(), true,
+                replaceContent(new StarFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             case R.id.action_settings:
-                replaceContent(new SettingsFragment(), true,
+                replaceContent(new SettingsFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             case R.id.action_help:
-                replaceContent(new HelpFragment(), true,
+                replaceContent(new HelpFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 break;
             case R.id.action_about:

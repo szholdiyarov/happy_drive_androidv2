@@ -20,12 +20,9 @@ import kz.telecom.happydrive.ui.fragment.ChangePasswordFragment;
  * Created by darkhan on 25.11.15.
  */
 public class AboutActivity extends BaseActivity {
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
@@ -35,16 +32,13 @@ public class AboutActivity extends BaseActivity {
         setContentView(R.layout.activity_about);
 
         if (savedInstanceState == null) {
-            replaceContent(new AboutFragment(), false, FragmentTransaction.TRANSIT_NONE);
+            replaceContent(new AboutFragment(),
+                    false, FragmentTransaction.TRANSIT_NONE);
         }
-
-
     }
 
     @Override
     protected int getDefaultContentViewContainerId() {
         return R.id.activity_about_container;
     }
-
-
 }
