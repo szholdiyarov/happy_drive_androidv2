@@ -50,15 +50,11 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
         MainActivity activity = (MainActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        activity.getDrawerToggle().setDrawerIndicatorEnabled(true);
-        activity.getDrawerToggle().syncState();
-
-        final Card card = getArguments().getParcelable(EXTRA_CARD);
 
         TextView usernameTextView = (TextView) view.findViewById(R.id.user_name);
         TextView positionTextView = (TextView) view.findViewById(R.id.user_position);
 
+        final Card card = getArguments().getParcelable(EXTRA_CARD);
         String lastName = card.getLastName();
         String username = card.getFirstName();
         if (!Utils.isEmpty(lastName)) {

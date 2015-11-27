@@ -45,9 +45,6 @@ public class CatalogItemFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Bundle bundle = this.getArguments();
-        categoryId = bundle.getInt("categoryId");
-        categoryName = bundle.getString("categoryName");
     }
 
     @Override
@@ -57,10 +54,14 @@ public class CatalogItemFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Bundle bundle = this.getArguments();
+        categoryId = bundle.getInt("categoryId");
+        categoryName = bundle.getString("categoryName");
+
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(categoryName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
@@ -255,19 +256,17 @@ public class CatalogItemFragment extends BaseFragment {
                     }
                 }
             }.start();
-
         }
     };
 
     private View.OnClickListener cardClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             int position = listView.getPositionForView(v);
             BaseActivity activity = (BaseActivity) getActivity();
             Card card = (Card) adapter.getItem(position);
             activity.replaceContent(CardDetailsFragment.newInstance(card),
-                    false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
 }

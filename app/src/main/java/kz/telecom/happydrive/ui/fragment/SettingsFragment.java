@@ -21,8 +21,6 @@ import kz.telecom.happydrive.ui.ChangePasswordActivity;
  * Created by darkhan on 24.11.15.
  */
 public class SettingsFragment extends BaseFragment implements View.OnClickListener {
-
-
     private ImageButton ibShow;
 
     private boolean visible = true;
@@ -50,6 +48,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.action_settings);
+
         ibShow = (ImageButton) view.findViewById(R.id.ibShow);
         ibShow.setOnClickListener(this);
         view.findViewById(R.id.tvExit).setOnClickListener(this);

@@ -65,29 +65,28 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
-        }
-        switch (itemId) {
-            case R.id.action_catalog:
-                replaceContent(new CatalogFragment(), false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                break;
-            case R.id.action_favourite:
+        } else if (itemId == R.id.action_favourite) {
+            if (!(findDefaultContent() instanceof StarFragment)) {
                 replaceContent(new StarFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                break;
-            case R.id.action_settings:
+            }
+        } else if (itemId == R.id.action_catalog) {
+            if (!(findDefaultContent() instanceof CatalogFragment)) {
+                replaceContent(new CatalogFragment(), false,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
+        } else if (itemId == R.id.action_settings) {
+            if (!(findDefaultContent() instanceof SettingsFragment)) {
                 replaceContent(new SettingsFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                break;
-            case R.id.action_help:
+            }
+        } else if (itemId == R.id.action_help) {
+            if (!(findDefaultContent() instanceof HelpFragment)) {
                 replaceContent(new HelpFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                break;
-            case R.id.action_about:
-                this.startActivity(new Intent(this, AboutActivity.class));
-                break;
-            default:
-                break;
+            }
+        } else if (itemId == R.id.action_about) {
+            this.startActivity(new Intent(this, AboutActivity.class));
         }
 
         closeDrawer();
@@ -120,6 +119,24 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
             return;
         }
 
-        super.onBackPressed();
+        BaseFragment fragment = findDefaultContent();
+        if (fragment == null || !fragment.onBackPressed()) {
+            if (!(fragment instanceof MainFragment)) {
+                User user = User.currentUser();
+                if (user != null) {
+                    replaceContent(MainFragment.newInstance(user.card), false,
+                            FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    DrawerFragment drawerFragment = (DrawerFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.activity_main_fmt_drawer);
+                    if (drawerFragment != null) {
+                        drawerFragment.setCheckedDrawerItemById(R.id.action_main);
+                    }
+
+                    return;
+                }
+            }
+
+            super.onBackPressed();
+        }
     }
 }

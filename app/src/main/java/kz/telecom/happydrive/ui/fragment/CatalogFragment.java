@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,7 @@ import android.widget.*;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.CatalogItemActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,6 @@ public class CatalogFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -43,7 +44,6 @@ public class CatalogFragment extends BaseFragment {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.action_catalog);
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         adapter = new CatalogAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.listView);
@@ -51,15 +51,13 @@ public class CatalogFragment extends BaseFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 Category category = (Category) adapter.getItem(i);
-                Bundle bundle = new Bundle();
-                bundle.putInt("categoryId", category.id);
-                bundle.putString("categoryName", category.name);
-                CatalogItemFragment catalogItemFragment = new CatalogItemFragment();
-                catalogItemFragment.setArguments(bundle);
-                ((BaseActivity) getActivity()).replaceContent(catalogItemFragment, false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                Intent intent = new Intent(getContext(), CatalogItemActivity.class);
+                intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_ID, category.id);
+                intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_NAME, category.name);
+                startActivity(intent);
             }
         });
+
         loadData();
     }
 
@@ -106,20 +104,7 @@ public class CatalogFragment extends BaseFragment {
         }.start();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean handled = false;
-        final int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            getActivity().onBackPressed();
-            handled = true;
-        }
-
-        return handled || super.onOptionsItemSelected(item);
-    }
-
     class CatalogAdapter extends BaseAdapter {
-
         Context context;
         List<Category> data;
         LayoutInflater inflater = null;

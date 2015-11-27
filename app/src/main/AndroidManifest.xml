@@ -62,6 +62,9 @@
         <activity
             android:name=".ui.AboutActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".ui.CatalogItemActivity"
+            android:label="@string/app_name" />
 
         <service android:name="com.parse.PushService" />
 

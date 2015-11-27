@@ -13,8 +13,6 @@ import kz.telecom.happydrive.ui.BaseActivity;
  * Created by darkhan on 24.11.15.
  */
 public class HelpFragment extends BaseFragment {
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,5 +29,4 @@ public class HelpFragment extends BaseFragment {
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.action_help);
     }
-
 }

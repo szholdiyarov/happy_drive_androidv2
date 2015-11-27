@@ -29,6 +29,7 @@ import kz.telecom.happydrive.util.Utils;
  * Created by Galymzhan Sh on 10/29/15.
  */
 public class DrawerFragment extends BaseFragment {
+    private NavigationView mNavigationView;
     private ImageView mBackgroundImageView;
     private ImageView mPhotoImageView;
     private TextView mUsernameTextView;
@@ -43,26 +44,31 @@ public class DrawerFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final NavigationView navi = (NavigationView) view.findViewById(R.id.fragment_main_navigation_view);
-        View headerView = navi.inflateHeaderView(R.layout.layout_drawer_header);
-        mBackgroundImageView = (ImageView) headerView.findViewById(R.id.drawer_header_background_img);
-        mPhotoImageView = (ImageView) headerView.findViewById(R.id.drawer_header_photo);
-        mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
-        mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
-
-        navi.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNavigationView = (NavigationView) view.findViewById(R.id.fragment_main_navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 return mCallback.onDrawerMenuItemSelected(item.getItemId());
             }
         });
 
+        View headerView = mNavigationView.inflateHeaderView(R.layout.layout_drawer_header);
+        mBackgroundImageView = (ImageView) headerView.findViewById(R.id.drawer_header_background_img);
+        mPhotoImageView = (ImageView) headerView.findViewById(R.id.drawer_header_photo);
+        mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
+        mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
+
         User user = User.currentUser();
         if (user != null) {
             updateHeaderState(user.card);
         }
 
+        setCheckedDrawerItemById(R.id.action_main);
         DataManager.getInstance().bus.register(this);
+    }
+
+    public void setCheckedDrawerItemById(int resId) {
+        mNavigationView.setCheckedItem(resId);
     }
 
     @Override

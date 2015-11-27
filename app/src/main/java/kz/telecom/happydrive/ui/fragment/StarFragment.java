@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.CatalogItemActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
@@ -37,7 +39,6 @@ public class StarFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -50,31 +51,17 @@ public class StarFragment extends BaseFragment {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.action_favourite);
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
         loadData();
-
     }
 
     @MainThread
     private void disableProgressBar() {
         ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
         progressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean handled = false;
-        final int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            getActivity().onBackPressed();
-            handled = true;
-        }
-
-        return handled || super.onOptionsItemSelected(item);
     }
 
     private void loadData() {
@@ -237,10 +224,10 @@ public class StarFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             int position = listView.getPositionForView(v);
-            BaseActivity activity = (BaseActivity) getActivity();
             Card card = (Card) adapter.getItem(position);
-            activity.replaceContent(CardDetailsFragment.newInstance(card),
-                    false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            Intent intent = new Intent(getContext(), CatalogItemActivity.class);
+            intent.putExtra(CatalogItemActivity.EXTRA_CARD, card);
+            startActivity(intent);
         }
     };
 }

@@ -25,6 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
+import kz.telecom.happydrive.ui.fragment.MainFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**

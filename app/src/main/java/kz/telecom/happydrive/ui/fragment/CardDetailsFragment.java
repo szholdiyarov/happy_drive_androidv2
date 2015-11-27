@@ -5,21 +5,16 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,17 +31,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.signature.StringSignature;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric.sdk.android.services.common.CommonUtils;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiObject;
@@ -60,7 +51,6 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
-import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Logger;
@@ -107,12 +97,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DataManager.getInstance().bus.register(this);
-        MainActivity activity = (MainActivity) getActivity();
+        BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        activity.getDrawerToggle().setDrawerIndicatorEnabled(true);
-        activity.getDrawerToggle().syncState();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -216,7 +203,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int itemId = item.getItemId();
-        if (itemId == R.id.action_edit) {
+        if (itemId == android.R.id.home) {
+            getActivity().onBackPressed();
+        } if (itemId == R.id.action_edit) {
             startActivity(new Intent(getContext(), CardEditActivity.class));
         } else if (itemId == R.id.action_share) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
