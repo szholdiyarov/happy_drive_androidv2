@@ -156,7 +156,8 @@ public class StarFragment extends BaseFragment {
                 imageView.setOnClickListener(cardClickListener);
                 String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
                 NetworkManager.getPicasso().load(tempAvatarUrl)
-                        .fit().centerCrop()
+                        .fit()
+                        .transform(new Utils.RoundedTransformation(12, 0))
                         .error(R.drawable.user_photo)
                         .placeholder(R.drawable.user_photo)
                         .into(imageView);
