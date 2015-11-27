@@ -116,4 +116,14 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
     protected int getDefaultContentViewContainerId() {
         return R.id.activity_main_view_container;
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            closeDrawer();
+            return;
+        }
+
+        super.onBackPressed();
+    }
 }
