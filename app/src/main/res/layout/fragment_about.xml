@@ -24,7 +24,7 @@
                     android:gravity="center_vertical"
                     android:text="Заголовок"
                     android:textColor="@color/app_white"
-                    android:textSize="25sp" />
+                    android:textSize="22sp" />
 
             <TextView
                     android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                     android:gravity="center_vertical"
                     android:text="текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст текст "
                     android:textColor="@color/app_white"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
         </LinearLayout>
 
     </ScrollView>
