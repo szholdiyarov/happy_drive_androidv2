@@ -26,7 +26,7 @@
         <EditText
                 android:id="@+id/etOldPassword"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password1"
                 android:inputType="text|textPassword"/>
@@ -38,7 +38,7 @@
         <EditText
                 android:id="@+id/etPassword1"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password2"
                 android:inputType="text|textPassword"/>
@@ -50,7 +50,7 @@
         <EditText
                 android:id="@+id/etPassword2"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
                 android:hint="Повторите новый пароль"
                 android:inputType="text|textPassword"
