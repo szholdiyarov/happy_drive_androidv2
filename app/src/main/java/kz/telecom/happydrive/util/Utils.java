@@ -6,6 +6,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -48,12 +49,10 @@ public class Utils {
     public static File tempFileWithNow(Context context) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "jpeg_" + timestamp + "_";
-        File storageDir = context.getCacheDir();
-        storageDir.mkdirs();
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
 
-        File file = File.createTempFile(fileName, ".jpg", storageDir);
-
-        return file;
+        return File.createTempFile(fileName, ".jpg", storageDir);
     }
 
     @SuppressLint("NewApi")
@@ -82,7 +81,6 @@ public class Utils {
 
         return filePath;
     }
-
 
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API11to18(Context context, Uri contentUri) {

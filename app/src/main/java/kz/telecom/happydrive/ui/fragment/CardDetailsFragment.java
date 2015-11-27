@@ -5,10 +5,13 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -489,43 +492,58 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onActivityResult(final int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        switch (requestCode) {
-//            case INTENT_CODE_PHOTO_CAMERA:
-//                Uri u;
-//                if (hasImageCaptureBug()) {
-//                    File fi = new File("/sdcard/tmp");
-//                    try {
-//                        u = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(getContext()
-//                                .getContentResolver(), fi.getAbsolutePath(), null, null));
-//                        if (!fi.delete()) {
-//                            Log.i("logMarker", "Failed to delete " + fi);
-//                        }
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    u = data.getData();
-//                }
-//        }
-        if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
-            if (mTempFile != null) {
-                if (mTempFile.exists()) {
-                    Logger.i("TEST", "the file exists");
-
-                    Logger.i("TEST", "fileSize: " + Integer.parseInt(String.valueOf(mTempFile.length() / 1024)));
-                }
-
-                Drawable drawable = Drawable.createFromPath(mTempFile.getAbsolutePath());
-                View view = getView();
-                if (view != null) {
-                    final ImageView userPhoto = (ImageView) view.findViewById(R.id.user_photo);
-                    userPhoto.setImageDrawable(drawable);
-                }
-            }
-        }
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == INTENT_CODE_PHOTO_GALLERY || requestCode == INTENT_CODE_BACKGROUND_GALLERY) {
+            if (requestCode == INTENT_CODE_PHOTO_CAMERA || requestCode == INTENT_CODE_BACKGROUND_CAMERA) {
+                if (mTempFile != null && mTempFile.length() > 0) {
+                    final File file = mTempFile;
+                    mTempFile = null;
+
+                    final ProgressDialog dialog = new ProgressDialog(getContext());
+                    dialog.setMessage("Сохранение...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            boolean isSuccessful = false;
+                            try {
+                                isSuccessful = requestCode == INTENT_CODE_PHOTO_CAMERA ?
+                                        User.currentUser().changeAvatar(file) :
+                                        User.currentUser().changeBackground(file);
+                            } catch (Exception e) {
+                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                            }
+
+                            final boolean success = isSuccessful;
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        if (success) {
+                                            ImageView imageView = null;
+                                            View view = getView();
+                                            if (view != null) {
+                                                if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
+                                                    imageView = (ImageView) view.findViewById(R.id.user_photo);
+                                                    GlideCacheSignature.invalidateAvatarKey();
+                                                } else {
+                                                    imageView = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
+                                                    GlideCacheSignature.invalidateBackgroundKey();
+                                                }
+                                            }
+
+                                            DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+                }
+            } else if (requestCode == INTENT_CODE_PHOTO_GALLERY || requestCode == INTENT_CODE_BACKGROUND_GALLERY) {
                 try {
                     String path = null;
                     if (Build.VERSION.SDK_INT < 11) {
@@ -574,10 +592,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                 }
                                             }
 
-                                            if (imageView != null) {
-                                                imageView.setImageURI(Uri.fromFile(file));
-                                            }
-
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
                                         }
                                     }
@@ -590,19 +604,5 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 }
             }
         }
-    }
-
-    public boolean hasImageCaptureBug() {
-        // list of known devices that have the bug
-        ArrayList<String> devices = new ArrayList<String>();
-        devices.add("android-devphone1/dream_devphone/dream");
-        devices.add("generic/sdk/generic");
-        devices.add("vodafone/vfpioneer/sapphire");
-        devices.add("tmobile/kila/dream");
-        devices.add("verizon/voles/sholes");
-        devices.add("google_ion/google_ion/sapphire");
-
-        return devices.contains(android.os.Build.BRAND + "/" + android.os.Build.PRODUCT + "/"
-                + android.os.Build.DEVICE);
     }
 }
