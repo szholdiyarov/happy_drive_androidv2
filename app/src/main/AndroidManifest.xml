@@ -44,7 +44,9 @@
         <activity
             android:name=".ui.AuthActivity"
             android:label="@string/app_name"/>
-
+        <activity
+                android:name=".ui.AboutActivity"
+                android:label="@string/app_name"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="444a8bc27f1541207a800de39f493a507f9e8708"/>
