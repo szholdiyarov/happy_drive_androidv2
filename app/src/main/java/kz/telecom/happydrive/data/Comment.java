@@ -37,6 +37,6 @@ public class Comment {
         this.date = node.get(API_DATE).asText(null);
         this.author = new Card(ApiClient.getObjectMapper()
                 .convertValue(node.get(API_AUTHOR), Map.class),
-                new ArrayList<FolderObject>());
+                new ArrayList<Map<String, Object>>());
     }
 }

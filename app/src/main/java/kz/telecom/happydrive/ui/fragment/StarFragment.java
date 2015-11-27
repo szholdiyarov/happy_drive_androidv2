@@ -11,10 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
@@ -85,7 +87,7 @@ public class StarFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (Card c: data) {
+                                for (Card c : data) {
                                     adapter.data.add(c);
                                 }
                                 adapter.notifyDataSetChanged();
@@ -145,22 +147,30 @@ public class StarFragment extends BaseFragment {
                 vi = inflater.inflate(R.layout.fragment_catalog_item_row, parent, false);
             TextView name = (TextView) vi.findViewById(R.id.name);
             TextView description = (TextView) vi.findViewById(R.id.description);
-            Card card = data.get(position);
+            final Card card = data.get(position);
             String fullName = card.getFirstName();
             if (!Utils.isEmpty(card.getLastName())) {
                 fullName += " " + card.getLastName();
             }
 
             if (card.getAvatar() != null) {
-                ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
+                final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
                 imageView.setOnClickListener(cardClickListener);
-                String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
-                NetworkManager.getPicasso().load(tempAvatarUrl)
-                        .fit().centerCrop()
-                        .error(R.drawable.user_photo)
-                        .placeholder(R.drawable.user_photo)
-                        .into(imageView);
-
+                imageView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + Integer.toString(card.id);
+                        NetworkManager.getGlide()
+                                .load(tempAvatarUrl)
+                                .signature(GlideCacheSignature.foreignCacheKey(tempAvatarUrl))
+                                .override(imageView.getWidth(),
+                                        imageView.getHeight())
+                                .centerCrop()
+                                .error(R.drawable.user_photo)
+                                .placeholder(R.drawable.user_photo)
+                                .into(imageView);
+                    }
+                });
             }
 
             ImageView starView = (ImageView) vi.findViewById(R.id.star);
@@ -228,8 +238,6 @@ public class StarFragment extends BaseFragment {
             activity.replaceContent(CardDetailsFragment.newInstance(card), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
-
-
 
 
 }

@@ -8,6 +8,7 @@ import com.crashlytics.android.core.CrashlyticsCore;
 
 import io.fabric.sdk.android.Fabric;
 import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.util.Logger;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;

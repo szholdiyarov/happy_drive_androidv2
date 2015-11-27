@@ -126,7 +126,7 @@ public class ApiClient {
             Map<String, Object> nodeMap = getObjectMapper()
                     .convertValue(response.result, Map.class);
             Card cCard = new Card((Map<String, Object>) nodeMap.get("card"),
-                    (List<FolderObject>) nodeMap.get(API_KEY_FOLDERS));
+                    (List<Map<String, Object>>) nodeMap.get(API_KEY_FOLDERS));
             cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
             return cCard;
         } catch (MalformedURLException e) {
@@ -144,7 +144,7 @@ public class ApiClient {
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
             for (Object o : arrayList) {
-                result.add(new Card((Map<String, Object>) o, new ArrayList<FolderObject>()));
+                result.add(new Card((Map<String, Object>) o, new ArrayList<Map<String, Object>>()));
             }
             return result;
         } catch (MalformedURLException e) {
@@ -165,7 +165,7 @@ public class ApiClient {
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
             for (Object o : arrayList) {
-                result.add(new Card((Map<String, Object>) o, new ArrayList<FolderObject>()));
+                result.add(new Card((Map<String, Object>) o, new ArrayList<Map<String, Object>>()));
             }
             return result;
         } catch (MalformedURLException e) {

@@ -61,7 +61,7 @@ public class Card implements Comparable<Card>, Parcelable {
 
     public final List<FolderObject> publicFolders;
 
-    public Card(Map<String, Object> data, List<FolderObject> folders) {
+    public Card(Map<String, Object> data, List<Map<String, Object>> folders) {
         if (data == null || !data.containsKey(API_KEY_CARD_ID)) {
             throw new IllegalArgumentException("data argument is null or it doesn't contain " +
                     API_KEY_CARD_ID + " value");
@@ -86,10 +86,19 @@ public class Card implements Comparable<Card>, Parcelable {
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
         visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
 
+        publicFolders = new ArrayList<>(2);
         if (folders != null) {
-            publicFolders = folders;
+            for (Map<String, Object> f : folders) {
+                try {
+                    publicFolders.add(new FolderObject(
+                            Utils.getValue(Integer.class, FolderObject.API_FOLDER_ID, -1, f),
+                            Utils.getValue(String.class, FolderObject.API_FOLDER_NAME, "", f),
+                            true, 0
+                    ));
+                } catch (Exception ignored) {
+                }
+            }
         } else {
-            publicFolders = new ArrayList<>(2);
             int photoFolderId = Utils.getValue(Integer.class,
                     UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, -1, data);
             if (photoFolderId > 0) {

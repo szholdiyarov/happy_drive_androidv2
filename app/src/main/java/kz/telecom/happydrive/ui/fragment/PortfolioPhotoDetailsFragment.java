@@ -2,6 +2,7 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
@@ -25,11 +28,10 @@ import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Comment;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
-import kz.telecom.happydrive.data.network.PicassoRegionDecoder;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.data.network.PicassoImageDecoder;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -106,11 +108,19 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
 
                             LayoutInflater inflater = getActivity().getLayoutInflater();
                             View headerView = inflater.inflate(R.layout.portfolio_photo_header, mListView, false);
-                            SubsamplingScaleImageView imageView = (SubsamplingScaleImageView)
+                            final SubsamplingScaleImageView imageView = (SubsamplingScaleImageView)
                                     headerView.findViewById(R.id.portfolio_photo_header_image_view);
-                            imageView.setBitmapDecoderClass(PicassoImageDecoder.class);
-                            imageView.setRegionDecoderClass(PicassoRegionDecoder.class);
                             imageView.setImage(ImageSource.uri(mFileObject.url));
+                            NetworkManager.getGlide()
+                                    .load(mFileObject.url)
+                                    .asBitmap()
+                                    .into(new ViewTarget<SubsamplingScaleImageView, Bitmap>(imageView) {
+                                        @Override
+                                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                            imageView.setImage(ImageSource.bitmap(resource));
+                                        }
+                                    });
+                            
                             mListView.addHeaderView(headerView);
 
                             View footerView = inflater.inflate(R.layout.portfolio_photo_footer, mListView, false);
@@ -254,13 +264,17 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                 imageView.post(new Runnable() {
                     @Override
                     public void run() {
-                        NetworkManager.getPicasso()
-                                .load("http://hd.todo.kz/card/download/avatar/" + comment.author.id)
+                        final boolean isOwner = User.currentUser().card.compareTo(comment.author) == 0;
+                        final String tempUrl = "http://hd.todo.kz/card/download/avatar/" + comment.author.id;
+                        NetworkManager.getGlide()
+                                .load(tempUrl)
+                                .signature(isOwner ? GlideCacheSignature.ownerAvatarKey(tempUrl)
+                                        : GlideCacheSignature.foreignCacheKey(tempUrl))
                                 .error(R.drawable.user_photo)
                                 .placeholder(R.drawable.user_photo)
-                                .resize(imageView.getWidth(),
+                                .override(imageView.getWidth(),
                                         imageView.getHeight())
-                                .onlyScaleDown()
+                                .centerCrop()
                                 .into(imageView);
                     }
                 });

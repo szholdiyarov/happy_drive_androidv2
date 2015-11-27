@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;
@@ -78,14 +79,14 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 @Override
                 public void run() {
                     Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.user_photo);
-                    NetworkManager.getPicasso()
+                    NetworkManager.getGlide()
                             .load(card.getAvatar())
+                            .signature(GlideCacheSignature
+                                    .ownerAvatarKey(card.getAvatar()))
                             .placeholder(drawable)
                             .error(drawable)
-                            .config(Bitmap.Config.RGB_565)
-                            .resize(userPhotoImageView.getWidth(),
+                            .override(userPhotoImageView.getWidth(),
                                     userPhotoImageView.getHeight())
-                            .onlyScaleDown()
                             .centerCrop()
                             .into(userPhotoImageView);
                 }
@@ -97,12 +98,12 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
             backgroundImageView.post(new Runnable() {
                 @Override
                 public void run() {
-                    NetworkManager.getPicasso()
+                    NetworkManager.getGlide()
                             .load(card.getBackground())
-                            .config(Bitmap.Config.RGB_565)
-                            .resize(backgroundImageView.getWidth(),
+                            .signature(GlideCacheSignature
+                                    .ownerBackgroundKey(card.getBackground()))
+                            .override(backgroundImageView.getWidth(),
                                     backgroundImageView.getHeight())
-                            .onlyScaleDown()
                             .centerCrop()
                             .into(backgroundImageView);
 

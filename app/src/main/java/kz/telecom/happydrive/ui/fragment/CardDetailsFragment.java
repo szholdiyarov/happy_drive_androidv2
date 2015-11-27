@@ -31,6 +31,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.signature.StringSignature;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
@@ -44,6 +46,7 @@ import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
@@ -114,6 +117,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     try {
                         if (user.card.compareTo(mCard) == 0) {
                             if (user.updateCard()) {
+                                mCard = user.card;
                                 Activity activity = getActivity();
                                 if (activity != null) {
                                     activity.runOnUiThread(new Runnable() {
@@ -371,12 +375,15 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 background.post(new Runnable() {
                     @Override
                     public void run() {
-                        NetworkManager.getPicasso()
+                        NetworkManager.getGlide()
                                 .load(card.getBackground())
-                                .config(Bitmap.Config.RGB_565)
-                                .resize(background.getWidth(), background.getHeight())
-                                .onlyScaleDown()
+                                .signature(card.compareTo(User.currentUser().card) == 0 ?
+                                        GlideCacheSignature.ownerBackgroundKey(card.getBackground()) :
+                                        GlideCacheSignature.foreignCacheKey(card.getBackground()))
+                                .override(background.getWidth(),
+                                        background.getHeight())
                                 .centerCrop()
+                                .priority(Priority.IMMEDIATE)
                                 .into(background);
                     }
                 });
@@ -390,13 +397,15 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 userPhoto.post(new Runnable() {
                     @Override
                     public void run() {
-                        NetworkManager.getPicasso()
+                        NetworkManager.getGlide()
                                 .load(card.getAvatar())
-                                .config(Bitmap.Config.RGB_565)
-                                .resize(userPhoto.getWidth(), userPhoto.getHeight())
-                                .placeholder(drawable)
-                                .error(drawable)
+                                .signature(card.compareTo(User.currentUser().card) == 0 ?
+                                        GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
+                                        GlideCacheSignature.foreignCacheKey(card.getAvatar()))
+                                .override(userPhoto.getWidth(), userPhoto.getHeight())
                                 .centerCrop()
+                                .error(drawable)
+                                .placeholder(drawable)
                                 .into(userPhoto);
                     }
                 });
@@ -405,10 +414,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        if (card == null || Utils.isEmpty(card.getFirstName())
-                || User.currentUser() == null || card.id != User.currentUser().card.id) {
+        if (card == null || card.publicFolders.size() == 0) {
             view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
             view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.portfolio_text).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.portfolio_block).setVisibility(View.VISIBLE);
         }
     }
 
@@ -424,6 +435,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         if (v.getId() == R.id.foto_block) {
             intent = new Intent(getContext(), PortfolioActivity.class);
             intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
+            intent.putExtra(PortfolioActivity.EXTRA_CARD, mCard);
         } else if (v.getId() == R.id.video_block) {
 //            intent = new Intent(getContext(), PortfolioActivity.class);
 //            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);
@@ -516,21 +528,19 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
-                                            String invalidateKey = null;
                                             ImageView imageView = null;
                                             View view = getView();
                                             if (view != null) {
                                                 if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
                                                     imageView = (ImageView) view.findViewById(R.id.user_photo);
-                                                    invalidateKey = mCard.getAvatar();
+                                                    GlideCacheSignature.invalidateAvatarKey();
                                                 } else {
                                                     imageView = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
-                                                    invalidateKey = mCard.getBackground();
+                                                    GlideCacheSignature.invalidateBackgroundKey();
                                                 }
                                             }
 
                                             if (imageView != null) {
-                                                NetworkManager.getPicasso().invalidate(invalidateKey);
                                                 imageView.setImageURI(Uri.fromFile(file));
                                             }
 

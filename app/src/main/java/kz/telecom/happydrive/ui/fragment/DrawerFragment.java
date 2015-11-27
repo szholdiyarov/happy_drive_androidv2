@@ -17,6 +17,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.util.Utils;
@@ -107,26 +108,38 @@ public class DrawerFragment extends BaseFragment {
         mUsernameTextView.setText(username);
         mEmailTextView.setText(card.getEmail());
 
-        if (!Utils.isEmpty(card.getAvatar()) ||
-                !Utils.isEmpty(card.getBackground())) {
-            mPhotoImageView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (!Utils.isEmpty(card.getAvatar())) {
-                        NetworkManager.getPicasso()
-                                .load(card.getAvatar())
-                                .error(R.drawable.user_photo)
-                                .placeholder(R.drawable.user_photo)
-                                .into(mPhotoImageView);
-                    }
-                    if (!Utils.isEmpty(card.getBackground())) {
-                        NetworkManager.getPicasso()
-                                .load(card.getBackground())
-                                .into(mBackgroundImageView);
-                    }
+        mPhotoImageView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!Utils.isEmpty(card.getAvatar())) {
+                    NetworkManager.getGlide()
+                            .load(card.getAvatar())
+                            .signature(GlideCacheSignature
+                                    .ownerAvatarKey(card.getAvatar()))
+                            .error(R.drawable.user_photo)
+                            .override(mPhotoImageView.getWidth(),
+                                    mPhotoImageView.getHeight())
+                            .centerCrop()
+                            .into(mPhotoImageView);
+
+                } else {
+                    mPhotoImageView.setImageResource(R.drawable.user_photo);
                 }
-            });
-        }
+
+                if (!Utils.isEmpty(card.getBackground())) {
+                    NetworkManager.getGlide()
+                            .load(card.getBackground())
+                            .signature(GlideCacheSignature
+                                    .ownerBackgroundKey(card.getBackground()))
+                            .override(mBackgroundImageView.getWidth(),
+                                    mBackgroundImageView.getHeight())
+                            .centerCrop()
+                            .into(mBackgroundImageView);
+                } else {
+                    mBackgroundImageView.setImageDrawable(null);
+                }
+            }
+        });
     }
 
     public interface Callback {

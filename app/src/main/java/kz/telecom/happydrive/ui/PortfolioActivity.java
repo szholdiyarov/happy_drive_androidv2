@@ -18,28 +18,23 @@ import kz.telecom.happydrive.ui.fragment.PortfolioPhotoFragment;
  */
 public class PortfolioActivity extends BaseActivity {
     public static final String EXTRA_TYPE = "extra:type";
+    public static final String EXTRA_CARD = "extra:card";
     public static final int EXTRA_TYPE_PHOTO = 1;
-    public static final int EXTRA_TYPE_VIDEO = 1;
+    public static final int EXTRA_TYPE_VIDEO = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portfolio);
-
-        Card card = User.currentUser().card;
-        int type = getIntent().getIntExtra(EXTRA_TYPE, EXTRA_TYPE_PHOTO);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
-        ActionBar actionBar = initToolbar(toolbar);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(type == EXTRA_TYPE_PHOTO ?
-                "Фотографии" : "Видеозаписи");
+        initToolbar(R.id.layout_toolbar);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
         if (savedInstanceState == null) {
+            Card card = getIntent().getParcelableExtra(EXTRA_CARD);
+            int type = getIntent().getIntExtra(EXTRA_TYPE, EXTRA_TYPE_PHOTO);
             replaceContent(type == EXTRA_TYPE_PHOTO ?
                             PortfolioPhotoFragment.newInstance(card) :
                             PortfolioPhotoFragment.newInstance(card),

@@ -60,6 +60,9 @@ public class User {
         card.setAvatar(other.getAvatar());
         card.setBackground(other.getBackground());
 
+        card.publicFolders.clear();
+        card.publicFolders.addAll(other.publicFolders);
+
         Card.saveUserCard(card, getDefaultSharedPrefs());
 
         return true;
@@ -181,7 +184,7 @@ public class User {
         }
 
         Card card = new Card((Map<String, Object>) rawData.get("card"),
-                (List<FolderObject>) rawData.get("folders"));
+                (List<Map<String, Object>>) rawData.get("folders"));
         return new User(token, card);
     }
 

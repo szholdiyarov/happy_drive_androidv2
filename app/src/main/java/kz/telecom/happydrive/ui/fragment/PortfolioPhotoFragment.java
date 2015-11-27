@@ -229,7 +229,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
 
                 try {
                     for (FolderObject fo : mCard.publicFolders) {
-                        if ("фотографии".equalsIgnoreCase(fo.name)) {
+                        if ("фотографии" .equalsIgnoreCase(fo.name)) {
                             Map<String, List<ApiObject>> mapOfFolders =
                                     ApiClient.getFiles(fo.id, true, null);
                             List<ApiObject> apiObjects = mapOfFolders.get(ApiClient.API_KEY_FILES);
@@ -418,12 +418,13 @@ public class PortfolioPhotoFragment extends BaseFragment {
             }
 
             FileObject fileObject = (FileObject) getItem(position);
-            NetworkManager.getPicasso()
+            ImageView imageView = vh.imageView;
+            NetworkManager.getGlide()
                     .load(fileObject.url)
+                    .centerCrop()
                     .error(R.drawable.image_album)
                     .placeholder(R.drawable.image_album)
-                    .config(Bitmap.Config.RGB_565)
-                    .into(vh.imageView);
+                    .into(imageView);
 
             return convertView;
         }
