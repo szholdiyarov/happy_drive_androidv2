@@ -441,7 +441,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                         GlideCacheSignature.foreignCacheKey(card.getAvatar()))
                                 .bitmapTransform(new CenterCrop(getContext()),
                                         new GlideRoundedCornersTransformation(getContext(),
-                                                Utils.dipToPixels(6f, dm), Utils.dipToPixels(1f, dm)))
+                                                Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
                                 .override(userPhoto.getWidth(), userPhoto.getHeight())
                                 .skipMemoryCache(true)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)

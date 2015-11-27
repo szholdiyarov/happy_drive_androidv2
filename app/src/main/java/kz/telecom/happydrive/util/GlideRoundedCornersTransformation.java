@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -44,6 +45,8 @@ public class GlideRoundedCornersTransformation implements Transformation<Bitmap>
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
+        paint.setColor(Color.WHITE);
+        canvas.drawRoundRect(new RectF(0, 0, width, height), mRadius, mRadius, paint);
         paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
         canvas.drawRoundRect(new RectF(mBorder, mBorder, width - mBorder, height - mBorder),
                 mRadius, mRadius, paint);

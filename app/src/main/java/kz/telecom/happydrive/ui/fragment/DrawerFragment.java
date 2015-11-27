@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.squareup.otto.Subscribe;
 
 import kz.telecom.happydrive.R;
@@ -20,6 +22,7 @@ import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.MainActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -50,7 +53,7 @@ public class DrawerFragment extends BaseFragment {
         navi.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                return item.isCheckable() && mCallback.onDrawerMenuItemSelected(item.getItemId());
+                return mCallback.onDrawerMenuItemSelected(item.getItemId());
             }
         });
 
@@ -112,14 +115,17 @@ public class DrawerFragment extends BaseFragment {
             @Override
             public void run() {
                 if (!Utils.isEmpty(card.getAvatar())) {
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
                     NetworkManager.getGlide()
                             .load(card.getAvatar())
                             .signature(GlideCacheSignature
                                     .ownerAvatarKey(card.getAvatar()))
                             .error(R.drawable.user_photo)
+                            .bitmapTransform(new CenterCrop(getContext()),
+                                    new GlideRoundedCornersTransformation(getContext(),
+                                            Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
                             .override(mPhotoImageView.getWidth(),
                                     mPhotoImageView.getHeight())
-                            .centerCrop()
                             .into(mPhotoImageView);
 
                 } else {
@@ -133,7 +139,6 @@ public class DrawerFragment extends BaseFragment {
                                     .ownerBackgroundKey(card.getBackground()))
                             .override(mBackgroundImageView.getWidth(),
                                     mBackgroundImageView.getHeight())
-                            .centerCrop()
                             .into(mBackgroundImageView);
                 } else {
                     mBackgroundImageView.setImageDrawable(null);

@@ -6,11 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
@@ -19,6 +22,7 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -79,15 +83,18 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                 @Override
                 public void run() {
                     Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.user_photo);
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
                     NetworkManager.getGlide()
                             .load(card.getAvatar())
                             .signature(GlideCacheSignature
                                     .ownerAvatarKey(card.getAvatar()))
                             .placeholder(drawable)
                             .error(drawable)
+                            .bitmapTransform(new CenterCrop(getContext()),
+                                    new GlideRoundedCornersTransformation(getContext(),
+                                            Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
                             .override(userPhotoImageView.getWidth(),
                                     userPhotoImageView.getHeight())
-                            .centerCrop()
                             .into(userPhotoImageView);
                 }
             });

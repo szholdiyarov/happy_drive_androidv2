@@ -19,16 +19,32 @@
             <ImageView
                 android:id="@+id/background"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="8dp"
+                android:src="@drawable/create_icon" />
 
             <ImageView
                 android:id="@+id/user_photo"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="16dp"
+                android:layout_margin="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/user_photo" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/user_photo"
+                android:layout_alignBottom="@id/user_photo"
+                android:layout_margin="8dp"
+                android:src="@drawable/create_icon" />
 
             <TextView
                 android:id="@+id/user_position"
