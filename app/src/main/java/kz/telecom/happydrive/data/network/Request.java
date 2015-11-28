@@ -14,7 +14,7 @@ import kz.telecom.happydrive.util.Utils;
  * Created by Galymzhan Sh on 11/18/15.
  */
 public abstract class Request<T> implements Comparable<Request<T>> {
-    public static final String DEFAULT_HOST = "http://hd.todo.kz";
+    public static final String DEFAULT_HOST = "http://89.218.185.181";
 
     public enum Method {
         GET,

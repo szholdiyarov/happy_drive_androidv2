@@ -204,8 +204,6 @@ public class StoragePhotoFragment extends BaseFragment {
                                     }
                                 });
                             }
-
-                            Logger.i("TEST", "obj map: " + objectMap);
                         } catch (Exception e) {
                             Activity activity = getActivity();
                             if (activity != null) {

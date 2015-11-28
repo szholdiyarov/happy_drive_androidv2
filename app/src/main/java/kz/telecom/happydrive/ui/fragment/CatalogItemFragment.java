@@ -21,6 +21,7 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Logger;
@@ -176,7 +177,7 @@ public class CatalogItemFragment extends BaseFragment {
                     imageView.post(new Runnable() {
                         @Override
                         public void run() {
-                            String tempAvatarUrl = "http://hd.todo.kz/card/download/avatar/" + card.id;
+                            String tempAvatarUrl = Request.DEFAULT_HOST + "/card/download/avatar/" + card.id;
                             DisplayMetrics dm = getResources().getDisplayMetrics();
                             NetworkManager.getGlide()
                                     .load(tempAvatarUrl)

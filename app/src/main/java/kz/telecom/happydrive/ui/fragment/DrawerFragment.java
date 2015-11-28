@@ -88,7 +88,6 @@ public class DrawerFragment extends BaseFragment {
                             });
                         }
                     } catch (Exception ignored) {
-                        Logger.i("TEST", ignored.getLocalizedMessage(), ignored);
                     }
                 }
             }.start();

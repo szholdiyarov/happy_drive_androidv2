@@ -30,7 +30,7 @@ import kz.telecom.happydrive.data.network.NoConnectionError;
 /**
  * Created by Galymzhan Sh on 11/7/15.
  */
-public class CardEditParamsFragment extends BaseFragment {
+public class CardEditParamsMainFragment extends BaseFragment {
     private EditText mFirstName, mLastName, mMiddleName,
             mPosition, mCompanyName, mPhoneNumber, mEmailAddress, mWebsite,
             mCompanyAddress, mAbout;

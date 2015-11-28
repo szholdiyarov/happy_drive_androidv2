@@ -111,8 +111,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
                                                             INTENT_CODE_PHOTO_GALLERY);
                                                 } else {
                                                 }
-                                            } catch (Exception e) {
-                                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                                            } catch (Exception ignored) {
                                             }
                                         }
                                     }).show();
@@ -127,7 +126,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FileObject fileObject = (FileObject) mAdapter.getItem(position);
                 ((BaseActivity) getActivity()).replaceContent(
-                        PortfolioPhotoDetailsFragment.newInstance(fileObject), false,
+                        PortfolioPhotoDetailsFragment.newInstance(fileObject), true,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
@@ -144,8 +143,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
                                             if (which == 0) {
                                                 deletePhoto((int) id);
                                             }
-                                        } catch (Exception e) {
-                                            Logger.e("TEST", e.getLocalizedMessage(), e);
+                                        } catch (Exception ignored) {
                                         }
                                     }
                                 }).show();
@@ -324,8 +322,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
                                         break;
                                     }
                                 }
-                            } catch (Exception e) {
-                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                            } catch (Exception ignored) {
                             }
 
                             if (isSuccessful) {
@@ -358,8 +355,7 @@ public class PortfolioPhotoFragment extends BaseFragment {
                             }
                         }
                     }.start();
-                } catch (Exception e) {
-                    Logger.e("TEST", e.getLocalizedMessage(), e);
+                } catch (Exception ignored) {
                 }
             }
         }

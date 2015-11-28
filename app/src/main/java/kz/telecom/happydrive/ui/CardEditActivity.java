@@ -7,27 +7,51 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.ui.fragment.CardEditParamsFragment;
+import kz.telecom.happydrive.ui.fragment.BaseFragment;
+import kz.telecom.happydrive.ui.fragment.CardEditParamsAdditionalFragment;
+import kz.telecom.happydrive.ui.fragment.CardEditParamsMainFragment;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
  */
-public class CardEditActivity extends BaseActivity {
+public class CardEditActivity extends BaseActivity implements View.OnClickListener {
+    private static final String EXTRA_CARD = "extra:card";
+
+    private Button mBackButton;
+    private Button mNextButton;
+    private View mStepper1;
+    private View mStepper2;
+
+    private Card mCard;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_edit);
 
-        Card card = User.currentUser().card;
+        mBackButton = (Button) findViewById(R.id.stepper_btn_left);
+        mNextButton = (Button) findViewById(R.id.stepper_btn_right);
+        mStepper1 = findViewById(R.id.stepper1);
+        mStepper2 = findViewById(R.id.stepper2);
+        mBackButton.setOnClickListener(this);
+        mNextButton.setOnClickListener(this);
+
+        if (savedInstanceState != null) {
+            mCard = savedInstanceState.getParcelable(EXTRA_CARD);
+        } else {
+            mCard = Card.copyOf(User.currentUser().card);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         ActionBar actionBar = initToolbar(toolbar);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(card.getCategoryId() > 0 ?
+        actionBar.setTitle(mCard.getCategoryId() > 0 ?
                 "Редактировать визитку" : "Создать визитку");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -35,8 +59,42 @@ public class CardEditActivity extends BaseActivity {
         }
 
         if (savedInstanceState == null) {
-            replaceContent(new CardEditParamsFragment(), false,
+            replaceContent(new CardEditParamsMainFragment(), false,
                     FragmentTransaction.TRANSIT_NONE);
+        }
+
+        mStepper1.post(new Runnable() {
+            @Override
+            public void run() {
+                updateStepperStates();
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_CARD, mCard);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCard = savedInstanceState.getParcelable(EXTRA_CARD);
+    }
+
+    private void updateStepperStates() {
+        BaseFragment fragment = findDefaultContent();
+        if (fragment instanceof CardEditParamsMainFragment) {
+            mStepper1.setSelected(true);
+            mStepper2.setSelected(false);
+            mBackButton.setVisibility(View.INVISIBLE);
+            mNextButton.setVisibility(View.VISIBLE);
+        } else {
+            mStepper1.setSelected(false);
+            mStepper2.setSelected(true);
+            mBackButton.setVisibility(View.VISIBLE);
+            mNextButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -53,7 +111,30 @@ public class CardEditActivity extends BaseActivity {
     }
 
     @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.stepper_btn_left) {
+            onBackPressed();
+        } else if (view.getId() == R.id.stepper_btn_right) {
+            replaceContent(new CardEditParamsAdditionalFragment(), true,
+                    FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        }
+
+        mStepper1.post(new Runnable() {
+            @Override
+            public void run() {
+                updateStepperStates();
+            }
+        });
+    }
+
+    @Override
     protected int getDefaultContentViewContainerId() {
         return R.id.activity_card_edit_view_container;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        updateStepperStates();
     }
 }

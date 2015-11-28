@@ -148,7 +148,6 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                                             INTENT_CODE_PHOTO_CAMERA :
                                                             INTENT_CODE_BACKGROUND_CAMERA);
                                         } catch (Exception ignored) {
-                                            Logger.e("TEST", "couldn't create a file", ignored);
                                         }
                                     } else if (which == 1) {
                                         Utils.openGallery(MainFragment.this, "", "image/*",
@@ -194,8 +193,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                 isSuccessful = requestCode == INTENT_CODE_PHOTO_CAMERA ?
                                         User.currentUser().changeAvatar(file) :
                                         User.currentUser().changeBackground(file);
-                            } catch (Exception e) {
-                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                            } catch (Exception ignored) {
                             }
 
                             if (isSuccessful) {
@@ -299,8 +297,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                 isSuccessful = requestCode == INTENT_CODE_PHOTO_GALLERY ?
                                         User.currentUser().changeAvatar(file) :
                                         User.currentUser().changeBackground(file);
-                            } catch (Exception e) {
-                                Logger.e("TEST", e.getLocalizedMessage(), e);
+                            } catch (Exception ignored) {
                             }
 
                             if (isSuccessful) {
@@ -377,8 +374,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                             }
                         }
                     }.start();
-                } catch (Exception e) {
-                    Logger.e("TEST", e.getLocalizedMessage(), e);
+                } catch (Exception ignored) {
                 }
             }
         }

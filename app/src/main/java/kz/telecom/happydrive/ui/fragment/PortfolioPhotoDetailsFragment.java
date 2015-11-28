@@ -33,6 +33,7 @@ import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
@@ -267,7 +268,7 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                     @Override
                     public void run() {
                         final boolean isOwner = User.currentUser().card.compareTo(comment.author) == 0;
-                        final String tempUrl = "http://hd.todo.kz/card/download/avatar/" + comment.author.id;
+                        final String tempUrl = Request.DEFAULT_HOST + "/card/download/avatar/" + comment.author.id;
                         DisplayMetrics dm = getResources().getDisplayMetrics();
                         NetworkManager.getGlide()
                                 .load(tempUrl)

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ public class Card implements Comparable<Card>, Parcelable {
     static final String API_KEY_VISIBILITY = "visible";
     static final String API_PATH_GET_CARDS = "card/list/";
 
-
     public final int id;
     private int mCategoryId;
     private String mFirstName;
@@ -53,6 +53,12 @@ public class Card implements Comparable<Card>, Parcelable {
     public boolean visible;
 
     public final List<FolderObject> publicFolders;
+
+    // internal only
+    private Card(int id, List<FolderObject> publicFolders) {
+        this.id = id;
+        this.publicFolders = publicFolders;
+    }
 
     public Card(Map<String, Object> data, List<Map<String, Object>> folders) {
         if (data == null || !data.containsKey(API_KEY_CARD_ID)) {
@@ -288,6 +294,40 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.apply();
     }
 
+    public static Card copyOf(Card card) {
+        List<FolderObject> publicFolders = new ArrayList<>(card.publicFolders);
+        Collections.copy(publicFolders, card.publicFolders);
+        Card newCard = new Card(card.id, publicFolders);
+        newCard.mCategoryId = card.mCategoryId;
+        newCard.mFirstName = card.mFirstName;
+        newCard.mLastName = card.mLastName;
+        newCard.mPhone = card.mPhone;
+        newCard.mEmail = card.mEmail;
+        newCard.mAddress = card.mAddress;
+        newCard.mWorkPlace = card.mWorkPlace;
+        newCard.mPosition = card.mPosition;
+        newCard.mShortDesc = card.mShortDesc;
+        newCard.mFullDesc = card.mFullDesc;
+        newCard.mAvatar = card.mAvatar;
+        newCard.mBackground = card.mBackground;
+        return newCard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Card card = (Card) o;
+
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     static Map<String, Object> restoreUserCard(SharedPreferences prefs) {
         return (Map<String, Object>) prefs.getAll();
     }
@@ -299,21 +339,5 @@ public class Card implements Comparable<Card>, Parcelable {
         public OnCardUpdatedEvent(Card card) {
             this.card = card;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Card card = (Card) o;
-
-        return id == card.id;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 }
