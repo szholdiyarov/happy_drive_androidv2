@@ -31,6 +31,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
@@ -165,6 +166,10 @@ public class PortfolioPhotoFragment extends BaseFragment {
             public void run() {
                 try {
                     ApiClient.deleteFile(fileId);
+                    try {
+                        User.currentUser().updateStorageSize();
+                    } catch (Exception ignored) {
+                    }
                     Activity activity = getActivity();
                     if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
@@ -172,6 +177,8 @@ public class PortfolioPhotoFragment extends BaseFragment {
                             public void run() {
                                 dialog.dismiss();
                                 mAdapter.removeByFileId(fileId, true);
+                                DataManager.getInstance().bus
+                                        .post(new User.OnStorageSizeUpdatedEvent());
                             }
                         });
                     }
@@ -321,6 +328,13 @@ public class PortfolioPhotoFragment extends BaseFragment {
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
 
+                            if (isSuccessful) {
+                                try {
+                                    User.currentUser().updateStorageSize();
+                                } catch (Exception ignored) {
+                                }
+                            }
+
                             final boolean success = isSuccessful;
                             Activity activity = getActivity();
                             if (activity != null) {
@@ -330,6 +344,8 @@ public class PortfolioPhotoFragment extends BaseFragment {
                                         dialog.dismiss();
                                         if (success) {
                                             mAdapter.notifyDataSetChanged();
+                                            DataManager.getInstance().bus
+                                                    .post(new User.OnStorageSizeUpdatedEvent());
                                         } else {
                                             View view = getView();
                                             if (view != null) {
