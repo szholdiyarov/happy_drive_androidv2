@@ -5,13 +5,10 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -32,12 +29,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -437,8 +432,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                         new GlideRoundedCornersTransformation(getContext(),
                                                 Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
                                 .override(userPhoto.getWidth(), userPhoto.getHeight())
-                                .skipMemoryCache(true)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .error(drawable)
                                 .placeholder(drawable)
                                 .into(userPhoto);
@@ -523,16 +516,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
-                                            ImageView imageView = null;
-                                            View view = getView();
-                                            if (view != null) {
-                                                if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
-                                                    imageView = (ImageView) view.findViewById(R.id.user_photo);
-                                                    GlideCacheSignature.invalidateAvatarKey();
-                                                } else {
-                                                    imageView = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
-                                                    GlideCacheSignature.invalidateBackgroundKey();
-                                                }
+                                            if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
+                                                GlideCacheSignature.invalidateAvatarKey();
+                                            } else {
+                                                GlideCacheSignature.invalidateBackgroundKey();
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
@@ -580,16 +567,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
-                                            ImageView imageView = null;
-                                            View view = getView();
-                                            if (view != null) {
-                                                if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
-                                                    imageView = (ImageView) view.findViewById(R.id.user_photo);
-                                                    GlideCacheSignature.invalidateAvatarKey();
-                                                } else {
-                                                    imageView = (ImageView) view.findViewById(R.id.fragment_card_details_v_header);
-                                                    GlideCacheSignature.invalidateBackgroundKey();
-                                                }
+                                            if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
+                                                GlideCacheSignature.invalidateAvatarKey();
+                                            } else {
+                                                GlideCacheSignature.invalidateBackgroundKey();
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
