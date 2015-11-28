@@ -42,6 +42,8 @@ public class User {
     public final Card card;
     @NonNull
     public final String token;
+    private long mStorageUsed;
+    private long mStorageTotal;
 
     @WorkerThread
     public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -150,6 +152,10 @@ public class User {
             }
         }
 
+        long[] storageSize = UserHelper.getStorageSize(token);
+        rawData.put(UserHelper.PREFS_KEY_STORAGE_USED, storageSize[0]);
+        rawData.put(UserHelper.PREFS_KEY_STORAGE_TOTAL, storageSize[1]);
+
         User user = parseUser(rawData);
         SharedPreferences prefs = getDefaultSharedPrefs();
         UserHelper.saveCredentials(user, prefs);
@@ -180,6 +186,22 @@ public class User {
         deinitStaticUser(sUser);
     }
 
+    public long getStorageUsed() {
+        return mStorageUsed;
+    }
+
+    public long getStorageTotal() {
+        return mStorageTotal;
+    }
+
+    @WorkerThread
+    public void updateStorageSize() throws NoConnectionError, ApiResponseError, ResponseParseError {
+        long[] storageSize = UserHelper.getStorageSize(null);
+        mStorageUsed = storageSize[0];
+        mStorageTotal = storageSize[1];
+        UserHelper.saveCredentials(this, getDefaultSharedPrefs());
+    }
+
     private static SharedPreferences getDefaultSharedPrefs() {
         Context context = DataManager.getInstance().context;
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -194,7 +216,10 @@ public class User {
 
         Card card = new Card((Map<String, Object>) rawData.get("card"),
                 (List<Map<String, Object>>) rawData.get("folders"));
-        return new User(token, card);
+        User user = new User(token, card);
+        user.mStorageUsed = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_USED, -1L, rawData);
+        user.mStorageTotal = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_TOTAL, -1L, rawData);
+        return user;
     }
 
     protected static User initStaticUser(User user) {
@@ -243,6 +268,11 @@ public class User {
 
     public static class PasswordRestoredEvent {
         public PasswordRestoredEvent() {
+        }
+    }
+
+    public static class OnStorageSizeUpdatedEvent {
+        public OnStorageSizeUpdatedEvent() {
         }
     }
 }

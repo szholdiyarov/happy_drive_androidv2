@@ -51,12 +51,14 @@
 
     <string name="title_activity_login">LoginActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_login">MainLoginActivity</string>
     <string name="title_activity_reset">ResetActivity</string>
     <string name="facebook_app_id">894471510605950</string>
     <string name="google_server_client_id">113985163095-bbvo74bhbd5h4q11gt1vdruvce6738rc.apps.googleusercontent.com</string>
     <string name="canceled">Отменено</string>
+
+    <string name="drawer_footer_storage_size_fmt">Использовано %1$s из %2$s</string>
+    <string name="drawer_footer_expiration_fmt">До оплаты осталось %s дней</string>
 
 </resources>

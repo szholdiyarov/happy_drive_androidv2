@@ -10,10 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.RequestBody;
-
 import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
@@ -31,6 +27,7 @@ class UserHelper {
     private static final String API_PATH_RESET_PASSWORD = "auth/reset/";
     private static final String API_PATH_UPDATE_AVATAR = "card/avatar/";
     private static final String API_PATH_UPDATE_BACKGROUND = "card/background/";
+    private static final String API_PATH_STORAGE_SIZE = "files/storage_size/";
 
     static final String API_USER_KEY_EMAIL = "email";
     static final String API_USER_KEY_PASSWORD = "password";
@@ -42,6 +39,8 @@ class UserHelper {
 
     static final String PREFS_KEY_PHOTO_FOLDER_ID = "hd.user.photoFolderId";
     static final String PREFS_KEY_VIDEO_FOLDER_ID = "hd.user.videoFolderId";
+    static final String PREFS_KEY_STORAGE_USED = "hd.user.storageUsed";
+    static final String PREFS_KEY_STORAGE_TOTAL = "hd.user.storageTotal";
 
     static JsonNode register(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -109,6 +108,23 @@ class UserHelper {
         }
     }
 
+    static long[] getStorageSize(String tokenIfNeeded)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_STORAGE_SIZE);
+        if (tokenIfNeeded != null) {
+            request.setHeaders(Collections.singletonMap("Auth-Token", tokenIfNeeded));
+        }
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
+            return new long[]{response.result.get("used_size").asLong(),
+                    response.result.get("max_allowed_size").asLong()};
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
     static JsonNode changeAvatar(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
         return uploadFile(file, API_PATH_UPDATE_AVATAR, "Image-Type");
     }
@@ -140,6 +156,8 @@ class UserHelper {
     static void saveCredentials(User user, SharedPreferences prefs) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(API_USER_KEY_TOKEN, user.token);
+        editor.putLong(PREFS_KEY_STORAGE_USED, user.getStorageUsed());
+        editor.putLong(PREFS_KEY_STORAGE_TOTAL, user.getStorageTotal());
         editor.apply();
     }
 
@@ -157,6 +175,8 @@ class UserHelper {
         raw.put(API_USER_KEY_TOKEN, prefs.getString(API_USER_KEY_TOKEN, null));
         raw.put(PREFS_KEY_PHOTO_FOLDER_ID, prefs.getInt(PREFS_KEY_PHOTO_FOLDER_ID, -1));
         raw.put(PREFS_KEY_VIDEO_FOLDER_ID, prefs.getInt(PREFS_KEY_VIDEO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_STORAGE_USED, prefs.getLong(PREFS_KEY_STORAGE_USED, -1L));
+        raw.put(PREFS_KEY_STORAGE_TOTAL, prefs.getLong(PREFS_KEY_STORAGE_TOTAL, -1L));
         raw.put(API_USER_KEY_CARD, Card.restoreUserCard(prefs));
 
         return raw;

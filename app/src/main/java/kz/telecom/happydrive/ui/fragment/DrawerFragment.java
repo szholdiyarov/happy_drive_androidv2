@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,13 +17,16 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.squareup.otto.Subscribe;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -34,6 +38,8 @@ public class DrawerFragment extends BaseFragment {
     private ImageView mPhotoImageView;
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
+    private TextView mStorageSizeTextView;
+    private TextView mExpirationDateTextView;
 
     private Callback mCallback;
 
@@ -58,9 +64,34 @@ public class DrawerFragment extends BaseFragment {
         mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
         mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
 
-        User user = User.currentUser();
+        mStorageSizeTextView = (TextView) view.findViewById(R.id.fragment_drawer_tv_storage_size);
+        mExpirationDateTextView = (TextView) view.findViewById(R.id.fragment_drawer_tv_expiration_date);
+
+        final User user = User.currentUser();
         if (user != null) {
             updateHeaderState(user.card);
+            updateFooterState(user);
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        user.updateStorageSize();
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mStorageSizeTextView != null) {
+                                        updateFooterState(user);
+                                    }
+                                }
+                            });
+                        }
+                    } catch (Exception ignored) {
+                        Logger.i("TEST", ignored.getLocalizedMessage(), ignored);
+                    }
+                }
+            }.start();
         }
 
         setCheckedDrawerItemById(R.id.action_main);
@@ -100,6 +131,14 @@ public class DrawerFragment extends BaseFragment {
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
         if (event.card.compareTo(User.currentUser().card) == 0) {
             updateHeaderState(event.card);
+        }
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onStorageSizeUpdated(User.OnStorageSizeUpdatedEvent event) {
+        if (User.currentUser() != null) {
+            updateFooterState(User.currentUser());
         }
     }
 
@@ -151,6 +190,12 @@ public class DrawerFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void updateFooterState(User user) {
+        mStorageSizeTextView.setText(getString(R.string.drawer_footer_storage_size_fmt,
+                Formatter.formatShortFileSize(getContext(), user.getStorageUsed()),
+                Formatter.formatShortFileSize(getContext(), user.getStorageTotal())));
     }
 
     public interface Callback {

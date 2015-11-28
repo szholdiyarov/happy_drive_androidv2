@@ -198,6 +198,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
 
+                            if (isSuccessful) {
+                                try {
+                                    User.currentUser().updateStorageSize();
+                                } catch (Exception ignored) {
+                                }
+                            }
+
                             final boolean success = isSuccessful;
                             Activity activity = getActivity();
                             if (activity != null) {
@@ -206,14 +213,60 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
+                                            final Card card = User.currentUser().card;
                                             if (requestCode == INTENT_CODE_PHOTO_CAMERA) {
                                                 GlideCacheSignature.invalidateAvatarKey();
+                                                View view = getView();
+                                                if (view != null) {
+                                                    final ImageView photoImageView = (ImageView) view.findViewById(R.id.user_photo);
+                                                    if (photoImageView != null) {
+                                                        photoImageView.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.user_photo);
+                                                                DisplayMetrics dm = getResources().getDisplayMetrics();
+                                                                NetworkManager.getGlide()
+                                                                        .load(card.getAvatar())
+                                                                        .signature(GlideCacheSignature
+                                                                                .ownerAvatarKey(card.getAvatar()))
+                                                                        .placeholder(drawable)
+                                                                        .error(drawable)
+                                                                        .bitmapTransform(new CenterCrop(getContext()),
+                                                                                new GlideRoundedCornersTransformation(getContext(),
+                                                                                        Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
+                                                                        .override(photoImageView.getWidth(),
+                                                                                photoImageView.getHeight())
+                                                                        .into(photoImageView);
+                                                            }
+                                                        });
+                                                    }
+                                                }
                                             } else {
                                                 GlideCacheSignature.invalidateBackgroundKey();
+                                                View view = getView();
+                                                if (view != null) {
+                                                    final ImageView backgroundImageView = (ImageView) view.findViewById(R.id.background);
+                                                    if (backgroundImageView != null) {
+                                                        backgroundImageView.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                NetworkManager.getGlide()
+                                                                        .load(card.getBackground())
+                                                                        .signature(GlideCacheSignature
+                                                                                .ownerBackgroundKey(card.getBackground()))
+                                                                        .override(backgroundImageView.getWidth(),
+                                                                                backgroundImageView.getHeight())
+                                                                        .centerCrop()
+                                                                        .into(backgroundImageView);
+                                                            }
+                                                        });
+                                                    }
+                                                }
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(
                                                     User.currentUser().card));
+                                            DataManager.getInstance().bus.post(new User.OnStorageSizeUpdatedEvent());
                                         }
                                     }
                                 });
@@ -250,6 +303,13 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
 
+                            if (isSuccessful) {
+                                try {
+                                    User.currentUser().updateStorageSize();
+                                } catch (Exception ignored) {
+                                }
+                            }
+
                             final boolean success = isSuccessful;
                             Activity activity = getActivity();
                             if (activity != null) {
@@ -258,35 +318,59 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                     public void run() {
                                         dialog.dismiss();
                                         if (success) {
+                                            final Card card = User.currentUser().card;
                                             if (requestCode == INTENT_CODE_PHOTO_GALLERY) {
                                                 GlideCacheSignature.invalidateAvatarKey();
+                                                View view = getView();
+                                                if (view != null) {
+                                                    final ImageView photoImageView = (ImageView) view.findViewById(R.id.user_photo);
+                                                    if (photoImageView != null) {
+                                                        photoImageView.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.user_photo);
+                                                                DisplayMetrics dm = getResources().getDisplayMetrics();
+                                                                NetworkManager.getGlide()
+                                                                        .load(card.getAvatar())
+                                                                        .signature(GlideCacheSignature
+                                                                                .ownerAvatarKey(card.getAvatar()))
+                                                                        .placeholder(drawable)
+                                                                        .error(drawable)
+                                                                        .bitmapTransform(new CenterCrop(getContext()),
+                                                                                new GlideRoundedCornersTransformation(getContext(),
+                                                                                        Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
+                                                                        .override(photoImageView.getWidth(),
+                                                                                photoImageView.getHeight())
+                                                                        .into(photoImageView);
+                                                            }
+                                                        });
+                                                    }
+                                                }
                                             } else {
                                                 GlideCacheSignature.invalidateBackgroundKey();
-                                            }
-
-                                            final Card card = User.currentUser().card;
-
-                                            View view = getView();
-                                            if (view != null) {
-                                                final ImageView backgroundImageView = (ImageView) view.findViewById(R.id.background);
-                                                if (backgroundImageView != null) {
-                                                    backgroundImageView.post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            NetworkManager.getGlide()
-                                                                    .load(card.getBackground())
-                                                                    .signature(GlideCacheSignature
-                                                                            .ownerBackgroundKey(card.getBackground()))
-                                                                    .override(backgroundImageView.getWidth(),
-                                                                            backgroundImageView.getHeight())
-                                                                    .centerCrop()
-                                                                    .into(backgroundImageView);
-                                                        }
-                                                    });
+                                                View view = getView();
+                                                if (view != null) {
+                                                    final ImageView backgroundImageView = (ImageView) view.findViewById(R.id.background);
+                                                    if (backgroundImageView != null) {
+                                                        backgroundImageView.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                NetworkManager.getGlide()
+                                                                        .load(card.getBackground())
+                                                                        .signature(GlideCacheSignature
+                                                                                .ownerBackgroundKey(card.getBackground()))
+                                                                        .override(backgroundImageView.getWidth(),
+                                                                                backgroundImageView.getHeight())
+                                                                        .centerCrop()
+                                                                        .into(backgroundImageView);
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(card));
+                                            DataManager.getInstance().bus.post(new User.OnStorageSizeUpdatedEvent());
                                         }
                                     }
                                 });

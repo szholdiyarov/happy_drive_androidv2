@@ -508,6 +508,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
 
+                            if (isSuccessful) {
+                                try {
+                                    User.currentUser().updateStorageSize();
+                                } catch (Exception ignored) {
+                                }
+                            }
+
                             final boolean success = isSuccessful;
                             Activity activity = getActivity();
                             if (activity != null) {
@@ -523,6 +530,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                            DataManager.getInstance().bus.post(new User.OnStorageSizeUpdatedEvent());
                                         }
                                     }
                                 });
@@ -559,6 +567,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                 Logger.e("TEST", e.getLocalizedMessage(), e);
                             }
 
+                            if (isSuccessful) {
+                                try {
+                                    User.currentUser().updateStorageSize();
+                                } catch (Exception ignored) {
+                                }
+                            }
+
                             final boolean success = isSuccessful;
                             Activity activity = getActivity();
                             if (activity != null) {
@@ -574,6 +589,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                             }
 
                                             DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                                            DataManager.getInstance().bus.post(new User.OnStorageSizeUpdatedEvent());
                                         }
                                     }
                                 });

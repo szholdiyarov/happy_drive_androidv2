@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.NavigationView
-    android:id="@+id/fragment_main_navigation_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.internal.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:menu="@menu/drawer_main"/>
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/fragment_main_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="44dp"
+        app:menu="@menu/drawer_main" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_gravity="bottom"
+        android:background="#ddd"
+        android:orientation="vertical"
+        android:paddingTop="2dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        tools:ignore="MissingPrefix">
+
+        <TextView
+            android:id="@+id/fragment_drawer_tv_storage_size"
+            fontPath="fonts/Roboto-Light.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/drawer_footer_storage_size_fmt"
+            android:textColor="@color/app_black" />
+
+        <TextView
+            android:id="@+id/fragment_drawer_tv_expiration_date"
+            fontPath="fonts/Roboto-Light.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/drawer_footer_expiration_fmt"
+            android:textColor="@color/app_black" />
+    </LinearLayout>
+</android.support.design.internal.ScrimInsetsFrameLayout>
