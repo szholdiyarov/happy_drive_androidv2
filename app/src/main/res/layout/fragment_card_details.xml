@@ -30,8 +30,8 @@
                     android:id="@+id/fragment_card_details_v_header"
                     android:layout_width="match_parent"
                     android:layout_height="95dp"
-                    android:scaleType="centerCrop"
-                    android:background="@color/colorPrimary" />
+                    android:background="@color/colorPrimary"
+                    android:scaleType="centerCrop" />
 
                 <ViewStub
                     android:id="@+id/fragment_card_details_stub"
@@ -157,7 +157,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/image_album" />
+                        android:src="@drawable/image_album_video_library" />
 
                     <TextView
                         android:id="@+id/video_text"

@@ -11,6 +11,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatEditText;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -181,7 +185,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                                 createFolder();
                             } else if (which == 1) {
                                 try {
-                                    mTempPhotoFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "png");
+                                    mTempPhotoFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
                                     Utils.openCamera(StoragePhotoFragment.this, mTempPhotoFile, INTENT_CODE_CAMERA);
                                 } catch (Exception e) {
                                     Toast.makeText(getContext(), "Не удалось открыть камеру",
@@ -205,10 +209,14 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ApiObject apiObject = (ApiObject) mAdapter.getItem(position);
+        BaseActivity activity = (BaseActivity) getActivity();
         if (apiObject instanceof FileObject) {
             FileObject fileObject = (FileObject) apiObject;
-            BaseActivity activity = (BaseActivity) getActivity();
             activity.replaceContent(PortfolioPhotoDetailsFragment.newInstance(fileObject),
+                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        } else {
+            FolderObject folderObject = (FolderObject) apiObject;
+            activity.replaceContent(newInstance(folderObject, mCard, mType),
                     true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     }
@@ -269,6 +277,90 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     }
 
     private synchronized void createFolder() {
+        FrameLayout frameLayout = new FrameLayout(getContext());
+
+        final int margin = Utils.dipToPixels(18f, getResources().getDisplayMetrics());
+        FrameLayout.LayoutParams fParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        fParams.setMargins(margin, 0, margin, 0);
+
+        final EditText editText = new AppCompatEditText(getContext());
+        editText.setLayoutParams(fParams);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT |
+                InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |
+                InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        editText.setHint("Название для новой папки");
+        editText.setSingleLine();
+
+        frameLayout.addView(editText);
+        new AlertDialog.Builder(getContext())
+                .setView(frameLayout)
+                .setTitle("Создание папки")
+                .setCancelable(false)
+                .setPositiveButton("Создать", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final String folderName = editText.getText().toString();
+                        if (Utils.isEmpty(folderName)) {
+                            editText.setError("Поле не может быть пустым");
+                            return;
+                        }
+
+                        dialog.dismiss();
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                        progressDialog.setMessage("Создание...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    final FolderObject folderObject = ApiClient.createFolder(mFolderObject.id,
+                                            mFolderObject.isPublic, folderName);
+                                    mAdapter.addItem(folderObject);
+                                    if (getActivity() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                } catch (final Exception e) {
+                                    if (getActivity() != null && getView() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.dismiss();
+
+                                                String message;
+                                                if (e instanceof NoConnectionError) {
+                                                    message = "Нет подключения к интернету";
+                                                } else if (e instanceof ApiResponseError) {
+                                                    int apiErrorCode = ((ApiResponseError) e).apiErrorCode;
+                                                    if (apiErrorCode == ApiResponseError.API_RESPONSE_CODE_ACCESS_DENIED) {
+                                                        message = "У вас нет доступа";
+                                                    } else {
+                                                        message = "Произошла ошибка. Сообщите " +
+                                                                "разработчикам код ошибки: " + apiErrorCode;
+                                                    }
+                                                } else {
+                                                    message = "Произошла неизвестная ошибка";
+                                                }
+
+                                                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }.start();
+
+                    }
+                }).setNegativeButton("Отмена", null)
+                .show();
     }
 
     private synchronized void deleteData(final ApiObject apiObject) {
@@ -445,7 +537,20 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                 mItems = new ArrayList<>();
             }
 
-            mItems.add(item);
+            boolean isAdded = false;
+            if (item.isFolder()) {
+                for (int i = 0; i < mItems.size(); i++) {
+                    if (!mItems.get(i).isFolder()) {
+                        mItems.add(i, item);
+                        isAdded = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isAdded) {
+                mItems.add(item);
+            }
         }
 
         public void removeItem(ApiObject item) {

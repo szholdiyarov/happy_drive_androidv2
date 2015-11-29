@@ -38,6 +38,7 @@ public class ApiClient {
     private static final String API_PATH_CARD_STARRED = "card/starred/";
     private static final String API_PATH_FILES_LIST = "files/list/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
+    private static final String API_PATH_FOLDER_CREATE = "files/folder/create/";
     private static final String API_PATH_FOLDER_DELETE = "files/folder/delete/";
     private static final String API_PATH_FILE_DELETE = "files/file/delete/";
     private static final String API_PATH_COMMENTS_LIST = "comments/list/";
@@ -261,6 +262,30 @@ public class ApiClient {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
             return new FileObject(response.result.get("file"));
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @NonNull
+    @WorkerThread
+    public static FolderObject createFolder(int folderId, boolean isPublic, String name)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FOLDER_CREATE);
+        Request.StringBody.Builder builder = new Request.StringBody.Builder();
+        builder.add("folder_name", name);
+        builder.add(FolderObject.API_IS_PUBLIC,
+                isPublic ? "true" : "false");
+        if (folderId > 0) {
+            builder.add(FolderObject.API_FOLDER_ID, folderId + "");
+        }
+
+        request.setBody(builder.build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return new FolderObject(response.result.get("folder"));
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }
