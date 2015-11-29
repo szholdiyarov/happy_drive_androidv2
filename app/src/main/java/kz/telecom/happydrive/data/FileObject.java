@@ -25,17 +25,17 @@ public class FileObject extends ApiObject {
     public final String url;
 
     private String mExtension;
-    private int mType = TYPE_FILE_INTERNAL_NOT_SET;
+    private int mType = TYPE_INTERNAL_NOT_SET;
 
     private static final Map<String, Integer> FILE_TYPES =
             new DefaultValueHashMap<String, Integer>(TYPE_FILE_UNKNOWN) {{
                 // photo file types
-                put("jpg", TYPE_PHOTO);
-                put("jpeg", TYPE_PHOTO);
-                put("png", TYPE_PHOTO);
-                put("bmp", TYPE_PHOTO);
-                put("tiff", TYPE_PHOTO);
-                put("gif", TYPE_PHOTO);
+                put("jpg", TYPE_FILE_PHOTO);
+                put("jpeg", TYPE_FILE_PHOTO);
+                put("png", TYPE_FILE_PHOTO);
+                put("bmp", TYPE_FILE_PHOTO);
+                put("tiff", TYPE_FILE_PHOTO);
+                put("gif", TYPE_FILE_PHOTO);
 
                 // video file types
             }};
@@ -70,7 +70,7 @@ public class FileObject extends ApiObject {
 
     @Override
     public int getType() {
-        if (mType != TYPE_FILE_INTERNAL_NOT_SET) {
+        if (mType != TYPE_INTERNAL_NOT_SET) {
             return mType;
         }
 

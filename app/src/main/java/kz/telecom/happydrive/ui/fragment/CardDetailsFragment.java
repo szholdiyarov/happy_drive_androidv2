@@ -52,7 +52,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
-import kz.telecom.happydrive.ui.PortfolioActivity;
+import kz.telecom.happydrive.ui.StorageActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
@@ -127,7 +127,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                         for (FolderObject fo : mCard.publicFolders) {
                             if ("фотографии" .equalsIgnoreCase(fo.name)) {
                                 try {
-                                    url = getFirstImageUrl(fo.id);
+                                    url = getLastImageUrl(fo.id);
                                 } catch (Exception ignored) {
                                 }
                                 break;
@@ -176,13 +176,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     }
 
     @WorkerThread
-    private String getFirstImageUrl(final int folderId) throws Exception {
+    private String getLastImageUrl(final int folderId) throws Exception {
         Map<String, List<ApiObject>> dir = ApiClient.getFiles(folderId, true, null);
         List<ApiObject> files = dir.get(ApiClient.API_KEY_FILES);
         if (files != null && files.size() > 0) {
             for (int i = files.size(); i > 0; i--) {
                 ApiObject obj = files.get(i - 1);
-                if (obj.getType() == ApiObject.TYPE_PHOTO) {
+                if (obj.getType() == ApiObject.TYPE_FILE_PHOTO) {
                     return ((FileObject) obj).url;
                 }
             }
@@ -483,12 +483,23 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View v) {
         Intent intent = null;
         if (v.getId() == R.id.foto_block) {
-            intent = new Intent(getContext(), PortfolioActivity.class);
-            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_PHOTO);
-            intent.putExtra(PortfolioActivity.EXTRA_CARD, mCard);
+            for (FolderObject obj : mCard.publicFolders) {
+                if (obj.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
+                    intent = new Intent(getContext(), StorageActivity.class);
+                    intent.putExtra(StorageActivity.EXTRA_FOLDER, obj);
+                    intent.putExtra(StorageActivity.EXTRA_CARD, mCard);
+                    intent.putExtra(StorageActivity.EXTRA_TYPE, StorageActivity.TYPE_PHOTO);
+                }
+            }
         } else if (v.getId() == R.id.video_block) {
-//            intent = new Intent(getContext(), PortfolioActivity.class);
-//            intent.putExtra(PortfolioActivity.EXTRA_TYPE, PortfolioActivity.EXTRA_TYPE_VIDEO);
+            for (FolderObject obj : mCard.publicFolders) {
+                if (obj.getType() == ApiObject.TYPE_FOLDER_VIDEO) {
+                    intent = new Intent(getContext(), StorageActivity.class);
+                    intent.putExtra(StorageActivity.EXTRA_FOLDER, obj);
+                    intent.putExtra(StorageActivity.EXTRA_CARD, mCard);
+                    intent.putExtra(StorageActivity.EXTRA_TYPE, StorageActivity.TYPE_VIDEO);
+                }
+            }
         }
 
         if (intent != null) {
@@ -534,6 +545,48 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
         updateView(getView(), event.card);
         getActivity().supportInvalidateOptionsMenu();
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onPortfolioPhotoUploaded(User.OnPortfolioPhotoUploadEvent event) {
+        DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+        if (event.fileObject != null && photoBlockImageView != null) {
+            NetworkManager.getGlide()
+                    .load(event.fileObject.url)
+                    .placeholder(R.drawable.image_album)
+                    .error(R.drawable.image_album)
+                    .into(photoBlockImageView);
+        }
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onPortfolioPhotoDeleted(final User.OnPortfolioPhotoDeletedEvent event) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final String imageUrl = getLastImageUrl(event.folderId);
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (imageUrl != null && photoBlockImageView != null) {
+                                    NetworkManager.getGlide()
+                                            .load(imageUrl)
+                                            .placeholder(R.drawable.image_album)
+                                            .error(R.drawable.image_album)
+                                            .into(photoBlockImageView);
+                                }
+                            }
+                        });
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }.start();
     }
 
     @Override

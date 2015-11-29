@@ -283,4 +283,20 @@ public class User {
         public OnStorageSizeUpdatedEvent() {
         }
     }
+
+    public static class OnPortfolioPhotoUploadEvent {
+        public final FileObject fileObject;
+
+        public OnPortfolioPhotoUploadEvent(FileObject fileObject) {
+            this.fileObject = fileObject;
+        }
+    }
+
+    public static class OnPortfolioPhotoDeletedEvent {
+        public final int folderId;
+
+        public OnPortfolioPhotoDeletedEvent(int folderId) {
+            this.folderId = folderId;
+        }
+    }
 }

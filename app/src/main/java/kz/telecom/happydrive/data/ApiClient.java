@@ -38,6 +38,7 @@ public class ApiClient {
     private static final String API_PATH_CARD_STARRED = "card/starred/";
     private static final String API_PATH_FILES_LIST = "files/list/";
     private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
+    private static final String API_PATH_FOLDER_DELETE = "files/folder/delete/";
     private static final String API_PATH_FILE_DELETE = "files/file/delete/";
     private static final String API_PATH_COMMENTS_LIST = "comments/list/";
     private static final String API_PATH_COMMENTS_POST = "comments/add/";
@@ -357,6 +358,22 @@ public class ApiClient {
             }
 
             return result;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static void deleteFolder(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FOLDER_DELETE);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FolderObject.API_FOLDER_ID, fileId + "")
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }

@@ -218,7 +218,6 @@ public class CatalogItemFragment extends BaseFragment {
     }
 
     private View.OnClickListener starClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             int position = listView.getPositionForView(v);

@@ -4,9 +4,17 @@
     android:layout_height="match_parent">
 
     <kz.telecom.happydrive.ui.widget.SquareImageView
-        android:id="@+id/portfolio_image"
+        android:id="@+id/layout_storage_photo_imgview_folder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
+    <TextView
+        android:id="@+id/layout_storage_photo_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#888"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/app_white" />
 </FrameLayout>

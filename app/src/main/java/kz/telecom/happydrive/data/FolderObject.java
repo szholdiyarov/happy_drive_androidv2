@@ -18,6 +18,8 @@ public class FolderObject extends ApiObject {
     public final boolean isPublic;
     public final long timestamp;
 
+    private int mType = TYPE_INTERNAL_NOT_SET;
+
     public FolderObject(int id, String name, boolean isPublic, long timestamp) {
         this.id = id;
         this.name = name;
@@ -45,7 +47,28 @@ public class FolderObject extends ApiObject {
 
     @Override
     public int getType() {
-        return TYPE_FOLDER;
+        if (mType != TYPE_INTERNAL_NOT_SET) {
+            return mType;
+        }
+
+        if ("фотографии".equalsIgnoreCase(name) ||
+                "фото".equalsIgnoreCase(name)) {
+            mType = TYPE_FOLDER_PHOTO;
+        } else if ("видеозаписи".equalsIgnoreCase(name) ||
+                "видео".equalsIgnoreCase(name)) {
+            mType = TYPE_FOLDER_VIDEO;
+        } else if ("музыка".equalsIgnoreCase(name)) {
+            mType = TYPE_FOLDER_MUSIC;
+        } else if ("документы".equalsIgnoreCase(name)) {
+            mType = TYPE_FOLDER_DOCUMENT;
+        }
+
+        return mType;
+    }
+
+    @Override
+    public boolean isFolder() {
+        return true;
     }
 
     @Override
