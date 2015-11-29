@@ -38,8 +38,12 @@ class UserHelper {
     static final String API_USER_KEY_CARD = "card";
     static final String API_USER_VISIBLE = "visible";
 
-    static final String PREFS_KEY_PHOTO_FOLDER_ID = "hd.user.photoFolderId";
-    static final String PREFS_KEY_VIDEO_FOLDER_ID = "hd.user.videoFolderId";
+    static final String PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID = "hd.user.public.photoFolderId";
+    static final String PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID = "hd.user.public.videoFolderId";
+    static final String PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID = "hd.user.private.photoFolderId";
+    static final String PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID = "hd.user.private.videoFolderId";
+    static final String PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID = "hd.user.private.musicFolderId";
+    static final String PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID = "hd.user.private.documentFolderId";
     static final String PREFS_KEY_STORAGE_USED = "hd.user.storageUsed";
     static final String PREFS_KEY_STORAGE_TOTAL = "hd.user.storageTotal";
 
@@ -163,6 +167,17 @@ class UserHelper {
         editor.putString(API_USER_KEY_TOKEN, user.token);
         editor.putLong(PREFS_KEY_STORAGE_USED, user.getStorageUsed());
         editor.putLong(PREFS_KEY_STORAGE_TOTAL, user.getStorageTotal());
+        for (FolderObject folder : user.privateFolders) {
+            if ("фото".equalsIgnoreCase(folder.name)) {
+                editor.putInt(PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, folder.id);
+            } else if ("видео".equalsIgnoreCase(folder.name)) {
+                editor.putInt(PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, folder.id);
+            } else if ("музыка".equalsIgnoreCase(folder.name)) {
+                editor.putInt(PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, folder.id);
+            } else if ("документы".equalsIgnoreCase(folder.name)) {
+                editor.putInt(PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, folder.id);
+            }
+        }
         editor.apply();
     }
 
@@ -178,8 +193,12 @@ class UserHelper {
 
         Map<String, Object> raw = new HashMap<>(2);
         raw.put(API_USER_KEY_TOKEN, prefs.getString(API_USER_KEY_TOKEN, null));
-        raw.put(PREFS_KEY_PHOTO_FOLDER_ID, prefs.getInt(PREFS_KEY_PHOTO_FOLDER_ID, -1));
-        raw.put(PREFS_KEY_VIDEO_FOLDER_ID, prefs.getInt(PREFS_KEY_VIDEO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, prefs.getInt(PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, prefs.getInt(PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, prefs.getInt(PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, prefs.getInt(PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, prefs.getInt(PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, -1));
+        raw.put(PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, prefs.getInt(PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, -1));
         raw.put(PREFS_KEY_STORAGE_USED, prefs.getLong(PREFS_KEY_STORAGE_USED, -1L));
         raw.put(PREFS_KEY_STORAGE_TOTAL, prefs.getLong(PREFS_KEY_STORAGE_TOTAL, -1L));
         raw.put(API_USER_KEY_CARD, Card.restoreUserCard(prefs));

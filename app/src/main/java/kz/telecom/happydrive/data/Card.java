@@ -5,7 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,13 +101,13 @@ public class Card implements Comparable<Card>, Parcelable {
             }
         } else {
             int photoFolderId = Utils.getValue(Integer.class,
-                    UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, -1, data);
+                    UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, -1, data);
             if (photoFolderId > 0) {
                 publicFolders.add(new FolderObject(photoFolderId, "Фотографии", true, 0));
             }
 
             int videoFolderId = Utils.getValue(Integer.class,
-                    UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, -1, data);
+                    UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, -1, data);
             if (videoFolderId > 0) {
                 publicFolders.add(new FolderObject(videoFolderId, "Видеозаписи", true, 0));
             }
@@ -299,9 +298,9 @@ public class Card implements Comparable<Card>, Parcelable {
 
         for (FolderObject fo : card.publicFolders) {
             if ("фотографии".equalsIgnoreCase(fo.name)) {
-                editor.putInt(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, fo.id);
+                editor.putInt(UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, fo.id);
             } else if ("видеозаписи".equalsIgnoreCase(fo.name)) {
-                editor.putInt(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, fo.id);
+                editor.putInt(UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, fo.id);
             }
         }
 

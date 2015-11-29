@@ -6,18 +6,13 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.PushService;
-import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +20,6 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.ResponseParseError;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 
@@ -44,6 +38,8 @@ public class User {
     public final String token;
     private long mStorageUsed;
     private long mStorageTotal;
+
+    public final List<FolderObject> privateFolders;
 
     @WorkerThread
     public boolean updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
@@ -152,9 +148,28 @@ public class User {
                 if (obj instanceof FolderObject) {
                     FolderObject folder = (FolderObject) obj;
                     if ("фотографии".equalsIgnoreCase(folder.name)) {
-                        rawData.put(UserHelper.PREFS_KEY_PHOTO_FOLDER_ID, folder.id);
+                        rawData.put(UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, folder.id);
                     } else if ("Видеозаписи".equalsIgnoreCase(folder.name)) {
-                        rawData.put(UserHelper.PREFS_KEY_VIDEO_FOLDER_ID, folder.id);
+                        rawData.put(UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, folder.id);
+                    }
+                }
+            }
+        }
+
+        mapOfFolders = ApiClient.getFiles(-1, false, token);
+        List<ApiObject> privateFolders = mapOfFolders.get(ApiClient.API_KEY_FOLDERS);
+        if (privateFolders != null) {
+            for (ApiObject obj : privateFolders) {
+                if (obj instanceof FolderObject) {
+                    FolderObject folder = (FolderObject) obj;
+                    if ("фото".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, folder.id);
+                    } else if ("видео".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, folder.id);
+                    } else if ("музыка".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, folder.id);
+                    } else if ("документы".equalsIgnoreCase(folder.name)) {
+                        rawData.put(UserHelper.PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, folder.id);
                     }
                 }
             }
@@ -222,9 +237,33 @@ public class User {
             throw new ResponseParseError("token is null");
         }
 
-        Card card = new Card((Map<String, Object>) rawData.get("card"),
-                (List<Map<String, Object>>) rawData.get("folders"));
-        User user = new User(token, card);
+        List<FolderObject> privateFolders = new ArrayList<>(4);
+        final int photoFolderId = Utils.getValue(Integer.class,
+                UserHelper.PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, -1, rawData);
+        if (photoFolderId > 0) {
+            privateFolders.add(new FolderObject(photoFolderId, "ФОТО", false, 0));
+        }
+
+        final int videoFolderId = Utils.getValue(Integer.class,
+                UserHelper.PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, -1, rawData);
+        if (videoFolderId > 0) {
+            privateFolders.add(new FolderObject(videoFolderId, "ВИДЕО", false, 0));
+        }
+
+        final int musicFolderId = Utils.getValue(Integer.class,
+                UserHelper.PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, -1, rawData);
+        if (musicFolderId > 0) {
+            privateFolders.add(new FolderObject(musicFolderId, "МУЗЫКА", false, 0));
+        }
+
+        final int documentFolderId = Utils.getValue(Integer.class,
+                UserHelper.PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, -1, rawData);
+        if (documentFolderId > 0) {
+            privateFolders.add(new FolderObject(documentFolderId, "ДОКУМЕНТЫ", false, 0));
+        }
+
+        Card card = new Card((Map<String, Object>) rawData.get("card"), null);
+        User user = new User(token, card, privateFolders);
         user.mStorageUsed = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_USED, -1L, rawData);
         user.mStorageTotal = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_TOTAL, -1L, rawData);
         return user;
@@ -248,9 +287,11 @@ public class User {
         sUser = null;
     }
 
-    private User(String token, Card card) {
+    private User(String token, Card card, List<FolderObject> privateFolders) {
         this.token = token;
         this.card = card;
+
+        this.privateFolders = privateFolders;
     }
 
     public static class SignedInEvent {
