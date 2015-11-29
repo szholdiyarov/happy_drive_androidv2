@@ -58,6 +58,7 @@ public class User {
         card.setPosition(other.getPosition());
         card.setShortDesc(other.getShortDesc());
         card.setFullDesc(other.getFullDesc());
+        card.setAudio(other.getAudio());
         card.setAvatar(other.getAvatar());
         card.setBackground(other.getBackground());
         card.visible = other.visible;
@@ -68,6 +69,19 @@ public class User {
         Card.saveUserCard(card, getDefaultSharedPrefs());
 
         return true;
+    }
+
+    @WorkerThread
+    public synchronized boolean changeAudio(File file) throws NoConnectionError,
+            ApiResponseError, ResponseParseError {
+        JsonNode jsonNode = UserHelper.changeAudio(file);
+        if (jsonNode.hasNonNull("url")) {
+            card.setAudio(jsonNode.get("url").asText());
+            Card.saveUserCard(card, getDefaultSharedPrefs());
+            return true;
+        }
+
+        return false;
     }
 
     @WorkerThread

@@ -25,6 +25,7 @@ class UserHelper {
     private static final String API_PATH_GET_TOKEN = "auth/getToken/";
     private static final String API_PATH_REGISTER = "auth/register/";
     private static final String API_PATH_RESET_PASSWORD = "auth/reset/";
+    private static final String API_PATH_UPDATE_AUDIO = "card/audio/";
     private static final String API_PATH_UPDATE_AVATAR = "card/avatar/";
     private static final String API_PATH_UPDATE_BACKGROUND = "card/background/";
     private static final String API_PATH_STORAGE_SIZE = "files/storage_size/";
@@ -123,6 +124,10 @@ class UserHelper {
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }
+    }
+
+    static JsonNode changeAudio(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        return uploadFile(file, API_PATH_UPDATE_AUDIO, "Audio-File-Type");
     }
 
     static JsonNode changeAvatar(File file) throws NoConnectionError, ApiResponseError, ResponseParseError {

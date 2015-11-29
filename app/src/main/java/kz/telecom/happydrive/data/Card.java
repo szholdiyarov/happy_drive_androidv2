@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,7 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mPosition;
     private String mShortDesc;
     private String mFullDesc;
+    private String mAudio;
     private String mAvatar;
     private String mBackground;
     public boolean visible;
@@ -81,6 +83,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mPosition = Utils.getValue(String.class, API_KEY_POSITION, null, data);
         mShortDesc = Utils.getValue(String.class, API_KEY_SHORT_DESC, null, data);
         mFullDesc = Utils.getValue(String.class, API_KEY_FULL_DESC, null, data);
+        mAudio = Utils.getValue(String.class, API_KEY_AUDIO_FILE_URL, null, data);
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
         visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
@@ -124,6 +127,7 @@ public class Card implements Comparable<Card>, Parcelable {
         mPosition = in.readString();
         mShortDesc = in.readString();
         mFullDesc = in.readString();
+        mAudio = in.readString();
         mAvatar = in.readString();
         mBackground = in.readString();
         publicFolders = in.readArrayList(getClass()
@@ -222,6 +226,14 @@ public class Card implements Comparable<Card>, Parcelable {
         return mFullDesc;
     }
 
+    public void setAudio(String audio) {
+        mAudio = audio;
+    }
+
+    public String getAudio() {
+        return mAudio;
+    }
+
     public void setAvatar(String avatar) {
         mAvatar = avatar;
     }
@@ -261,6 +273,7 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mPosition);
         dest.writeString(mShortDesc);
         dest.writeString(mFullDesc);
+        dest.writeString(mAudio);
         dest.writeString(mAvatar);
         dest.writeString(mBackground);
         dest.writeList(publicFolders);
@@ -279,6 +292,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_POSITION, card.mPosition);
         editor.putString(API_KEY_SHORT_DESC, card.mShortDesc);
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
+        editor.putString(API_KEY_AUDIO_FILE_URL, card.mAudio);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
         editor.putBoolean(API_KEY_VISIBILITY, card.visible);
@@ -308,6 +322,7 @@ public class Card implements Comparable<Card>, Parcelable {
         newCard.mPosition = card.mPosition;
         newCard.mShortDesc = card.mShortDesc;
         newCard.mFullDesc = card.mFullDesc;
+        newCard.mAudio = card.mAudio;
         newCard.mAvatar = card.mAvatar;
         newCard.mBackground = card.mBackground;
         return newCard;

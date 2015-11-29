@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
@@ -46,13 +47,12 @@ public class Utils {
         fragment.startActivityForResult(Intent.createChooser(intent, intentTitle), code);
     }
 
-    public static File tempFileWithNow(Context context) throws IOException {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fileName = "jpeg_" + timestamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+    public static File tempFile(String env, String extension) throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String fileName = extension.toUpperCase() + "_" + timestamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(env);
 
-        return File.createTempFile(fileName, ".jpg", storageDir);
+        return File.createTempFile(fileName, "." + extension, storageDir);
     }
 
     @SuppressLint("NewApi")

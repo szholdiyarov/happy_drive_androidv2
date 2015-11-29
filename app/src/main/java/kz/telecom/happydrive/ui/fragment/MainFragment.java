@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -142,7 +143,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener {
                                     dialog.dismiss();
                                     if (which == 0) {
                                         try {
-                                            mTempFile = Utils.tempFileWithNow(getContext());
+                                            mTempFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
                                             Utils.openCamera(MainFragment.this, mTempFile,
                                                     viewId == R.id.user_photo ?
                                                             INTENT_CODE_PHOTO_CAMERA :

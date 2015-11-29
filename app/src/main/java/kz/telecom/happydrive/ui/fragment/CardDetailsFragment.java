@@ -6,9 +6,11 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -33,6 +35,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +72,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     private Card mCard;
     private boolean isCardUpdating = false;
 
+    private MediaPlayer mPlayer = null;
     private File mTempFile;
 
     public static BaseFragment newInstance(Card card) {
@@ -191,9 +195,18 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         User user = User.currentUser();
         if (mCard != null && user != null) {
             inflater.inflate(mCard.compareTo(user.card) == 0 ?
-                    !Utils.isEmpty(mCard.getFirstName()) ?
-                            R.menu.fragment_card_details_full : R.menu.fragment_card_details :
+                    mCard.getCategoryId() > 0 ? R.menu.fragment_card_details_full :
+                            R.menu.fragment_card_details :
                     R.menu.fragment_card_details_other, menu);
+
+            if (!Utils.isEmpty(mCard.getAudio())) {
+                final boolean isPlaying = mPlayer != null && mPlayer.isPlaying();
+                menu.add(R.id.action_group_main, R.id.action_playback, 0,
+                        isPlaying ? "Воспроизвести" : "Остановить")
+                        .setIcon(isPlaying ? R.drawable.ic_pause_white_36dp :
+                                R.drawable.ic_play_arrow_white_36dp)
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
         }
     }
 
@@ -202,7 +215,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         final int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
             getActivity().onBackPressed();
-        } if (itemId == R.id.action_edit) {
+        } else if (itemId == R.id.action_playback) {
+            toggleAudioPlayback(!(mPlayer != null && mPlayer.isPlaying()));
+        } else if (itemId == R.id.action_edit) {
             startActivity(new Intent(getContext(), CardEditActivity.class));
         } else if (itemId == R.id.action_share) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -240,7 +255,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     dialog.dismiss();
                                     if (which == 0) {
                                         try {
-                                            mTempFile = Utils.tempFileWithNow(getContext());
+                                            mTempFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
                                             Utils.openCamera(CardDetailsFragment.this, mTempFile,
                                                     itemId == R.id.action_change_photo ?
                                                             INTENT_CODE_PHOTO_CAMERA :
@@ -440,7 +455,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        if (card == null || card.publicFolders.size() == 0 ||card.getCategoryId() <= 0) {
+        if (card == null || card.publicFolders.size() == 0 || card.getCategoryId() <= 0) {
             view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
             view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
         } else {
@@ -449,6 +464,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         photoBlockImageView = (ImageView) view.findViewById(R.id.portfolio_photo);
+    }
+
+    @Override
+    public void onPause() {
+        toggleAudioPlayback(false);
+        super.onPause();
     }
 
     @Override
@@ -472,6 +493,39 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         if (intent != null) {
             startActivity(intent);
         }
+    }
+
+    private void toggleAudioPlayback(boolean play) {
+        if (play) {
+            try {
+                mPlayer = new MediaPlayer();
+                mPlayer.setDataSource(getContext(), Uri.parse(mCard.getAudio()),
+                        Collections.singletonMap("Auth-Token", User.currentUser().token));
+
+                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        toggleAudioPlayback(false);
+                    }
+                });
+
+                mPlayer.prepare();
+                mPlayer.start();
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Произошла ошибка во время прослушивания записи",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else if (mPlayer != null) {
+            try {
+                mPlayer.stop();
+            } catch (Exception ignored) {
+            }
+
+            mPlayer.release();
+            mPlayer = null;
+        }
+
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Subscribe

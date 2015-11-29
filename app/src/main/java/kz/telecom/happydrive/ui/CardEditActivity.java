@@ -3,6 +3,7 @@ package kz.telecom.happydrive.ui;
 import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.File;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
@@ -22,6 +25,7 @@ import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import kz.telecom.happydrive.ui.fragment.CardEditParamsAdditionalFragment;
 import kz.telecom.happydrive.ui.fragment.CardEditParamsMainFragment;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -35,6 +39,7 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
     private View mStepper2;
 
     private Card mCard;
+    private File mAudioFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,20 +115,24 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
                     dialog.setMessage("Сохранение...");
                     dialog.setCancelable(false);
                     dialog.show();
-                    finish();
 
                     new Thread() {
                         @Override
                         public void run() {
                             try {
                                 ApiClient.updateCard(mCard);
+                                if (mAudioFile != null && mAudioFile.length() > 0) {
+                                    User.currentUser().changeAudio(mAudioFile);
+                                }
+
                                 User.currentUser().updateCard();
                                 CardEditActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        dialog.dismiss();
                                         DataManager.getInstance().bus
                                                 .post(new Card.OnCardUpdatedEvent(mCard));
+                                        dialog.dismiss();
+                                        finish();
                                     }
                                 });
                             } catch (final Exception e) {
@@ -162,7 +171,16 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
             BaseFragment baseFragment = findDefaultContent();
             if (baseFragment instanceof IsSavable) {
                 if (((IsSavable) baseFragment).readyForSave()) {
-                    replaceContent(CardEditParamsAdditionalFragment.newInstance(mCard), true,
+                    if (mAudioFile == null) {
+                        try {
+                            mAudioFile = Utils.tempFile(Environment.DIRECTORY_MUSIC, "3gp");
+                        } catch (Exception ignored) {
+                            Toast.makeText(this, "Не удалось создать файл для аудио-приветствия. " +
+                                    "Функция записи будет недоступна", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    replaceContent(CardEditParamsAdditionalFragment.newInstance(mCard, mAudioFile), true,
                             FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 } else {
                     Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
