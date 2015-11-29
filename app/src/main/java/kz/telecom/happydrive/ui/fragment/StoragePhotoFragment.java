@@ -123,8 +123,15 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
             fab.setOnClickListener(this);
             gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    deleteData((ApiObject) mAdapter.getItem(position));
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getContext())
+                            .setItems(new String[]{"Удалить"}, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    deleteData((ApiObject) mAdapter.getItem(position));
+                                }
+                            }).show();
                     return true;
                 }
             });
@@ -488,11 +495,13 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                             .load(fileObject.url)
                             .centerCrop()
                             .error(R.drawable.image_album)
+                            .placeholder(R.drawable.image_album_load)
                             .into(imageView);
                 }
             } else {
                 FolderViewHolder folderViewHolder = (FolderViewHolder) viewHolder;
                 FolderObject folderObject = (FolderObject) getItem(position);
+                folderViewHolder.textView.setText(folderObject.name);
             }
 
             return convertView;

@@ -7,14 +7,16 @@
         android:id="@+id/layout_storage_photo_imgview_folder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_album_folder" />
 
     <TextView
         android:id="@+id/layout_storage_photo_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="#888"
         android:ellipsize="end"
-        android:singleLine="true"
+        android:maxLines="2"
         android:textColor="@color/app_white" />
 </FrameLayout>

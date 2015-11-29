@@ -141,12 +141,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                 @Override
                                 public void run() {
                                     DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
-                                    if (imageUrl != null && photoBlockImageView != null) {
-                                        NetworkManager.getGlide()
-                                                .load(imageUrl)
-                                                .placeholder(R.drawable.image_album)
-                                                .error(R.drawable.image_album)
-                                                .into(photoBlockImageView);
+                                    if (photoBlockImageView != null) {
+                                        if (imageUrl != null) {
+                                            NetworkManager.getGlide()
+                                                    .load(imageUrl)
+                                                    .placeholder(R.drawable.image_album)
+                                                    .error(R.drawable.image_album)
+                                                    .into(photoBlockImageView);
+                                        } else {
+                                            photoBlockImageView.setImageResource(R.drawable.image_album);
+                                        }
                                     }
                                 }
                             });
@@ -554,7 +558,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         if (event.fileObject != null && photoBlockImageView != null) {
             NetworkManager.getGlide()
                     .load(event.fileObject.url)
-                    .placeholder(R.drawable.image_album)
+                    .placeholder(R.drawable.image_album_load)
                     .error(R.drawable.image_album)
                     .into(photoBlockImageView);
         }
@@ -573,12 +577,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (imageUrl != null && photoBlockImageView != null) {
-                                    NetworkManager.getGlide()
-                                            .load(imageUrl)
-                                            .placeholder(R.drawable.image_album)
-                                            .error(R.drawable.image_album)
-                                            .into(photoBlockImageView);
+                                if (photoBlockImageView != null) {
+                                    if (imageUrl != null) {
+                                        NetworkManager.getGlide()
+                                                .load(imageUrl)
+                                                .placeholder(R.drawable.image_album_load)
+                                                .error(R.drawable.image_album)
+                                                .into(photoBlockImageView);
+                                    } else {
+                                        photoBlockImageView.setImageResource(R.drawable.image_album);
+                                    }
                                 }
                             }
                         });
