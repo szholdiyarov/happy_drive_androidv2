@@ -7,10 +7,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kz.telecom.happydrive.data.network.JsonRequest;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
+import kz.telecom.happydrive.data.network.Request;
+import kz.telecom.happydrive.data.network.Response;
+import kz.telecom.happydrive.data.network.ResponseParseError;
 import kz.telecom.happydrive.util.Logger;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +26,7 @@ import java.util.Map;
  * Created by Galymzhan Sh on 11/7/15.
  */
 public class Category {
+    private static final String API_PATH_GET_CATEGORIES = "card/categories/";
 
     @JsonProperty("category_id")
     public final int id;
@@ -46,32 +54,22 @@ public class Category {
     }
 
     @NonNull
-    public static List<Category> getCategoriesListTemp() throws Exception {
-        JsonNode jsonNode;
+    public static List<Category> getCategories()
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        if (storedCategories.size() > 0) {
+            return storedCategories;
+        }
+
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_GET_CATEGORIES);
+
         try {
-            jsonNode = CategoryHelper.getCategories();
-        } catch (Exception ioe) {
-            throw new NoConnectionError("no network error", ioe);
+            Response<JsonNode> response = NetworkManager.execute(request);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
+            JsonNode node = response.result.get("categories");
+            return node != null ? storedCategories = parseCategories(node) : storedCategories;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
         }
-
-        final int responseCode = jsonNode.hasNonNull(ApiResponseError.API_RESPONSE_CODE_KEY) ?
-                jsonNode.get(ApiResponseError.API_RESPONSE_CODE_KEY)
-                        .asInt(ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR) :
-                ApiResponseError.API_RESPONSE_UNKNOWN_CLIENT_ERROR;
-
-        if (responseCode != ApiResponseError.API_RESPONSE_CODE_OK) {
-            throw new ApiResponseError("api response error", responseCode, null);
-        }
-        List<Category> result = new ArrayList<>();
-
-        final JsonNode arrNode = jsonNode.get("categories");
-        if (arrNode != null) {
-            result = parseCategories(arrNode);
-            storedCategories = result;
-        } else {
-            Logger.d("Couldn't get json arrayNode", "'categories' tag is empty");
-        }
-        return result;
     }
 
     private static ArrayList<Category> parseCategories(JsonNode arrNode) {

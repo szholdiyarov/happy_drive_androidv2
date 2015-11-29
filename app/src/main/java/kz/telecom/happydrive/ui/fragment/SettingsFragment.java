@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
@@ -82,6 +84,12 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ibShow:
+                if (User.currentUser().card.getCategoryId() <= 0) {
+                    Toast.makeText(getContext(), "Вы не можете открыть доступ к " +
+                            "визитке пока не заполните обязательные поля", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 final boolean newStatus = !visible;
                 final int newImage = newStatus ? R.drawable.btn_switch_pressed : R.drawable.btn_switch_normal;
                 final int oldImage = !newStatus ? R.drawable.btn_switch_pressed : R.drawable.btn_switch_normal;

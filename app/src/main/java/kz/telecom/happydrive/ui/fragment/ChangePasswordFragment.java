@@ -86,11 +86,6 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                             @Override
                             public void run() {
                                 if (result) {
-                                    // Dummy clear
-                                    etOldPassword.setText("");
-                                    etPassword1.setText("");
-                                    etPassword2.setText("");
-                                    Snackbar.make(v, "Пароль успешно изменен", Snackbar.LENGTH_LONG).show();
                                     getActivity().onBackPressed();
                                 } else {
                                     etOldPassword.setError("Текущий пароль не верный");

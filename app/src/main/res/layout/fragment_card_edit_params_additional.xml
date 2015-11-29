@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:text="E-mail"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите электронный адрес"
+            android:inputType="text|textEmailAddress"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="Веб-сайт"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите адрес веб-сайта"
+            android:inputType="text|textUri"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="Адрес"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите адрес компании"
+            android:inputType="text|textPostalAddress|textCapSentences"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="О себе"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Укажите информацию о себе"
+            android:inputType="text|textCapSentences|textMultiLine" />
+    </LinearLayout>
+</ScrollView>

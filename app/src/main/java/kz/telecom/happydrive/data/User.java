@@ -46,12 +46,6 @@ public class User {
     private long mStorageTotal;
 
     @WorkerThread
-    public void saveCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
-        ApiClient.updateCard(card);
-        Card.saveUserCard(card, getDefaultSharedPrefs());
-    }
-
-    @WorkerThread
     public boolean updateCard() throws NoConnectionError, ApiResponseError, ResponseParseError {
         Card other = ApiClient.getCard(card.id);
         card.setCategoryId(other.getCategoryId());

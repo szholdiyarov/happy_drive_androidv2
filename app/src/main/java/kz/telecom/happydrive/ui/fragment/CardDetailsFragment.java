@@ -51,7 +51,6 @@ import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.PortfolioActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -265,7 +264,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fragment_card_details_progress_bar);
         progressBar.setVisibility(View.GONE);
 
-        if (card == null || card.getFirstName() == null) {
+        if (card == null || card.getCategoryId() <= 0) {
             TextView textView = (TextView) view.findViewById(R.id.stub_error_tv_msg);
             if (textView == null) {
                 stubView = ((ViewStub) view.findViewById(R.id.stub_error)).inflate();
@@ -320,7 +319,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
             View phoneBlock = view.findViewById(R.id.phone_block);
             if (!Utils.isEmpty(card.getPhone())) {
-                phoneBlock.setVisibility(View.GONE);
+                phoneBlock.setVisibility(View.VISIBLE);
                 TextView phoneNumber = (TextView) phoneBlock.findViewById(R.id.phone);
                 phoneNumber.setText(card.getPhone());
             } else {
@@ -441,7 +440,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
         }
 
-        if (card == null || card.publicFolders.size() == 0) {
+        if (card == null || card.publicFolders.size() == 0 ||card.getCategoryId() <= 0) {
             view.findViewById(R.id.portfolio_text).setVisibility(View.GONE);
             view.findViewById(R.id.portfolio_block).setVisibility(View.GONE);
         } else {

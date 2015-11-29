@@ -48,7 +48,7 @@ public class ApiClient {
 
     private static ObjectMapper sObjectMapper;
 
-    static void updateCard(Card card) throws NoConnectionError, ApiResponseError, ResponseParseError {
+    public static void updateCard(Card card) throws NoConnectionError, ApiResponseError, ResponseParseError {
         Map<String, Object> cardMap = new HashMap<>();
         cardMap.put(Card.API_KEY_CATEGORY_ID, card.getCategoryId());
         cardMap.put(Card.API_KEY_FIRST_NAME, card.getFirstName());

@@ -1,18 +1,24 @@
 package kz.telecom.happydrive.ui;
 
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import kz.telecom.happydrive.ui.fragment.CardEditParamsAdditionalFragment;
 import kz.telecom.happydrive.ui.fragment.CardEditParamsMainFragment;
@@ -59,7 +65,7 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
         }
 
         if (savedInstanceState == null) {
-            replaceContent(new CardEditParamsMainFragment(), false,
+            replaceContent(CardEditParamsMainFragment.newInstance(mCard), false,
                     FragmentTransaction.TRANSIT_NONE);
         }
 
@@ -83,6 +89,95 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
         mCard = savedInstanceState.getParcelable(EXTRA_CARD);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_card_edit, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean handled = false;
+        final int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            onBackPressed();
+            handled = true;
+        } else if (itemId == R.id.action_save) {
+            BaseFragment baseFragment = findDefaultContent();
+            if (baseFragment instanceof IsSavable) {
+                if (((IsSavable) baseFragment).readyForSave()) {
+                    final ProgressDialog dialog = new ProgressDialog(this);
+                    dialog.setMessage("Сохранение...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    finish();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                ApiClient.updateCard(mCard);
+                                User.currentUser().updateCard();
+                                CardEditActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        DataManager.getInstance().bus
+                                                .post(new Card.OnCardUpdatedEvent(mCard));
+                                    }
+                                });
+                            } catch (final Exception e) {
+                                CardEditActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        if (e instanceof NoConnectionError) {
+                                            Toast.makeText(CardEditActivity.this, "Нет подключения к интернету",
+                                                    Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(CardEditActivity.this, "Произошла ошибка при сохранении визитки",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+                } else {
+                    Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            handled = true;
+        }
+
+        return handled || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.stepper_btn_left) {
+            onBackPressed();
+        } else if (view.getId() == R.id.stepper_btn_right) {
+            BaseFragment baseFragment = findDefaultContent();
+            if (baseFragment instanceof IsSavable) {
+                if (((IsSavable) baseFragment).readyForSave()) {
+                    replaceContent(CardEditParamsAdditionalFragment.newInstance(mCard), true,
+                            FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                } else {
+                    Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        mStepper1.post(new Runnable() {
+            @Override
+            public void run() {
+                updateStepperStates();
+            }
+        });
+    }
+
     private void updateStepperStates() {
         BaseFragment fragment = findDefaultContent();
         if (fragment instanceof CardEditParamsMainFragment) {
@@ -99,35 +194,6 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean handled = false;
-        final int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            onBackPressed();
-            handled = true;
-        }
-
-        return handled || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.stepper_btn_left) {
-            onBackPressed();
-        } else if (view.getId() == R.id.stepper_btn_right) {
-            replaceContent(new CardEditParamsAdditionalFragment(), true,
-                    FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        }
-
-        mStepper1.post(new Runnable() {
-            @Override
-            public void run() {
-                updateStepperStates();
-            }
-        });
-    }
-
-    @Override
     protected int getDefaultContentViewContainerId() {
         return R.id.activity_card_edit_view_container;
     }
@@ -136,5 +202,9 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
     public void onBackPressed() {
         super.onBackPressed();
         updateStepperStates();
+    }
+
+    public interface IsSavable {
+        boolean readyForSave();
     }
 }
