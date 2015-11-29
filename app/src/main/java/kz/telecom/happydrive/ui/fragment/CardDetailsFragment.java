@@ -180,8 +180,9 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         Map<String, List<ApiObject>> dir = ApiClient.getFiles(folderId, true, null);
         List<ApiObject> files = dir.get(ApiClient.API_KEY_FILES);
         if (files != null && files.size() > 0) {
-            for (ApiObject obj : files) {
-                if (!obj.isFolder()) {
+            for (int i = files.size(); i > 0; i--) {
+                ApiObject obj = files.get(i - 1);
+                if (obj.getType() == ApiObject.TYPE_PHOTO) {
                     return ((FileObject) obj).url;
                 }
             }

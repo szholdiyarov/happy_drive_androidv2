@@ -157,7 +157,8 @@ public class StoragePhotoFragment extends BaseFragment {
                         List<ApiObject> folderList = objectMap.get(ApiClient.API_KEY_FOLDERS);
                         if (folderList != null && folderList.size() > 0) {
                             for (ApiObject obj : folderList) {
-                                FolderObject folder = obj.isFolder() ? (FolderObject) obj : null;
+                                FolderObject folder = obj.getType() == ApiObject.TYPE_FOLDER ?
+                                        (FolderObject) obj : null;
                                 if (folder != null && "фото".equalsIgnoreCase(folder.name)) {
                                     photoFolder = folder;
                                 }
@@ -188,7 +189,8 @@ public class StoragePhotoFragment extends BaseFragment {
                             List<ApiObject> fileList = objectMap.get(ApiClient.API_KEY_FILES);
                             if (fileList != null && fileList.size() > 0) {
                                 for (ApiObject obj : fileList) {
-                                    FileObject file = !obj.isFolder() ? (FileObject) obj : null;
+                                    FileObject file = obj.getType() != ApiObject.TYPE_FOLDER ?
+                                            (FileObject) obj : null;
                                     if (file != null) {
                                         mItems.add(file);
                                     }

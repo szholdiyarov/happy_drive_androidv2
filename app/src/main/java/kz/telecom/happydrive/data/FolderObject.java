@@ -44,8 +44,8 @@ public class FolderObject extends ApiObject {
     }
 
     @Override
-    public boolean isFolder() {
-        return true;
+    public int getType() {
+        return TYPE_FOLDER;
     }
 
     @Override

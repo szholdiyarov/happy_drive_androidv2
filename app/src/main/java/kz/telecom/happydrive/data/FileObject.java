@@ -4,6 +4,10 @@ import android.os.Parcel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Map;
+
+import kz.telecom.happydrive.util.DefaultValueHashMap;
+
 /**
  * Created by shgalym on 11/22/15.
  */
@@ -19,6 +23,22 @@ public class FileObject extends ApiObject {
     public final long size;
     public final long timestamp;
     public final String url;
+
+    private String mExtension;
+    private int mType = TYPE_FILE_INTERNAL_NOT_SET;
+
+    private static final Map<String, Integer> FILE_TYPES =
+            new DefaultValueHashMap<String, Integer>(TYPE_FILE_UNKNOWN) {{
+                // photo file types
+                put("jpg", TYPE_PHOTO);
+                put("jpeg", TYPE_PHOTO);
+                put("png", TYPE_PHOTO);
+                put("bmp", TYPE_PHOTO);
+                put("tiff", TYPE_PHOTO);
+                put("gif", TYPE_PHOTO);
+
+                // video file types
+            }};
 
     public FileObject(int id, String name, long size, long timestamp, String url) {
         this.id = id;
@@ -49,8 +69,26 @@ public class FileObject extends ApiObject {
     }
 
     @Override
-    public boolean isFolder() {
-        return false;
+    public int getType() {
+        if (mType != TYPE_FILE_INTERNAL_NOT_SET) {
+            return mType;
+        }
+
+        mType = FILE_TYPES.get(getExtension());
+        return mType;
+    }
+
+    public String getExtension() {
+        if (mExtension != null) {
+            return mExtension;
+        }
+
+        String[] comps = name.split("\\.");
+        if (comps.length > 0) {
+            mExtension = comps[comps.length - 1].toLowerCase();
+        }
+
+        return mExtension;
     }
 
     @Override
