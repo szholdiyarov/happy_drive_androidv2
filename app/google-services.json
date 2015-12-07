@@ -1,1 +1,59 @@
-{"project_info":{"project_id":"happydrive-60b8e","project_number":"113985163095","name":"happydrive"},"client":[{"client_info":{"mobilesdk_app_id":"1:113985163095:android:320fd51306af8870","client_id":"android:kz.telecom.happydrive","client_type":1,"android_client_info":{"package_name":"kz.telecom.happydrive"}},"oauth_client":[{"client_id":"113985163095-9mbrqqji719pfdq61701ukua1i7jbsue.apps.googleusercontent.com","client_type":1,"android_info":{"package_name":"kz.telecom.happydrive","certificate_hash":"FFCC0F126923309CF0D188BAB0B7EAA86F1FAB01"}}],"api_key":[],"services":{"analytics_service":{"status":1},"cloud_messaging_service":{"status":1,"apns_config":[]},"appinvite_service":{"status":1,"other_platform_oauth_client":[]},"google_signin_service":{"status":2},"ads_service":{"status":1}}}],"client_info":[],"ARTIFACT_VERSION":"1"}
+{
+  "project_info": {
+    "project_id": "happydrive8-1148",
+    "project_number": "275060858600",
+    "name": "happydrive8"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275060858600:android:320fd51306af8870",
+        "client_id": "android:kz.telecom.happydrive",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "kz.telecom.happydrive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "275060858600-i92aeqjnv9h6gumfjvl0q66s8f81s2la.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kz.telecom.happydrive",
+            "certificate_hash": "FFCC0F126923309CF0D188BAB0B7EAA86F1FAB01"
+          }
+        },
+        {
+          "client_id": "275060858600-evevp1d2bvhgfq2n67p5rdegm5a367kq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kz.telecom.happydrive",
+            "certificate_hash": "8E15FDAE3711E2A4000CDBEBB9FB971453DBA3DD"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
