@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_toolbar" />
+
+    <Button
+        android:id="@+id/activity_locked_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <Button
+        android:id="@+id/activity_locked_btn_secondary"
+        style="?attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_locked_btn"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/activity_locked_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/activity_locked_btn"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_horizontal"
+        android:textSize="16sp" />
+
+</RelativeLayout>

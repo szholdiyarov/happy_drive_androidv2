@@ -1,12 +1,9 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -29,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +46,18 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
 /**
  * Created by shgalym on 11/22/15.
  */
 public class StoragePhotoFragment extends BaseFragment implements View.OnClickListener,
         AdapterView.OnItemClickListener {
+    private static final String TAG = Logger.makeLogTag("StoragePhotoFragment");
+
     private static final int INTENT_CODE_CAMERA = 11001;
     private static final int INTENT_CODE_GALLERY = 11002;
 
@@ -76,7 +80,8 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     private boolean mIsUpdating;
     private int mLastError = LAST_ERROR_NO_ISSUES;
 
-    private File mTempPhotoFile;
+    private ProgressDialog mProgressDialog;
+
 
     public static BaseFragment newInstance(FolderObject folderObject, Card card, int type) {
         if (folderObject == null || card == null) {
@@ -181,25 +186,17 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            if (which == 0) {
-                                createFolder();
-                            } else if (which == 1) {
-                                try {
-                                    mTempPhotoFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
-                                    Utils.openCamera(StoragePhotoFragment.this, mTempPhotoFile, INTENT_CODE_CAMERA);
-                                } catch (Exception e) {
-                                    Toast.makeText(getContext(), "Не удалось открыть камеру",
-                                            Toast.LENGTH_SHORT).show();
+                            try {
+                                if (which == 0) {
+                                } else if (which == 1) {
+                                    EasyImage.openCamera(StoragePhotoFragment.this);
+                                } else if (which == 2) {
+                                    EasyImage.openGallery(StoragePhotoFragment.this);
                                 }
-                            } else if (which == 2) {
-                                try {
-                                    Utils.openGallery(StoragePhotoFragment.this, "", "image/*",
-                                            INTENT_CODE_GALLERY);
-                                } catch (Exception e) {
-                                    Toast.makeText(getContext(), "Не найдена галлерея",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
+                            } catch (Exception e) {
+                                Logger.e(TAG, e.getLocalizedMessage(), e);
+                                Toast.makeText(getContext(), "Произошла ошибка во время запуска Intent'а." +
+                                        " Пожалуйста, сообщите в службу поддержки.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }).show();
@@ -434,87 +431,227 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == INTENT_CODE_CAMERA || requestCode == INTENT_CODE_GALLERY) {
-                File tempFile;
-                if (requestCode == INTENT_CODE_CAMERA) {
-                    if (mTempPhotoFile == null || mTempPhotoFile.length() <= 0) {
-                        Toast.makeText(getContext(), "Камера не вернула изображение",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+    public void onActivityResult(final int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new EasyImage.Callbacks() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource imageSource) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                }
+            }
 
-                    tempFile = mTempPhotoFile;
-                    mTempPhotoFile = null;
-                } else {
-                    String path = null;
-                    if (Build.VERSION.SDK_INT < 11) {
-                        path = Utils.getRealPathFromURI_BelowAPI11(getContext(), data.getData());
-                    } else if (Build.VERSION.SDK_INT < 19) {
-                        path = Utils.getRealPathFromURI_API11to18(getContext(), data.getData());
-                    } else {
-                        path = Utils.getRealPathFromURI_API19(getContext(), data.getData());
-                    }
+            @Override
+            public void onImagePicked(File file, EasyImage.ImageSource imageSource) {
+                uploadFile(file);
+            }
 
-                    tempFile = new File(path);
+            @Override
+            public void onCanceled(EasyImage.ImageSource imageSource) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
                 }
 
-                final File file = tempFile;
-
-                final ProgressDialog dialog = new ProgressDialog(getContext());
-                dialog.setMessage("Сохранение...");
-                dialog.setCancelable(false);
-                dialog.show();
-
-                new Thread() {
-                    @Override
-                    public void run() {
-                        boolean isSuccessful = false;
-                        FileObject obj = null;
-
-                        try {
-                            obj = ApiClient.uploadFile(mFolderObject.id, file);
-                            isSuccessful = true;
-                        } catch (Exception ignored) {
-                        }
-
-                        if (isSuccessful) {
-                            try {
-                                User.currentUser().updateStorageSize();
-                            } catch (Exception ignored) {
-                            }
-                        }
-
-                        final FileObject fileObject = obj;
-                        final boolean success = isSuccessful;
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dialog.dismiss();
-                                    if (success) {
-                                        mAdapter.addItem(fileObject);
-                                        mAdapter.notifyDataSetChanged();
-                                        DataManager.getInstance().bus
-                                                .post(new User.OnStorageSizeUpdatedEvent());
-                                        if (mFolderObject.isPublic &&
-                                                mFolderObject.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
-                                            DataManager.getInstance().bus
-                                                    .post(new User.OnPortfolioPhotoUploadEvent(fileObject));
-                                        }
-                                    } else {
-                                        if (getView() != null) {
-                                            Snackbar.make(getView(), "Не удалось сохранить",
-                                                    Snackbar.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-                            });
-                        }
+                if (imageSource == EasyImage.ImageSource.CAMERA) {
+                    File photoFile = EasyImage.lastlyTakenButCanceledPhoto(getContext());
+                    if (photoFile != null) {
+                        photoFile.delete();
                     }
-                }.start();
+                }
             }
+        });
+    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode == Activity.RESULT_OK) {
+//            if (requestCode == INTENT_CODE_CAMERA || requestCode == INTENT_CODE_GALLERY) {
+//                File tempFile;
+//
+//                try {
+//                    if (requestCode == INTENT_CODE_CAMERA) {
+//                        if (mTempPhotoFile == null || mTempPhotoFile.length() <= 0) {
+//                            Toast.makeText(getContext(), "Камера не вернула изображение",
+//                                    Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//
+//                        tempFile = mTempPhotoFile;
+//                        mTempPhotoFile = null;
+//                    } else {
+//                        String path = null;
+//                        if (Build.VERSION.SDK_INT < 11) {
+//                            path = Utils.getRealPathFromURI_BelowAPI11(getContext(), data.getData());
+//                        } else if (Build.VERSION.SDK_INT < 19) {
+//                            path = Utils.getRealPathFromURI_API11to18(getContext(), data.getData());
+//                        } else {
+//                            path = Utils.getRealPathFromURI_API19(getContext(), data.getData());
+//                        }
+//
+//                        tempFile = new File(path);
+//                    }
+//                } catch (Exception e) {
+//                    Logger.e(TAG, e.getLocalizedMessage(), e);
+//                    Toast.makeText(getContext(), "Произошла ошибка во " +
+//                            "время получения объекта", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                final File file = tempFile;
+//
+//                final ProgressDialog dialog = new ProgressDialog(getContext());
+//                dialog.setMessage("Сохранение...");
+//                dialog.setCancelable(false);
+//                dialog.show();
+//
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        boolean isSuccessful = false;
+//                        FileObject obj = null;
+//
+//                        try {
+//                            obj = ApiClient.uploadFile(mFolderObject.id, file);
+//                            isSuccessful = true;
+//                        } catch (Exception ignored) {
+//                        }
+//
+//                        if (isSuccessful) {
+//                            try {
+//                                User.currentUser().updateStorageSize();
+//                            } catch (Exception ignored) {
+//                            }
+//                        }
+//
+//                        final FileObject fileObject = obj;
+//                        final boolean success = isSuccessful;
+//                        if (getActivity() != null) {
+//                            getActivity().runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    dialog.dismiss();
+//                                    if (success) {
+//                                        mAdapter.addItem(fileObject);
+//                                        mAdapter.notifyDataSetChanged();
+//                                        DataManager.getInstance().bus
+//                                                .post(new User.OnStorageSizeUpdatedEvent());
+//                                        if (mFolderObject.isPublic &&
+//                                                mFolderObject.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
+//                                            DataManager.getInstance().bus
+//                                                    .post(new User.OnPortfolioPhotoUploadEvent(fileObject));
+//                                        }
+//                                    } else {
+//                                        if (getView() != null) {
+//                                            Snackbar.make(getView(), "Не удалось сохранить",
+//                                                    Snackbar.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
+//                }.start();
+//            }
+//        }
+//    }
+
+    private void uploadFile(final File file) {
+        if (file == null || file.length() < 0) {
+            return;
+        }
+
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage("Сохранение...");
+            mProgressDialog.setCancelable(false);
+        }
+
+        mProgressDialog.show();
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final FileObject fileObject = ApiClient.uploadFile(mFolderObject.id, file);
+
+                    try {
+                        User.currentUser().updateStorageSize();
+                    } catch (Exception ignored) {
+                    }
+
+                    mAdapter.addItem(fileObject);
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressDialog.dismiss();
+                                mAdapter.notifyDataSetChanged();
+                                DataManager.getInstance().bus
+                                        .post(new User.OnStorageSizeUpdatedEvent());
+                                if (mFolderObject.isPublic &&
+                                        mFolderObject.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
+                                    DataManager.getInstance().bus
+                                            .post(new User.OnPortfolioPhotoUploadEvent(fileObject));
+                                }
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressDialog.dismiss();
+                                if (e instanceof NoConnectionError) {
+                                    if (getView() != null) {
+                                        Snackbar.make(getView(), R.string.no_connection,
+                                                Snackbar.LENGTH_LONG)
+                                                .setAction("Повторить", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        mProgressDialog.show();
+                                                        uploadFile(file);
+                                                    }
+                                                }).show();
+                                    } else {
+                                        Toast.makeText(getContext(), R.string.no_connection,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                } else if (e instanceof ApiResponseError) {
+                                    final int errorCode = ((ApiResponseError) e).apiErrorCode;
+                                    new AlertDialog.Builder(getContext())
+                                            .setTitle("Ошибка")
+                                            .setMessage("Произошла ошибка во время сохранения файла. " +
+                                                    "Пожалуйста, сообщите код ошибки службе поддержки: " + errorCode)
+                                            .show();
+                                } else {
+                                    Toast.makeText(getContext(), "Произошла неизвестная ошибка. Повторите еще раз." +
+                                                    " Если ошибка повторяется, пожалуйста, обратитесь в службу поддержки",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }.start();
+    }
+
+    private static class FileViewHolder {
+        final ImageView imageView;
+
+        public FileViewHolder(ImageView imageView) {
+            this.imageView = imageView;
+        }
+    }
+
+    private static class FolderViewHolder {
+        final ImageView imageView;
+        final TextView textView;
+
+        public FolderViewHolder(ImageView imageView, TextView textView) {
+            this.imageView = imageView;
+            this.textView = textView;
         }
     }
 
@@ -593,16 +730,17 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
 
             if (viewType == VIEW_TYPE_FILE) {
                 final FileObject fileObject = (FileObject) getItem(position);
-                if (fileObject.getType() == ApiObject.TYPE_FILE_PHOTO) {
-                    FileViewHolder fileViewHolder = (FileViewHolder) viewHolder;
-                    ImageView imageView = fileViewHolder.imageView;
-                    NetworkManager.getGlide()
-                            .load(fileObject.url)
-                            .centerCrop()
-                            .error(R.drawable.image_album)
-                            .placeholder(R.drawable.image_album_load)
-                            .into(imageView);
-                }
+                FileViewHolder fileViewHolder = (FileViewHolder) viewHolder;
+                ImageView imageView = fileViewHolder.imageView;
+                NetworkManager.getGlide()
+                        .load(fileObject.url)
+                        .centerCrop()
+                        .error(R.drawable.image_album)
+                        .placeholder(R.drawable.image_album_load)
+                        .bitmapTransform(new CenterCrop(getContext()),
+                                new GlideRoundedCornersTransformation(getContext(),
+                                        Utils.dipToPixels(3f, getResources().getDisplayMetrics()), 0))
+                        .into(imageView);
             } else {
                 FolderViewHolder folderViewHolder = (FolderViewHolder) viewHolder;
                 FolderObject folderObject = (FolderObject) getItem(position);
@@ -643,24 +781,6 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         public int getItemViewType(int position) {
             return mItems.get(position) instanceof FileObject ?
                     VIEW_TYPE_FILE : VIEW_TYPE_FOLDER;
-        }
-    }
-
-    private static class FileViewHolder {
-        final ImageView imageView;
-
-        public FileViewHolder(ImageView imageView) {
-            this.imageView = imageView;
-        }
-    }
-
-    private static class FolderViewHolder {
-        final ImageView imageView;
-        final TextView textView;
-
-        public FolderViewHolder(ImageView imageView, TextView textView) {
-            this.imageView = imageView;
-            this.textView = textView;
         }
     }
 }

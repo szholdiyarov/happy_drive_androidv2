@@ -12,7 +12,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
@@ -27,8 +32,10 @@ import kz.telecom.happydrive.util.Utils;
  * Created by shgalym on 11/22/15.
  */
 public class ApiClient {
+    public static final String API_KEY_FOLDERS = "folders";
+    public static final String API_KEY_FILES = "files";
+    public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
-
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
     private static final String API_PATH_CATEGORY_CARDS = "card/list/";
@@ -43,12 +50,10 @@ public class ApiClient {
     private static final String API_PATH_FILE_DELETE = "files/file/delete/";
     private static final String API_PATH_COMMENTS_LIST = "comments/list/";
     private static final String API_PATH_COMMENTS_POST = "comments/add/";
-
-    public static final String API_KEY_FOLDERS = "folders";
-    public static final String API_KEY_FILES = "files";
-    public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
-
     private static ObjectMapper sObjectMapper;
+
+    private ApiClient() {
+    }
 
     public static void updateCard(Card card) throws NoConnectionError, ApiResponseError, ResponseParseError {
         Map<String, Object> cardMap = new HashMap<>();
@@ -127,9 +132,18 @@ public class ApiClient {
             checkResponseAndThrowIfNeeded(response);
             Map<String, Object> nodeMap = getObjectMapper()
                     .convertValue(response.result, Map.class);
-            Card cCard = new Card((Map<String, Object>) nodeMap.get("card"),
-                    (List<Map<String, Object>>) nodeMap.get(API_KEY_FOLDERS));
-            cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
+            Map<String, Object> cardData = (Map<String, Object>) nodeMap.get("card");
+            if (nodeMap.containsKey(Card.API_KEY_VISIBILITY)) {
+                cardData.put(Card.API_KEY_VISIBILITY, nodeMap.get(Card.API_KEY_VISIBILITY));
+            }
+            if (nodeMap.containsKey(Card.API_KEY_PAYED_STATUS)) {
+                cardData.put(Card.API_KEY_PAYED_STATUS, nodeMap.get(Card.API_KEY_PAYED_STATUS));
+            }
+            if (nodeMap.containsKey(Card.API_KEY_EXPIRATION_DATE)) {
+                cardData.put(Card.API_KEY_EXPIRATION_DATE, nodeMap.get(Card.API_KEY_EXPIRATION_DATE));
+            }
+
+            Card cCard = new Card(cardData, (List<Map<String, Object>>) nodeMap.get(API_KEY_FOLDERS));
             return cCard;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
@@ -191,7 +205,6 @@ public class ApiClient {
         // Failed to put star (Maybe already starred?)
         return false;
     }
-
 
     @NonNull
     public static boolean removeStar(int cardId) {
@@ -446,8 +459,5 @@ public class ApiClient {
         }
 
         return sObjectMapper;
-    }
-
-    private ApiClient() {
     }
 }

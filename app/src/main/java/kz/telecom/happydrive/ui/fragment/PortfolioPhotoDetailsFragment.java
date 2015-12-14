@@ -94,7 +94,7 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                 mAdapter = new CommentAdapter();
                 try {
                     mAdapter.setItems(ApiClient.getComments(mFileObject.id), false);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
 
                 if (getActivity() != null) {
@@ -106,9 +106,6 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                                 Toast.makeText(getActivity(), "Произошла ошибка", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-
-                            mListView.setAdapter(mAdapter);
-                            mListView.setVisibility(View.VISIBLE);
 
                             LayoutInflater inflater = getActivity().getLayoutInflater();
                             View headerView = inflater.inflate(R.layout.portfolio_photo_header, mListView, false);
@@ -125,6 +122,8 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                                     });
 
                             mListView.addHeaderView(headerView);
+                            mListView.setAdapter(mAdapter);
+                            mListView.setVisibility(View.VISIBLE);
 
                             View footerView = inflater.inflate(R.layout.portfolio_photo_footer, mListView, false);
                             final EditText editText = (EditText) footerView.findViewById(R.id.portfolio_footer_et);
@@ -278,7 +277,7 @@ public class PortfolioPhotoDetailsFragment extends BaseFragment {
                                         new GlideRoundedCornersTransformation(getContext(),
                                                 Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                                 .error(R.drawable.user_photo)
-                                .placeholder(R.drawable.user_photo)
+                                .placeholder(R.drawable.user_photo_load)
                                 .override(imageView.getWidth(),
                                         imageView.getHeight())
                                 .into(imageView);

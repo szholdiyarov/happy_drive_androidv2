@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui;
 
 import android.app.ProgressDialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -61,6 +62,8 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         ActionBar actionBar = initToolbar(toolbar);
+        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat
+                .getColor(this, R.color.colorPrimary)));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mCard.getCategoryId() > 0 ?
                 "Редактировать визитку" : "Создать визитку");

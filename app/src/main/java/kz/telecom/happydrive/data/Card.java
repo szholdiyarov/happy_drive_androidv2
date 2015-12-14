@@ -35,7 +35,9 @@ public class Card implements Comparable<Card>, Parcelable {
     static final String API_KEY_VKONTAKTE = "vkontakte";
     static final String API_KEY_INSTAGRAM = "instagram";
     static final String API_KEY_VISIBILITY = "visible";
-    static final String API_PATH_GET_CARDS = "card/list/";
+    static final String API_KEY_PAYED_STATUS = "payed_status";
+    static final String API_KEY_EXPIRATION_DATE = "expiration_date";
+    static final String API_KEY_STARRED = "starred";
 
     public final int id;
     private int mCategoryId;
@@ -51,7 +53,10 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mAudio;
     private String mAvatar;
     private String mBackground;
-    public boolean visible;
+    private boolean visible;
+    private boolean payedStatus;
+    private String expirationDate;
+    private boolean isStarred;
 
     public final List<FolderObject> publicFolders;
 
@@ -86,6 +91,9 @@ public class Card implements Comparable<Card>, Parcelable {
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
         visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
+        payedStatus = Utils.getValue(Boolean.class, API_KEY_PAYED_STATUS, false, data);
+        expirationDate = Utils.getValue(String.class, API_KEY_EXPIRATION_DATE, null, data);
+        isStarred = Utils.getValue(Boolean.class, API_KEY_STARRED, false, data);
 
         publicFolders = new ArrayList<>(2);
         if (folders != null) {
@@ -129,6 +137,10 @@ public class Card implements Comparable<Card>, Parcelable {
         mAudio = in.readString();
         mAvatar = in.readString();
         mBackground = in.readString();
+        visible = in.readInt() != 0;
+        payedStatus = in.readInt() != 0;
+        expirationDate = in.readString();
+        isStarred = in.readInt() != 0;
         publicFolders = in.readArrayList(getClass()
                 .getClassLoader());
     }
@@ -249,6 +261,38 @@ public class Card implements Comparable<Card>, Parcelable {
         return mBackground;
     }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setPayedStatus(boolean status) {
+        this.payedStatus = status;
+    }
+
+    public boolean isPayedStatus() {
+        return payedStatus;
+    }
+
+    public void setExpirationDate(String date) {
+        this.expirationDate = date;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setStarred(boolean starred) {
+        isStarred = starred;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
     @Override
     public int compareTo(@NonNull Card other) {
         return id - other.id;
@@ -275,6 +319,10 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mAudio);
         dest.writeString(mAvatar);
         dest.writeString(mBackground);
+        dest.writeInt(visible ? 1 : 0);
+        dest.writeInt(payedStatus ? 1 : 0);
+        dest.writeString(expirationDate);
+        dest.writeInt(isStarred ? 1 : 0);
         dest.writeList(publicFolders);
     }
 
@@ -295,6 +343,8 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
         editor.putBoolean(API_KEY_VISIBILITY, card.visible);
+        editor.putBoolean(API_KEY_PAYED_STATUS, card.payedStatus);
+        editor.putString(API_KEY_EXPIRATION_DATE, card.expirationDate);
 
         for (FolderObject fo : card.publicFolders) {
             if ("фотографии".equalsIgnoreCase(fo.name)) {
@@ -324,6 +374,10 @@ public class Card implements Comparable<Card>, Parcelable {
         newCard.mAudio = card.mAudio;
         newCard.mAvatar = card.mAvatar;
         newCard.mBackground = card.mBackground;
+        newCard.visible = card.visible;
+        newCard.payedStatus = card.payedStatus;
+        newCard.expirationDate = card.expirationDate;
+        newCard.isStarred = card.isStarred;
         return newCard;
     }
 

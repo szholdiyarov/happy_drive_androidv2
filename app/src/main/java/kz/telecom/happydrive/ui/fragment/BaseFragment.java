@@ -12,8 +12,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         if (!(context instanceof BaseActivity)) {
-            throw new IllegalStateException("BaseFragment is used to work with " +
-                    BaseActivity.class.getSimpleName());
+            throw new IllegalStateException(this.getClass().getSimpleName() +
+                    " is used to work with " + BaseActivity.class.getSimpleName());
         }
 
         super.onAttach(context);

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.text.format.Formatter;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,20 +12,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.squareup.otto.Subscribe;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.MainActivity;
-import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -35,7 +32,6 @@ import kz.telecom.happydrive.util.Utils;
 public class DrawerFragment extends BaseFragment {
     private NavigationView mNavigationView;
     private ImageView mBackgroundImageView;
-    private ImageView mPhotoImageView;
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
     private TextView mStorageSizeTextView;
@@ -60,7 +56,6 @@ public class DrawerFragment extends BaseFragment {
 
         View headerView = mNavigationView.inflateHeaderView(R.layout.layout_drawer_header);
         mBackgroundImageView = (ImageView) headerView.findViewById(R.id.drawer_header_background_img);
-        mPhotoImageView = (ImageView) headerView.findViewById(R.id.drawer_header_photo);
         mUsernameTextView = (TextView) headerView.findViewById(R.id.drawer_header_username);
         mEmailTextView = (TextView) headerView.findViewById(R.id.drawer_header_email);
 
@@ -81,7 +76,7 @@ public class DrawerFragment extends BaseFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (mStorageSizeTextView != null) {
+                                    if (mStorageSizeTextView != null && getView() != null) {
                                         updateFooterState(user);
                                     }
                                 }
@@ -93,7 +88,7 @@ public class DrawerFragment extends BaseFragment {
             }.start();
         }
 
-        setCheckedDrawerItemById(R.id.action_main);
+        setCheckedDrawerItemById(R.id.action_card);
         DataManager.getInstance().bus.register(this);
     }
 
@@ -128,7 +123,8 @@ public class DrawerFragment extends BaseFragment {
     @Subscribe
     @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
-        if (event.card.compareTo(User.currentUser().card) == 0) {
+        if (event.card.compareTo(User.currentUser().card) == 0
+                && getView() != null) {
             updateHeaderState(event.card);
         }
     }
@@ -136,7 +132,7 @@ public class DrawerFragment extends BaseFragment {
     @Subscribe
     @SuppressWarnings("unused")
     public void onStorageSizeUpdated(User.OnStorageSizeUpdatedEvent event) {
-        if (User.currentUser() != null) {
+        if (User.currentUser() != null && getView() != null) {
             updateFooterState(User.currentUser());
         }
     }
@@ -155,46 +151,38 @@ public class DrawerFragment extends BaseFragment {
         mUsernameTextView.setText(username);
         mEmailTextView.setText(card.getEmail());
 
-        mPhotoImageView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (!Utils.isEmpty(card.getAvatar())) {
-                    DisplayMetrics dm = getResources().getDisplayMetrics();
-                    NetworkManager.getGlide()
-                            .load(card.getAvatar())
-                            .signature(GlideCacheSignature
-                                    .ownerAvatarKey(card.getAvatar()))
-                            .error(R.drawable.user_photo)
-                            .bitmapTransform(new CenterCrop(getContext()),
-                                    new GlideRoundedCornersTransformation(getContext(),
-                                            Utils.dipToPixels(6f, dm), Utils.dipToPixels(2f, dm)))
-                            .override(mPhotoImageView.getWidth(),
-                                    mPhotoImageView.getHeight())
-                            .into(mPhotoImageView);
-
-                } else {
-                    mPhotoImageView.setImageResource(R.drawable.user_photo);
-                }
-
-                if (!Utils.isEmpty(card.getBackground())) {
-                    NetworkManager.getGlide()
-                            .load(card.getBackground())
-                            .signature(GlideCacheSignature
-                                    .ownerBackgroundKey(card.getBackground()))
-                            .override(mBackgroundImageView.getWidth(),
-                                    mBackgroundImageView.getHeight())
-                            .into(mBackgroundImageView);
-                } else {
-                    mBackgroundImageView.setImageDrawable(null);
-                }
-            }
-        });
+        if (!Utils.isEmpty(card.getBackground())) {
+            NetworkManager.getGlide()
+                    .load(card.getBackground())
+                    .signature(GlideCacheSignature
+                            .ownerBackgroundKey(card.getBackground()))
+                    .into(mBackgroundImageView);
+        } else {
+            mBackgroundImageView.setImageDrawable(null);
+        }
     }
 
     private void updateFooterState(User user) {
         mStorageSizeTextView.setText(getString(R.string.drawer_footer_storage_size_fmt,
                 Formatter.formatShortFileSize(getContext(), user.getStorageUsed()),
                 Formatter.formatShortFileSize(getContext(), user.getStorageTotal())));
+        final String expirationDate = user.card.getExpirationDate();
+        if (expirationDate != null) {
+            try {
+                Calendar date = Calendar.getInstance();
+                date.setTime(new SimpleDateFormat("dd.MM.yyyy").parse(expirationDate));
+                Calendar now = Calendar.getInstance();
+
+                int days = 0;
+                while (now.before(date)) {
+                    now.add(Calendar.DAY_OF_MONTH, 1);
+                    days++;
+                }
+
+                mExpirationDateTextView.setText(getString(R.string.drawer_footer_expiration_fmt, days));
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     public interface Callback {

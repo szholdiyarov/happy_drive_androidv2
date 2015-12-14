@@ -148,9 +148,8 @@ class UserHelper {
         request.setBody(new Request.FileBody("*/*", file));
 
         String[] comps = file.getAbsolutePath().split("\\.");
-        if (comps.length > 0) {
-            request.setHeaders(Collections.singletonMap(headerName,
-                    comps[comps.length - 1]));
+        if (comps.length > 1 && comps[comps.length -1].length() < 5) {
+            request.setHeaders(Collections.singletonMap(headerName, comps[comps.length - 1]));
         }
 
         try {

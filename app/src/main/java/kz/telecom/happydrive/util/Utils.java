@@ -124,12 +124,21 @@ public class Utils {
         return fallback;
     }
 
+    public static void goToAppStore(Context context, final String packageName) {
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+        }
+    }
+
     public static int dipToPixels(float dp, DisplayMetrics dm) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, dm);
     }
 
     private Utils() {
-        throw new IllegalStateException(Logger.class.getSimpleName()
+        throw new IllegalStateException(Utils.class.getSimpleName()
                 + " class should never have an instance.");
     }
 }

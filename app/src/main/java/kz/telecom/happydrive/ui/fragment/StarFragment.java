@@ -2,19 +2,27 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
@@ -27,15 +35,66 @@ import kz.telecom.happydrive.ui.CatalogItemActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by darkhan on 24.11.15.
  */
 public class StarFragment extends BaseFragment {
     private ListView listView;
     private ItemAdapter adapter;
+    private View.OnClickListener starClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            final ImageButton imgBtn = (ImageButton) v;
+            final Card pickedCard = adapter.data.get(position);
+            final boolean inStarred = adapter.data.contains(pickedCard);
+            final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
+            final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
+            imgBtn.setImageResource(newImage);
+            new Thread() {
+                @Override
+                public void run() {
+                    final boolean success;
+                    if (inStarred) {
+                        // remove from starred
+                        success = ApiClient.removeStar(pickedCard.id);
+                        adapter.data.remove(pickedCard);
+                    } else {
+                        success = ApiClient.putStar(pickedCard.id);
+                        adapter.data.add(pickedCard);
+                    }
+                    if (!success) {
+                        BaseActivity activity = (BaseActivity) getActivity();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Roll back everything if query was unsuccessful.
+                                imgBtn.setImageResource(oldImage);
+                                if (inStarred) {
+                                    adapter.data.add(pickedCard);
+                                    adapter.notifyDataSetChanged();
+                                } else {
+                                    adapter.data.remove(pickedCard);
+                                }
+                            }
+                        });
+                    }
+                }
+            }.start();
+
+        }
+    };
+    private View.OnClickListener cardClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            Card card = (Card) adapter.getItem(position);
+            Intent intent = new Intent(getContext(), CatalogItemActivity.class);
+            intent.putExtra(CatalogItemActivity.EXTRA_CARD, card);
+            startActivity(intent);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +110,7 @@ public class StarFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         actionBar.setTitle(R.string.action_favourite);
 
         adapter = new ItemAdapter(getContext());
@@ -160,7 +220,7 @@ public class StarFragment extends BaseFragment {
                                         new GlideRoundedCornersTransformation(getContext(),
                                                 Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                                 .error(R.drawable.user_photo)
-                                .placeholder(R.drawable.user_photo)
+                                .placeholder(R.drawable.user_photo_load)
                                 .into(imageView);
                     }
                 });
@@ -176,59 +236,4 @@ public class StarFragment extends BaseFragment {
             return vi;
         }
     }
-
-    private View.OnClickListener starClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            final ImageButton imgBtn = (ImageButton) v;
-            final Card pickedCard = adapter.data.get(position);
-            final boolean inStarred = adapter.data.contains(pickedCard);
-            final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
-            final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
-            imgBtn.setImageResource(newImage);
-            new Thread() {
-                @Override
-                public void run() {
-                    final boolean success;
-                    if (inStarred) {
-                        // remove from starred
-                        success = ApiClient.removeStar(pickedCard.id);
-                        adapter.data.remove(pickedCard);
-                    } else {
-                        success = ApiClient.putStar(pickedCard.id);
-                        adapter.data.add(pickedCard);
-                    }
-                    if (!success) {
-                        BaseActivity activity = (BaseActivity) getActivity();
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Roll back everything if query was unsuccessful.
-                                imgBtn.setImageResource(oldImage);
-                                if (inStarred) {
-                                    adapter.data.add(pickedCard);
-                                } else {
-                                    adapter.data.remove(pickedCard);
-                                }
-                            }
-                        });
-                    }
-                }
-            }.start();
-
-        }
-    };
-
-    private View.OnClickListener cardClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            Card card = (Card) adapter.getItem(position);
-            Intent intent = new Intent(getContext(), CatalogItemActivity.class);
-            intent.putExtra(CatalogItemActivity.EXTRA_CARD, card);
-            startActivity(intent);
-        }
-    };
 }

@@ -7,19 +7,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.network.Request;
+import kz.telecom.happydrive.data.network.Response;
 import kz.telecom.happydrive.data.network.ResponseParseError;
+import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 
@@ -57,7 +63,9 @@ public class User {
         card.setAudio(other.getAudio());
         card.setAvatar(other.getAvatar());
         card.setBackground(other.getBackground());
-        card.visible = other.visible;
+        card.setVisible(other.isVisible());
+        card.setPayedStatus(other.isPayedStatus());
+        card.setExpirationDate(other.getExpirationDate());
 
         card.publicFolders.clear();
         card.publicFolders.addAll(other.publicFolders);
@@ -120,6 +128,25 @@ public class User {
         }
 
         return sUser;
+    }
+
+    public static User migrate(final String oldLogin, final String oldPassword, final String newEmail,
+                               final String newPassword) throws ApiResponseError, NoConnectionError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, "auth/updateOldUser/");
+        request.setBody(new Request.StringBody.Builder()
+                .add("login", oldLogin)
+                .add("old_password", oldPassword)
+                .add("email", newEmail)
+                .add("new_password", newPassword)
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            ApiClient.checkResponseAndThrowIfNeeded(response);
+            return signIn(newEmail, newPassword);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
     }
 
     public static User socialSignIn(final String accessToken, final String provider) throws Exception {
@@ -185,7 +212,14 @@ public class User {
         Card.saveUserCard(user.card, prefs);
         ParseInstallation.getCurrentInstallation()
                 .put("email", isSocial ? rawData.get("login") : arg1);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            }
+        });
         return initStaticUser(user);
     }
 
@@ -262,7 +296,19 @@ public class User {
             privateFolders.add(new FolderObject(documentFolderId, "ДОКУМЕНТЫ", false, 0));
         }
 
-        Card card = new Card((Map<String, Object>) rawData.get("card"), null);
+        Map<String, Object> cardData = (Map<String, Object>) rawData.get("card");
+        if (rawData.containsKey(Card.API_KEY_VISIBILITY)) {
+            cardData.put(Card.API_KEY_VISIBILITY, rawData.get(Card.API_KEY_VISIBILITY));
+        }
+        if (rawData.containsKey(Card.API_KEY_PAYED_STATUS)) {
+            cardData.put(Card.API_KEY_PAYED_STATUS, rawData.get(Card.API_KEY_PAYED_STATUS));
+        }
+        if (rawData.containsKey(Card.API_KEY_EXPIRATION_DATE)) {
+            cardData.put(Card.API_KEY_EXPIRATION_DATE, rawData.get(Card.API_KEY_EXPIRATION_DATE));
+        }
+
+
+        Card card = new Card(cardData, null);
         User user = new User(token, card, privateFolders);
         user.mStorageUsed = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_USED, -1L, rawData);
         user.mStorageTotal = Utils.getValue(Long.class, UserHelper.PREFS_KEY_STORAGE_TOTAL, -1L, rawData);

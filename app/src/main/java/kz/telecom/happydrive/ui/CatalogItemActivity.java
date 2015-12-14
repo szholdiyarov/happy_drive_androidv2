@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -8,19 +9,23 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogItemFragment;
+import kz.telecom.happydrive.ui.widget.BackgroundChangeable;
 
 /**
  * Created by shgalym on 11/27/15.
  */
-public class CatalogItemActivity extends BaseActivity {
+public class CatalogItemActivity extends BaseActivity implements BackgroundChangeable {
     public static final String EXTRA_CATEGORY_ID = "extra:cat:id";
     public static final String EXTRA_CATEGORY_NAME = "extra:cat:name";
     public static final String EXTRA_CARD = "extra:card";
+
+    private ImageView mBackgroundImageView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class CatalogItemActivity extends BaseActivity {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
+        mBackgroundImageView = (ImageView) findViewById(R.id.activity_catalog_item_img_view_background);
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
         ActionBar actionBar = initToolbar(toolbar);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -63,6 +69,16 @@ public class CatalogItemActivity extends BaseActivity {
         }
 
         return handled || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void changeBackground(Bitmap bitmap) {
+        mBackgroundImageView.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public ImageView getBackgroundImageView() {
+        return mBackgroundImageView;
     }
 
     @Override

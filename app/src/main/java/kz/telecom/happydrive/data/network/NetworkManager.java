@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import kz.telecom.happydrive.data.User;
@@ -175,6 +176,9 @@ public class NetworkManager {
 
     private NetworkManager(Context context) {
         httpClient = new OkHttpClient();
+        httpClient.setConnectTimeout(2, TimeUnit.MINUTES);
+        httpClient.setReadTimeout(2, TimeUnit.MINUTES);
+        httpClient.setWriteTimeout(2, TimeUnit.MINUTES);
         httpClient.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {

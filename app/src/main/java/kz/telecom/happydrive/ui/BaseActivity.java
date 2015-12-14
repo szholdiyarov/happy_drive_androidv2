@@ -25,7 +25,6 @@ import java.lang.annotation.RetentionPolicy;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
-import kz.telecom.happydrive.ui.fragment.MainFragment;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -50,6 +49,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
+        } else if (!(this instanceof LockedActivity) &&
+                (User.currentUser() != null && !User.currentUser().card.isPayedStatus())) {
+            Intent intent = new Intent(this, LockedActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            intent.putExtra(LockedActivity.EXTRA_CAUSE, LockedActivity.CAUSE_PAYED_STATUS);
+            startActivity(intent);
+            finish();
         }
 
         busEventListener = new Object() {
@@ -60,13 +66,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
 
         };
-        
+
         DataManager.getInstance().bus.register(busEventListener);
         FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
     protected void onUserSignOut() {
-        User.currentUser().signOut();
         Intent intent = new Intent(this, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
@@ -171,7 +176,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
-    
+
     @Override
     public void onBackPressed() {
         BaseFragment fragment = findContent(getDefaultContentViewContainerId());

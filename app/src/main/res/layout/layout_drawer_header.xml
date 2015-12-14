@@ -12,37 +12,26 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
-    <ImageView
-        android:id="@+id/drawer_header_photo"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+    <TextView
+        android:id="@+id/drawer_header_email"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="@dimen/system_margin_16p"
-        android:scaleType="centerCrop"
-        android:src="@drawable/user_photo" />
+        android:textColor="#fff"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/drawer_header_username"
         fontPath="fonts/Roboto-Medium.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/drawer_header_photo"
+        android:layout_above="@id/drawer_header_email"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="#fff"
         android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/drawer_header_email"
-        fontPath="fonts/Roboto-Medium.ttf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/drawer_header_username"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textColor="#fff"
-        android:textSize="14sp" />
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
@@ -11,9 +13,16 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiClient;
@@ -23,12 +32,9 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.widget.BackgroundChangeable;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -40,7 +46,44 @@ public class CatalogItemFragment extends BaseFragment {
     private int categoryId;
     private String categoryName;
 
-    private List<Card> starredCards = new ArrayList<>();
+    private View.OnClickListener starClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            final Card pickedCard = adapter.data.get(position);
+            new Thread() {
+                @Override
+                public void run() {
+                    if (pickedCard.isStarred()) {
+                        // remove from starred
+                        ApiClient.removeStar(pickedCard.id);
+                        pickedCard.setStarred(false);
+                    } else {
+                        ApiClient.putStar(pickedCard.id);
+                        pickedCard.setStarred(true);
+                    }
+                    BaseActivity activity = (BaseActivity) getActivity();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetInvalidated();
+                        }
+                    });
+                }
+            }.start();
+        }
+    };
+
+    private View.OnClickListener cardClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = listView.getPositionForView(v);
+            BaseActivity activity = (BaseActivity) getActivity();
+            Card card = (Card) adapter.getItem(position);
+            activity.replaceContent(CardDetailsFragment.newInstance(card),
+                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,11 +104,33 @@ public class CatalogItemFragment extends BaseFragment {
 
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         actionBar.setTitle(categoryName);
 
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
+
+        if (getActivity() instanceof BackgroundChangeable) {
+            final ImageView backgroundImgView = ((BackgroundChangeable) getActivity())
+                    .getBackgroundImageView();
+            final Card card = User.currentUser().card;
+            if (!Utils.isEmpty(card.getBackground())) {
+                backgroundImgView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkManager.getGlide()
+                                .load(card.getBackground())
+                                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
+                                .override(backgroundImgView.getWidth(),
+                                        backgroundImgView.getHeight())
+                                .centerCrop()
+                                .into(backgroundImgView);
+                    }
+                });
+            }
+        }
+
         loadData();
     }
 
@@ -91,11 +156,6 @@ public class CatalogItemFragment extends BaseFragment {
         new Thread() {
             @Override
             public void run() {
-                try {
-                    starredCards = ApiClient.getStars();
-                } catch (Exception e) {
-                    Logger.d("getStars API failed", e.getMessage());
-                }
                 try {
                     final List<Card> data = ApiClient.getCategoryCards(categoryId);
                     BaseActivity activity = (BaseActivity) getActivity();
@@ -130,16 +190,11 @@ public class CatalogItemFragment extends BaseFragment {
     }
 
     class ItemAdapter extends BaseAdapter {
-        private Card myCard = User.currentUser().card;
-        Context context;
         List<Card> data;
-        LayoutInflater inflater = null;
+        private Card myCard = User.currentUser().card;
 
         public ItemAdapter(Context context) {
-            this.context = context;
             this.data = new ArrayList<>();
-            inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
@@ -161,14 +216,22 @@ public class CatalogItemFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View vi = convertView;
             if (vi == null)
-                vi = inflater.inflate(R.layout.fragment_catalog_item_row, parent, false);
+                vi = LayoutInflater.from(getContext())
+                        .inflate(R.layout.fragment_catalog_item_row, parent, false);
+
             TextView name = (TextView) vi.findViewById(R.id.name);
+            name.setOnClickListener(cardClickListener);
             TextView description = (TextView) vi.findViewById(R.id.description);
+            description.setOnClickListener(cardClickListener);
+
             final Card card = data.get(position);
             String fullName = card.getFirstName();
             if (!Utils.isEmpty(card.getLastName())) {
                 fullName += " " + card.getLastName();
             }
+
+            name.setText(fullName);
+            description.setText(card.getPosition());
 
             if (card.getAvatar() != null) {
                 final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
@@ -189,7 +252,7 @@ public class CatalogItemFragment extends BaseFragment {
                                             new GlideRoundedCornersTransformation(getContext(),
                                                     Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                                     .error(R.drawable.user_photo)
-                                    .placeholder(R.drawable.user_photo)
+                                    .placeholder(R.drawable.user_photo_load)
                                     .into(imageView);
                         }
                     });
@@ -201,72 +264,10 @@ public class CatalogItemFragment extends BaseFragment {
                 starView.setVisibility(View.INVISIBLE);
             } else {
                 starView.setVisibility(View.VISIBLE);
-                if (starredCards.contains(data.get(position))) {
-                    starView.setImageResource(R.drawable.favorite_on_icon);
-                } else {
-                    starView.setImageResource(R.drawable.favorite_off_icon);
-                }
+                starView.setColorFilter(card.isStarred() ? Color.BLACK : Color.WHITE);
                 starView.setOnClickListener(starClickListener);
             }
-
-            name.setOnClickListener(cardClickListener);
-            description.setOnClickListener(cardClickListener);
-            name.setText(fullName);
-            description.setText(card.getPosition());
             return vi;
         }
     }
-
-    private View.OnClickListener starClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            final ImageButton imgBtn = (ImageButton) v;
-            final Card pickedCard = adapter.data.get(position);
-            final boolean inStarred = starredCards.contains(pickedCard);
-            final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
-            final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
-            imgBtn.setImageResource(newImage);
-            new Thread() {
-                @Override
-                public void run() {
-                    final boolean success;
-                    if (inStarred) {
-                        // remove from starred
-                        success = ApiClient.removeStar(pickedCard.id);
-                        starredCards.remove(pickedCard);
-                    } else {
-                        success = ApiClient.putStar(pickedCard.id);
-                        starredCards.add(pickedCard);
-                    }
-                    if (!success) {
-                        BaseActivity activity = (BaseActivity) getActivity();
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Roll back everything if query was unsuccessful.
-                                imgBtn.setImageResource(oldImage);
-                                if (inStarred) {
-                                    starredCards.add(pickedCard);
-                                } else {
-                                    starredCards.remove(pickedCard);
-                                }
-                            }
-                        });
-                    }
-                }
-            }.start();
-        }
-    };
-
-    private View.OnClickListener cardClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            BaseActivity activity = (BaseActivity) getActivity();
-            Card card = (Card) adapter.getItem(position);
-            activity.replaceContent(CardDetailsFragment.newInstance(card),
-                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        }
-    };
 }
