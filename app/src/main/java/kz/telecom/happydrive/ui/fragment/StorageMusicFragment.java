@@ -54,9 +54,9 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 /**
  * Created by shgalym on 11/22/15.
  */
-public class StoragePhotoFragment extends BaseFragment implements View.OnClickListener,
+public class StorageMusicFragment extends BaseFragment implements View.OnClickListener,
         AdapterView.OnItemClickListener {
-    private static final String TAG = Logger.makeLogTag("StoragePhotoFragment");
+    private static final String TAG = Logger.makeLogTag("StorageMusicFragment");
 
     private static final int INTENT_CODE_CAMERA = 11001;
     private static final int INTENT_CODE_GALLERY = 11002;
@@ -92,7 +92,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         bundle.putParcelable(StorageActivity.EXTRA_FOLDER, folderObject);
         bundle.putParcelable(StorageActivity.EXTRA_CARD, card);
         bundle.putInt(StorageActivity.EXTRA_TYPE, type);
-        BaseFragment fragment = new StoragePhotoFragment();
+        BaseFragment fragment = new StorageMusicFragment();
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -106,7 +106,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_storage_photo, parent, false);
+        return inflater.inflate(R.layout.fragment_storage_music, parent, false);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
             updateData();
         } else if (viewId == R.id.fragment_storage_fab) {
             new AlertDialog.Builder(getContext())
-                    .setItems(new String[]{"Создать папку", "Снять фото", "Из галлереи",
+                    .setItems(new String[]{"Создать папку", "Из галлереи",
                             "Из облачного хранилища"}, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -190,9 +190,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                                 if (which == 0) {
                                     createFolder();
                                 } else if (which == 1) {
-                                    EasyImage.openCamera(StoragePhotoFragment.this);
-                                } else if (which == 2) {
-                                    EasyImage.openGallery(StoragePhotoFragment.this);
+                                    EasyImage.openGallery(StorageMusicFragment.this);
                                 }
                             } catch (Exception e) {
                                 Logger.e(TAG, e.getLocalizedMessage(), e);

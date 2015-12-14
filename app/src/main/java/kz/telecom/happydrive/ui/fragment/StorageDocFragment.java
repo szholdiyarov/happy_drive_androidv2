@@ -21,12 +21,10 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,11 +40,9 @@ import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
-import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -54,9 +50,9 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 /**
  * Created by shgalym on 11/22/15.
  */
-public class StoragePhotoFragment extends BaseFragment implements View.OnClickListener,
+public class StorageDocFragment extends BaseFragment implements View.OnClickListener,
         AdapterView.OnItemClickListener {
-    private static final String TAG = Logger.makeLogTag("StoragePhotoFragment");
+    private static final String TAG = Logger.makeLogTag("StorageDocFragment");
 
     private static final int INTENT_CODE_CAMERA = 11001;
     private static final int INTENT_CODE_GALLERY = 11002;
@@ -76,7 +72,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     private Card mCard;
     private int mType;
 
-    private PhotoAdapter mAdapter;
+    private VideoAdapter mAdapter;
     private boolean mIsUpdating;
     private int mLastError = LAST_ERROR_NO_ISSUES;
 
@@ -92,7 +88,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         bundle.putParcelable(StorageActivity.EXTRA_FOLDER, folderObject);
         bundle.putParcelable(StorageActivity.EXTRA_CARD, card);
         bundle.putInt(StorageActivity.EXTRA_TYPE, type);
-        BaseFragment fragment = new StoragePhotoFragment();
+        BaseFragment fragment = new StorageDocFragment();
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -106,7 +102,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_storage_photo, parent, false);
+        return inflater.inflate(R.layout.fragment_storage_doc, parent, false);
     }
 
     @Override
@@ -124,13 +120,13 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         mErrorMsgTextView = (TextView) view.findViewById(R.id.fragment_storage_tv_error_msg);
         mErrorButton = (Button) view.findViewById(R.id.fragment_storage_btn_error);
 
-        final GridView gridView = (GridView) view.findViewById(R.id.fragment_storage_photo_grid_view);
-        gridView.setOnItemClickListener(this);
+        final ListView listView = (ListView) view.findViewById(R.id.fragment_storage_video_list_view);
+        listView.setOnItemClickListener(this);
 
         View fab = view.findViewById(R.id.fragment_storage_fab);
         if (User.currentUser().card.compareTo(mCard) == 0) {
             fab.setOnClickListener(this);
-            gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                     new AlertDialog.Builder(getContext())
@@ -151,11 +147,11 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         mProgressBar.hide();
         mErrorContainerView.setVisibility(View.GONE);
         if (mAdapter == null) {
-            mAdapter = new PhotoAdapter();
+            mAdapter = new VideoAdapter();
             updateData();
         }
 
-        gridView.setAdapter(mAdapter);
+        listView.setAdapter(mAdapter);
     }
 
     @Override
@@ -181,7 +177,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
             updateData();
         } else if (viewId == R.id.fragment_storage_fab) {
             new AlertDialog.Builder(getContext())
-                    .setItems(new String[]{"Создать папку", "Снять фото", "Из галлереи",
+                    .setItems(new String[]{"Создать папку", "Из галлереи",
                             "Из облачного хранилища"}, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -190,9 +186,9 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
                                 if (which == 0) {
                                     createFolder();
                                 } else if (which == 1) {
-                                    EasyImage.openCamera(StoragePhotoFragment.this);
+                                    EasyImage.openCamera(StorageDocFragment.this);
                                 } else if (which == 2) {
-                                    EasyImage.openGallery(StoragePhotoFragment.this);
+                                    EasyImage.openGallery(StorageDocFragment.this);
                                 }
                             } catch (Exception e) {
                                 Logger.e(TAG, e.getLocalizedMessage(), e);
@@ -639,10 +635,10 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
     }
 
     private static class FileViewHolder {
-        final ImageView imageView;
+        final TextView textView;
 
-        public FileViewHolder(ImageView imageView) {
-            this.imageView = imageView;
+        public FileViewHolder(TextView imageView) {
+            this.textView = imageView;
         }
     }
 
@@ -656,7 +652,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
-    private class PhotoAdapter extends BaseAdapter {
+    private class VideoAdapter extends BaseAdapter {
         private static final int VIEW_TYPE_FILE = 0;
         private static final int VIEW_TYPE_FOLDER = 1;
 
@@ -710,10 +706,10 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
             if (convertView == null) {
                 if (viewType == VIEW_TYPE_FILE) {
                     convertView = LayoutInflater.from(getContext())
-                            .inflate(R.layout.layout_storage_photo_file_item, parent, false);
-                    ImageView imageView = (ImageView) convertView
-                            .findViewById(R.id.layout_storage_photo_imgview_file);
-                    viewHolder = new FileViewHolder(imageView);
+                            .inflate(R.layout.layout_storage_video_file_item, parent, false);
+                    TextView textView = (TextView) convertView
+                            .findViewById(R.id.layout_storage_video_title);
+                    viewHolder = new FileViewHolder(textView);
                 } else {
                     convertView = LayoutInflater.from(getContext())
                             .inflate(R.layout.layout_storage_photo_folder_item, parent, false);
@@ -732,16 +728,7 @@ public class StoragePhotoFragment extends BaseFragment implements View.OnClickLi
             if (viewType == VIEW_TYPE_FILE) {
                 final FileObject fileObject = (FileObject) getItem(position);
                 FileViewHolder fileViewHolder = (FileViewHolder) viewHolder;
-                ImageView imageView = fileViewHolder.imageView;
-                NetworkManager.getGlide()
-                        .load(fileObject.url)
-                        .centerCrop()
-                        .error(R.drawable.image_album)
-                        .placeholder(R.drawable.image_album_load)
-                        .bitmapTransform(new CenterCrop(getContext()),
-                                new GlideRoundedCornersTransformation(getContext(),
-                                        Utils.dipToPixels(3f, getResources().getDisplayMetrics()), 0))
-                        .into(imageView);
+                fileViewHolder.textView.setText(fileObject.name);
             } else {
                 FolderViewHolder folderViewHolder = (FolderViewHolder) viewHolder;
                 FolderObject folderObject = (FolderObject) getItem(position);

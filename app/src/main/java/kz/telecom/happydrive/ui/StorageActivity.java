@@ -13,9 +13,10 @@ import android.widget.ImageView;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.FolderObject;
-import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
+import kz.telecom.happydrive.ui.fragment.StorageDocFragment;
+import kz.telecom.happydrive.ui.fragment.StorageMusicFragment;
 import kz.telecom.happydrive.ui.fragment.StoragePhotoFragment;
 import kz.telecom.happydrive.ui.fragment.StorageVideoFragment;
 import kz.telecom.happydrive.util.Utils;
@@ -76,6 +77,12 @@ public class StorageActivity extends BaseActivity {
                         false, FragmentTransaction.TRANSIT_NONE);
             } else if (type == TYPE_VIDEO) {
                 replaceContent(StorageVideoFragment.newInstance(folderObject, card, type),
+                        false, FragmentTransaction.TRANSIT_NONE);
+            } else if (type == TYPE_MUSIC) {
+                replaceContent(StorageMusicFragment.newInstance(folderObject, card, type),
+                        false, FragmentTransaction.TRANSIT_NONE);
+            } else if (type == TYPE_DOCUMENT) {
+                replaceContent(StorageDocFragment.newInstance(folderObject, card, type),
                         false, FragmentTransaction.TRANSIT_NONE);
             }
         }

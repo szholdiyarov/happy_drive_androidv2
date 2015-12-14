@@ -177,13 +177,14 @@ public class StorageVideoFragment extends BaseFragment implements View.OnClickLi
             updateData();
         } else if (viewId == R.id.fragment_storage_fab) {
             new AlertDialog.Builder(getContext())
-                    .setItems(new String[]{"Создать папку", "Снять фото", "Из галлереи",
+                    .setItems(new String[]{"Создать папку", "Снять видео", "Из галлереи",
                             "Из облачного хранилища"}, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             try {
                                 if (which == 0) {
+                                    createFolder();
                                 } else if (which == 1) {
                                     EasyImage.openCamera(StorageVideoFragment.this);
                                 } else if (which == 2) {
