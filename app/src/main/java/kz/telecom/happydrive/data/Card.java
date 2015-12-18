@@ -38,6 +38,7 @@ public class Card implements Comparable<Card>, Parcelable {
     static final String API_KEY_PAYED_STATUS = "payed_status";
     static final String API_KEY_EXPIRATION_DATE = "expiration_date";
     static final String API_KEY_STARRED = "starred";
+    static final String API_KEY_DOMAIN = "domain";
 
     public final int id;
     private int mCategoryId;
@@ -57,6 +58,7 @@ public class Card implements Comparable<Card>, Parcelable {
     private boolean payedStatus;
     private String expirationDate;
     private boolean isStarred;
+    private String mDomain;
 
     public final List<FolderObject> publicFolders;
 
@@ -94,6 +96,7 @@ public class Card implements Comparable<Card>, Parcelable {
         payedStatus = Utils.getValue(Boolean.class, API_KEY_PAYED_STATUS, false, data);
         expirationDate = Utils.getValue(String.class, API_KEY_EXPIRATION_DATE, null, data);
         isStarred = Utils.getValue(Boolean.class, API_KEY_STARRED, false, data);
+        mDomain = Utils.getValue(String.class, API_KEY_DOMAIN, null, data);
 
         publicFolders = new ArrayList<>(2);
         if (folders != null) {
@@ -141,6 +144,7 @@ public class Card implements Comparable<Card>, Parcelable {
         payedStatus = in.readInt() != 0;
         expirationDate = in.readString();
         isStarred = in.readInt() != 0;
+        mDomain = in.readString();
         publicFolders = in.readArrayList(getClass()
                 .getClassLoader());
     }
@@ -293,6 +297,14 @@ public class Card implements Comparable<Card>, Parcelable {
         return isStarred;
     }
 
+    public void setDomain(String domain) {
+        mDomain = domain;
+    }
+
+    public String getDomain() {
+        return mDomain;
+    }
+
     @Override
     public int compareTo(@NonNull Card other) {
         return id - other.id;
@@ -323,6 +335,7 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeInt(payedStatus ? 1 : 0);
         dest.writeString(expirationDate);
         dest.writeInt(isStarred ? 1 : 0);
+        dest.writeString(mDomain);
         dest.writeList(publicFolders);
     }
 
@@ -345,6 +358,7 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putBoolean(API_KEY_VISIBILITY, card.visible);
         editor.putBoolean(API_KEY_PAYED_STATUS, card.payedStatus);
         editor.putString(API_KEY_EXPIRATION_DATE, card.expirationDate);
+        editor.putString(API_KEY_DOMAIN, card.mDomain);
 
         for (FolderObject fo : card.publicFolders) {
             if ("фотографии".equalsIgnoreCase(fo.name)) {
@@ -378,6 +392,7 @@ public class Card implements Comparable<Card>, Parcelable {
         newCard.payedStatus = card.payedStatus;
         newCard.expirationDate = card.expirationDate;
         newCard.isStarred = card.isStarred;
+        newCard.mDomain = card.mDomain;
         return newCard;
     }
 

@@ -37,6 +37,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.ui.ChangeDomainActivity;
 import kz.telecom.happydrive.ui.ChangePasswordActivity;
 import kz.telecom.happydrive.util.Logger;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -152,6 +153,8 @@ public class SettingsFragment extends BaseFragment implements AdapterView.OnItem
             startActivity(new Intent(getContext(), CardEditActivity.class));
         } else if (itemId == R.id.action_change_password) {
             startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
+        } else if (itemId == R.id.action_change_domain) {
+            startActivity(new Intent(getActivity(), ChangeDomainActivity.class));
         } else if (itemId == R.id.action_toggle_card_visibility) {
             if (!isVisible && User.currentUser().card.getCategoryId() <= 0) {
                 Toast.makeText(getContext(), "Вы не можете открыть доступ к " +
@@ -339,6 +342,7 @@ public class SettingsFragment extends BaseFragment implements AdapterView.OnItem
                 R.id.action_change_background, R.drawable.ic_card_24p, "Изменить фон", VIEW_TYPE_COMMON,
                 R.id.action_edit_card, R.drawable.ic_mode_edit_black_24dp, "Редактировать визитку", VIEW_TYPE_COMMON,
                 R.id.action_change_password, R.drawable.ic_refresh_black_24dp, "Сменить пароль", VIEW_TYPE_COMMON,
+                R.id.action_change_domain, R.drawable.ic_domain_black_24dp, "Установить домен", VIEW_TYPE_COMMON,
                 R.id.action_toggle_card_visibility, R.drawable.ic_lock_black_24dp, "Показать визитку", VIEW_TYPE_SWITCH,
                 R.id.action_sign_out, R.drawable.ic_exit_to_app_black_24dp, "Выйти", VIEW_TYPE_COMMON
         };

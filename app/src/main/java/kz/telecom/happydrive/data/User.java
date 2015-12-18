@@ -66,6 +66,7 @@ public class User {
         card.setVisible(other.isVisible());
         card.setPayedStatus(other.isPayedStatus());
         card.setExpirationDate(other.getExpirationDate());
+        card.setDomain(other.getDomain());
 
         card.publicFolders.clear();
         card.publicFolders.addAll(other.publicFolders);

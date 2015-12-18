@@ -11,7 +11,7 @@
             android:src="@drawable/bkg_auth"/>
 
     <FrameLayout
-            android:id="@+id/activity_password_view_container"
+            android:id="@+id/activity_domain_view_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"/>

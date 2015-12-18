@@ -6,6 +6,7 @@
     <item name="action_change_background" type="id" />
     <item name="action_edit_card" type="id" />
     <item name="action_change_password" type="id" />
+    <item name="action_change_domain" type="id" />
     <item name="action_toggle_card_visibility" type="id" />
     <item name="action_sign_out" type="id" />
 </resources>

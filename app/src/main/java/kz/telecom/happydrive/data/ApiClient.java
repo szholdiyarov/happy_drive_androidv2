@@ -35,6 +35,7 @@ public class ApiClient {
     public static final String API_KEY_FOLDERS = "folders";
     public static final String API_KEY_FILES = "files";
     public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
+    public static final String API_PATH_CHANGE_DOMAIN = "auth/change_domain/";
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
@@ -254,6 +255,22 @@ public class ApiClient {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    @WorkerThread
+    public static void changeDomain(final String domain)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CHANGE_DOMAIN);
+        request.setBody(new Request.StringBody.Builder()
+                .add(Card.API_KEY_DOMAIN, domain)
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
     }
 
     @NonNull
