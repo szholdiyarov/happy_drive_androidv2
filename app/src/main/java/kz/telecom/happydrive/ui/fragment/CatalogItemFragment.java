@@ -98,7 +98,7 @@ public class CatalogItemFragment extends BaseFragment {
         actionBar.setTitle(categoryName);
 
         if (adapter == null) {
-            adapter = new ItemAdapter(getContext());
+            adapter = new ItemAdapter();
         }
 
         listView = (ListView) view.findViewById(R.id.cardsListView);
@@ -172,12 +172,8 @@ public class CatalogItemFragment extends BaseFragment {
     }
 
     class ItemAdapter extends BaseAdapter {
-        List<Card> data;
+        List<Card> data = new ArrayList<>();
         private Card myCard = User.currentUser().card;
-
-        public ItemAdapter(Context context) {
-            this.data = new ArrayList<>();
-        }
 
         @Override
         public int getCount() {

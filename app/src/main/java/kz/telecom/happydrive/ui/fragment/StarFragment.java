@@ -1,6 +1,5 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,7 +29,6 @@ import kz.telecom.happydrive.data.ApiClient;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
@@ -41,58 +40,29 @@ import kz.telecom.happydrive.util.Utils;
 public class StarFragment extends BaseFragment {
     private ListView listView;
     private ItemAdapter adapter;
+
     private View.OnClickListener starClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            final ImageButton imgBtn = (ImageButton) v;
+            final int position = (Integer) v.getTag();
             final Card pickedCard = adapter.data.get(position);
-            final boolean inStarred = adapter.data.contains(pickedCard);
-            final int newImage = inStarred ? R.drawable.favorite_off_icon : R.drawable.favorite_on_icon;
-            final int oldImage = inStarred ? R.drawable.favorite_on_icon : R.drawable.favorite_off_icon;
-            imgBtn.setImageResource(newImage);
             new Thread() {
                 @Override
                 public void run() {
-                    final boolean success;
-                    if (inStarred) {
-                        // remove from starred
-                        success = ApiClient.removeStar(pickedCard.id);
-                        adapter.data.remove(pickedCard);
-                    } else {
-                        success = ApiClient.putStar(pickedCard.id);
-                        adapter.data.add(pickedCard);
-                    }
-                    if (!success) {
-                        BaseActivity activity = (BaseActivity) getActivity();
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Roll back everything if query was unsuccessful.
-                                imgBtn.setImageResource(oldImage);
-                                if (inStarred) {
-                                    adapter.data.add(pickedCard);
+                    if (ApiClient.removeStar(pickedCard.id)) {
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.data.remove(position);
                                     adapter.notifyDataSetChanged();
-                                } else {
-                                    adapter.data.remove(pickedCard);
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }.start();
-
-        }
-    };
-    private View.OnClickListener cardClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            Card card = (Card) adapter.getItem(position);
-            Intent intent = new Intent(getContext(), CatalogItemActivity.class);
-            intent.putExtra(CatalogItemActivity.EXTRA_CARD, card);
-            startActivity(intent);
         }
     };
 
@@ -114,9 +84,22 @@ public class StarFragment extends BaseFragment {
                 ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(R.string.action_favourite);
 
-        adapter = new ItemAdapter(getContext());
+        if (adapter == null) {
+            adapter = new ItemAdapter();
+        }
+
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Card card = (Card) adapter.getItem(position);
+                Intent intent = new Intent(getContext(), CatalogItemActivity.class);
+                intent.putExtra(CatalogItemActivity.EXTRA_CARD, card);
+                startActivity(intent);
+            }
+        });
+
         loadData();
     }
 
@@ -138,9 +121,8 @@ public class StarFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (Card c : data) {
-                                    adapter.data.add(c);
-                                }
+                                adapter.data.clear();
+                                adapter.data.addAll(data);
                                 adapter.notifyDataSetChanged();
                                 disableProgressBar();
                             }
@@ -164,17 +146,7 @@ public class StarFragment extends BaseFragment {
     }
 
     class ItemAdapter extends BaseAdapter {
-
-        Context context;
-        List<Card> data;
-        LayoutInflater inflater = null;
-
-        public ItemAdapter(Context context) {
-            this.context = context;
-            this.data = new ArrayList<>();
-            inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
+        List<Card> data = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -193,48 +165,75 @@ public class StarFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View vi = convertView;
-            if (vi == null)
-                vi = inflater.inflate(R.layout.fragment_catalog_item_row, parent, false);
-            TextView name = (TextView) vi.findViewById(R.id.name);
-            TextView description = (TextView) vi.findViewById(R.id.description);
-            final Card card = data.get(position);
-            String fullName = card.getFirstName();
-            if (!Utils.isEmpty(card.getLastName())) {
-                fullName += " " + card.getLastName();
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext())
+                        .inflate(R.layout.fragment_catalog_item_row, parent, false);
+
+                ImageView imageView = (ImageView) convertView.findViewById(R.id.avatar);
+                TextView titleTextView = (TextView) convertView.findViewById(R.id.name);
+                TextView descTextView = (TextView) convertView.findViewById(R.id.description);
+                ImageButton actionBtn = (ImageButton) convertView.findViewById(R.id.star);
+                actionBtn.setOnClickListener(starClickListener);
+                viewHolder = new ViewHolder(imageView, titleTextView, descTextView, actionBtn);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
+
+            final Card card = data.get(position);
+
+            String lastName = card.getLastName();
+            String username = card.getFirstName();
+            if (!Utils.isEmpty(lastName)) {
+                if (!Utils.isEmpty(username)) {
+                    username += " " + lastName;
+                } else {
+                    username = lastName;
+                }
+            }
+
+            viewHolder.titleTextView.setText(username);
+            viewHolder.descTextView.setText(card.getPosition());
 
             if (card.getAvatar() != null) {
-                final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
-                imageView.setOnClickListener(cardClickListener);
-                imageView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        String tempAvatarUrl = Request.DEFAULT_HOST + "/card/download/avatar/" + Integer.toString(card.id);
-                        DisplayMetrics dm = getResources().getDisplayMetrics();
-                        NetworkManager.getGlide()
-                                .load(tempAvatarUrl)
-                                .signature(GlideCacheSignature.foreignCacheKey(tempAvatarUrl))
-                                .override(imageView.getWidth(),
-                                        imageView.getHeight())
-                                .bitmapTransform(new CenterCrop(getContext()),
-                                        new GlideRoundedCornersTransformation(getContext(),
-                                                Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
-                                .error(R.drawable.user_photo)
-                                .placeholder(R.drawable.user_photo_load)
-                                .into(imageView);
-                    }
-                });
+                if (!Utils.isEmpty(card.getAvatar())) {
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                    NetworkManager.getGlide()
+                            .load(card.getAvatar())
+                            .signature(GlideCacheSignature
+                                    .foreignCacheKey(card.getAvatar()))
+                            .bitmapTransform(new CenterCrop(getContext()),
+                                    new GlideRoundedCornersTransformation(getContext(),
+                                            Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
+                            .error(R.drawable.user_photo)
+                            .placeholder(R.drawable.user_photo_load)
+                            .into(viewHolder.imageView);
+                }
+            } else {
+                viewHolder.imageView.setImageResource(R.drawable.user_photo);
             }
 
-            ImageView starView = (ImageView) vi.findViewById(R.id.star);
-            starView.setImageResource(R.drawable.favorite_on_icon);
-            starView.setOnClickListener(starClickListener);
-            name.setOnClickListener(cardClickListener);
-            description.setOnClickListener(cardClickListener);
-            name.setText(fullName);
-            description.setText(card.getPosition());
-            return vi;
+            ImageView starView = viewHolder.actionImageBtn;
+            starView.setTag(position);
+            starView.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent));
+
+            return convertView;
+        }
+    }
+
+    static class ViewHolder {
+        private final ImageView imageView;
+        private final TextView titleTextView;
+        private final TextView descTextView;
+        private final ImageButton actionImageBtn;
+
+        ViewHolder(ImageView imageView, TextView titleTextView,
+                   TextView descTextView, ImageButton actionImageBtn) {
+            this.imageView = imageView;
+            this.titleTextView = titleTextView;
+            this.descTextView = descTextView;
+            this.actionImageBtn = actionImageBtn;
         }
     }
 }
