@@ -2,6 +2,7 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,9 +15,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -75,7 +73,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         setRetainInstance(true);
     }
 
@@ -141,86 +138,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         updateView(view, mCard);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        User user = User.currentUser();
-//        if (mCard != null && user != null) {
-//            inflater.inflate(mCard.compareTo(user.card) == 0 ?
-//                    mCard.getCategoryId() > 0 ? R.menu.fragment_card_details_full :
-//                            R.menu.fragment_card_details :
-//                    R.menu.fragment_card_details_other, menu);
-//
-//            if (!Utils.isEmpty(mCard.getAudio())) {
-//                final boolean isPlaying = mPlayer != null && mPlayer.isPlaying();
-//                menu.add(R.id.action_group_main, R.id.action_playback, 0,
-//                        isPlaying ? "Воспроизвести" : "Остановить")
-//                        .setIcon(isPlaying ? R.drawable.ic_pause_white_36dp :
-//                                R.drawable.ic_play_arrow_white_36dp)
-//                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//            }
-//        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            getActivity().onBackPressed();
-        } else if (itemId == R.id.action_playback) {
-            toggleAudioPlayback(!(mPlayer != null && mPlayer.isPlaying()));
-        } else if (itemId == R.id.action_edit) {
-        } else if (itemId == R.id.action_share) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//            Uri uri = Uri.parse("file:///file");
-            shareIntent.setType("text/plain");
-            String bodyString = mCard.getFirstName();
-
-            String lastName = mCard.getLastName();
-            if (!Utils.isEmpty(lastName)) {
-                if (!Utils.isEmpty(bodyString)) {
-                    bodyString += " " + lastName;
-                } else {
-                    bodyString = lastName;
-                }
-            }
-
-            if (!Utils.isEmpty(mCard.getPhone())) {
-                bodyString += ", " + mCard.getPhone();
-            }
-
-            if (!Utils.isEmpty(mCard.getEmail())) {
-                bodyString += ", " + mCard.getEmail();
-            }
-
-            shareIntent.putExtra(Intent.EXTRA_TEXT, bodyString);
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-
-            startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
-        } else if (itemId == R.id.action_change_photo || itemId == R.id.action_change_background) {
-            new AlertDialog.Builder(getContext())
-                    .setItems(new String[]{"Снять фото", "Из Галлереи"},
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    try {
-                                        if (which == 0) {
-                                            EasyImage.openCamera(CardDetailsFragment.this);
-                                        } else if (which == 1) {
-                                            EasyImage.openGallery(CardDetailsFragment.this);
-                                        }
-                                    } catch (Exception e) {
-                                        Logger.e(TAG, e.getLocalizedMessage(), e);
-                                        Toast.makeText(getContext(), "Произошла ошибка во время запуска Intent'а." +
-                                                " Пожалуйста, сообщите в службу поддержки.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }).show();
-        }
-
-        return false;
     }
 
     public void updateView(View view, final Card card) {
@@ -345,6 +262,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 ImageView imageView = (ImageView) phoneContainer.findViewById(R.id.fragment_card_img_view_phone);
                 imageView.setColorFilter(0xff959595);
                 textView.setText(card.getPhone());
+
+                phoneContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + card.getPhone())));
+                    }
+                });
             } else {
                 phoneContainer.setVisibility(View.GONE);
             }
@@ -356,6 +280,19 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 ImageView imageView = (ImageView) emailContainer.findViewById(R.id.fragment_card_img_view_email);
                 imageView.setColorFilter(0xff959595);
                 emailTextView.setText(card.getEmail());
+
+                emailContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                    "mailto", card.getEmail(), null));
+                            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{card.getEmail()});
+                            startActivity(Intent.createChooser(intent, "Написать письмо..."));
+                        } catch (ActivityNotFoundException ignored) {
+                        }
+                    }
+                });
             } else {
                 emailContainer.setVisibility(View.GONE);
             }
@@ -367,108 +304,21 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 ImageView imageView = (ImageView) addressContainer.findViewById(R.id.fragment_card_img_view_address);
                 imageView.setColorFilter(0xff959595);
                 addressTextView.setText(card.getAddress());
+
+                addressContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            String uri = "geo:0,0?q=" + card.getAddress();
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(Intent.createChooser(intent, "Геолокация..."));
+                        } catch (ActivityNotFoundException ignored) {
+                        }
+                    }
+                });
             } else {
                 addressContainer.setVisibility(View.GONE);
             }
-//            TextView userName = (TextView) view.findViewById(R.id.username);
-//            if (userName == null) {
-//                ((ViewStub) view.findViewById(R.id.fragment_card_details_stub)).inflate();
-//            }
-//
-//            String userText = card.getFirstName();
-//            if (!TextUtils.isEmpty(card.getLastName())) {
-//                userText += " " + card.getLastName();
-//            }
-//
-//            userName = (TextView) view.findViewById(R.id.username);
-//            userName.setText(userText);
-//
-//            TextView position = (TextView) view.findViewById(R.id.position);
-//            position.setText(card.getPosition());
-//
-//            TextView companyName = (TextView) view.findViewById(R.id.company_name);
-//            if (!TextUtils.isEmpty(card.getWorkPlace())) {
-//                companyName.setVisibility(View.VISIBLE);
-//                companyName.setText(card.getWorkPlace());
-//            } else {
-//                companyName.setVisibility(View.GONE);
-//            }
-//
-//            View phoneBlock = view.findViewById(R.id.phone_block);
-//            if (!Utils.isEmpty(card.getPhone())) {
-//                phoneBlock.setVisibility(View.VISIBLE);
-//                TextView phoneNumber = (TextView) phoneBlock.findViewById(R.id.phone);
-//                phoneNumber.setText(card.getPhone());
-//            } else {
-//                phoneBlock.setVisibility(View.GONE);
-//            }
-//
-//
-//            view.findViewById(R.id.phone_block).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + card.getPhone())));
-//                }
-//            });
-//
-//            View emailBlock = view.findViewById(R.id.email_block);
-//            if (!TextUtils.isEmpty(card.getEmail())) {
-//                TextView email = (TextView) view.findViewById(R.id.email);
-//                email.setText(card.getEmail());
-//                emailBlock.setVisibility(View.VISIBLE);
-//            } else {
-//                emailBlock.setVisibility(View.GONE);
-//            }
-//
-//            emailBlock.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent i = new Intent(Intent.ACTION_SEND);
-//                    i.setType("message/rfc822");
-//                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{card.getEmail()});
-//                    try {
-//                        startActivity(Intent.createChooser(i, "Написать"));
-//                    } catch (ActivityNotFoundException ex) {
-//                    }
-//                }
-//            });
-//
-//            View addressBlock = view.findViewById(R.id.address_block);
-//            if (!TextUtils.isEmpty(card.getAddress())) {
-//                TextView address = (TextView) view.findViewById(R.id.address);
-//                address.setText(card.getAddress());
-//                addressBlock.setVisibility(View.VISIBLE);
-//            } else {
-//                addressBlock.setVisibility(View.GONE);
-//            }
-//
-//            addressBlock.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    try {
-//                        String uri = "geo:0,0?q=" + card.getAddress();
-//                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-//                        startActivity(intent);
-//                    } catch (ActivityNotFoundException e) {
-//                    }
-//                }
-//            });
-//
-//            TextView aboutTextView = (TextView) view.findViewById(R.id.about);
-//            if (!TextUtils.isEmpty(card.getShortDesc())) {
-//                aboutTextView.setText(card.getShortDesc());
-//                aboutTextView.setVisibility(View.VISIBLE);
-//            } else {
-//                aboutTextView.setVisibility(View.GONE);
-//            }
-//
-//            view.findViewById(R.id.portfolio_text).setVisibility(View.VISIBLE);
-//            view.findViewById(R.id.portfolio_block).setVisibility(View.VISIBLE);
-//            view.findViewById(R.id.about_block).setVisibility(View.VISIBLE);
-//            view.findViewById(R.id.about_divider).setVisibility(View.VISIBLE);
-//
-//            view.findViewById(R.id.foto_block).setOnClickListener(this);
-//            view.findViewById(R.id.video_block).setOnClickListener(this);
         }
 
         final ImageButton audioImgBtn = (ImageButton) view.findViewById(R.id.fragment_card_img_button_audio);
