@@ -128,6 +128,10 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
                                     User.currentUser().changeAudio(mAudioFile);
                                 }
 
+                                if (User.currentUser().card.getCategoryId() <= 0) {
+                                    ApiClient.setVisibility(true);
+                                }
+
                                 User.currentUser().updateCard();
                                 CardEditActivity.this.runOnUiThread(new Runnable() {
                                     @Override
