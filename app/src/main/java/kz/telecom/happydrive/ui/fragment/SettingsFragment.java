@@ -272,7 +272,7 @@ public class SettingsFragment extends BaseFragment implements AdapterView.OnItem
                             public void run() {
                                 mProgressDialog.dismiss();
                                 DataManager.getInstance().bus
-                                        .post(new Card.OnCardUpdatedEvent(User.currentUser().card));
+                                        .post(new Card.OnBackgroundUpdatedEvent(User.currentUser().card));
                             }
                         });
                     }

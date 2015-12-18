@@ -408,4 +408,12 @@ public class Card implements Comparable<Card>, Parcelable {
             this.card = card;
         }
     }
+
+    public static class OnBackgroundUpdatedEvent {
+        public final Card card;
+
+        public OnBackgroundUpdatedEvent(Card card) {
+            this.card = card;
+        }
+    }
 }

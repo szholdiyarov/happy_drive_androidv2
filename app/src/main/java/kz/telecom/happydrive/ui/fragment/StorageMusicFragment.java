@@ -409,8 +409,6 @@ public class StorageMusicFragment extends BaseFragment implements View.OnClickLi
                                                         .post(new User.OnStorageSizeUpdatedEvent());
                                                 if (apiObject instanceof FileObject && mFolderObject.isPublic &&
                                                         mFolderObject.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
-                                                    DataManager.getInstance().bus
-                                                            .post(new User.OnPortfolioPhotoDeletedEvent(mFolderObject.id));
                                                 }
                                             } else if (exception instanceof NoConnectionError) {
                                                 Toast.makeText(getContext(), "Нет подключения к интернету",
@@ -589,8 +587,6 @@ public class StorageMusicFragment extends BaseFragment implements View.OnClickLi
                                         .post(new User.OnStorageSizeUpdatedEvent());
                                 if (mFolderObject.isPublic &&
                                         mFolderObject.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
-                                    DataManager.getInstance().bus
-                                            .post(new User.OnPortfolioPhotoUploadEvent(fileObject));
                                 }
                             }
                         });

@@ -2,10 +2,9 @@ package kz.telecom.happydrive.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,33 +14,34 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
 import kz.telecom.happydrive.BuildConfig;
 import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.CloudFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
-import kz.telecom.happydrive.ui.fragment.HelpFragment;
 import kz.telecom.happydrive.ui.fragment.SettingsFragment;
 import kz.telecom.happydrive.ui.fragment.StarFragment;
-import kz.telecom.happydrive.ui.widget.BackgroundChangeable;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 10/27/15.
  */
-public class MainActivity extends BaseActivity
-        implements DrawerFragment.Callback, BackgroundChangeable {
+public class MainActivity extends BaseActivity implements DrawerFragment.Callback {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ImageView mBackgroundImageView;
@@ -66,8 +66,8 @@ public class MainActivity extends BaseActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        User user = User.currentUser();
         if (savedInstanceState == null) {
-            User user = User.currentUser();
             if (user != null) {
                 replaceContent(CardDetailsFragment.newInstance(user.card), false,
                         FragmentTransaction.TRANSIT_NONE);
@@ -121,11 +121,18 @@ public class MainActivity extends BaseActivity
                 }
             });
         }
+
+        if (user != null) {
+            updateBackground(user.card);
+        }
+
+        DataManager.getInstance().bus.register(this);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onDestroy() {
+        super.onDestroy();
+        DataManager.getInstance().bus.unregister(this);
     }
 
     @Override
@@ -155,27 +162,17 @@ public class MainActivity extends BaseActivity
                 replaceContent(new SettingsFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
-        } else if (itemId == R.id.action_help) {
-            if (!(findDefaultContent() instanceof HelpFragment)) {
-                replaceContent(new HelpFragment(), false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            }
+//        } else if (itemId == R.id.action_help) {
+//            if (!(findDefaultContent() instanceof HelpFragment)) {
+//                replaceContent(new HelpFragment(), false,
+//                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            }
 //        } else if (itemId == R.id.action_about) {
 //            this.startActivity(new Intent(this, AboutActivity.class));
         }
 
         closeDrawer();
         return true;
-    }
-
-    @Override
-    public void changeBackground(Bitmap bitmap) {
-        mBackgroundImageView.setImageBitmap(bitmap);
-    }
-
-    @Override
-    public ImageView getBackgroundImageView() {
-        return mBackgroundImageView;
     }
 
     @SuppressWarnings("unused")
@@ -186,6 +183,22 @@ public class MainActivity extends BaseActivity
     @SuppressWarnings("unused")
     public void closeDrawer() {
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onCardBackgroundChanged(Card.OnBackgroundUpdatedEvent event) {
+        updateBackground(event.card);
+    }
+
+    private void updateBackground(@NonNull Card card) {
+        NetworkManager.getGlide()
+                .load(card.getBackground())
+                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
+                .placeholder(R.drawable.bkg_auth)
+                .error(R.drawable.bkg_auth)
+                .centerCrop()
+                .into(mBackgroundImageView);
     }
 
     @Override

@@ -2,6 +2,7 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.text.format.Formatter;
@@ -131,6 +132,15 @@ public class DrawerFragment extends BaseFragment {
 
     @Subscribe
     @SuppressWarnings("unused")
+    public void onCardBackgroundUpdate(Card.OnBackgroundUpdatedEvent event) {
+        if (event.card.compareTo(User.currentUser().card) == 0
+                && getView() != null) {
+            updateBackground(event.card);
+        }
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
     public void onStorageSizeUpdated(User.OnStorageSizeUpdatedEvent event) {
         if (User.currentUser() != null && getView() != null) {
             updateFooterState(User.currentUser());
@@ -150,16 +160,18 @@ public class DrawerFragment extends BaseFragment {
 
         mUsernameTextView.setText(username);
         mEmailTextView.setText(card.getEmail());
+        updateBackground(card);
+    }
 
-        if (!Utils.isEmpty(card.getBackground())) {
-            NetworkManager.getGlide()
-                    .load(card.getBackground())
-                    .signature(GlideCacheSignature
-                            .ownerBackgroundKey(card.getBackground()))
-                    .into(mBackgroundImageView);
-        } else {
-            mBackgroundImageView.setImageDrawable(null);
-        }
+    private void updateBackground(@NonNull Card card) {
+        NetworkManager.getGlide()
+                .load(card.getBackground())
+                .signature(GlideCacheSignature
+                        .ownerBackgroundKey(card.getBackground()))
+                .placeholder(R.drawable.bkg_auth)
+                .error(R.drawable.bkg_auth)
+                .centerCrop()
+                .into(mBackgroundImageView);
     }
 
     private void updateFooterState(User user) {

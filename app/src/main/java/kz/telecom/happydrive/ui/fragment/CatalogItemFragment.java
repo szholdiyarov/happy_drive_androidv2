@@ -32,7 +32,6 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.ui.widget.BackgroundChangeable;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
@@ -111,25 +110,25 @@ public class CatalogItemFragment extends BaseFragment {
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
 
-        if (getActivity() instanceof BackgroundChangeable) {
-            final ImageView backgroundImgView = ((BackgroundChangeable) getActivity())
-                    .getBackgroundImageView();
-            final Card card = User.currentUser().card;
-            if (!Utils.isEmpty(card.getBackground())) {
-                backgroundImgView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        NetworkManager.getGlide()
-                                .load(card.getBackground())
-                                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
-                                .override(backgroundImgView.getWidth(),
-                                        backgroundImgView.getHeight())
-                                .centerCrop()
-                                .into(backgroundImgView);
-                    }
-                });
-            }
-        }
+//        if (getActivity() instanceof BackgroundChangeable) {
+//            final ImageView backgroundImgView = ((BackgroundChangeable) getActivity())
+//                    .getBackgroundImageView();
+//            final Card card = User.currentUser().card;
+//            if (!Utils.isEmpty(card.getBackground())) {
+//                backgroundImgView.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        NetworkManager.getGlide()
+//                                .load(card.getBackground())
+//                                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
+//                                .override(backgroundImgView.getWidth(),
+//                                        backgroundImgView.getHeight())
+//                                .centerCrop()
+//                                .into(backgroundImgView);
+//                    }
+//                });
+//            }
+//        }
 
         loadData();
     }

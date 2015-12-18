@@ -2,11 +2,11 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -110,7 +110,8 @@ public class StarFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        actionBar.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(R.string.action_favourite);
 
         adapter = new ItemAdapter(getContext());

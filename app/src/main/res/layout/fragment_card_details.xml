@@ -25,7 +25,7 @@
                 android:layout_width="96dp"
                 android:layout_height="match_parent"
                 android:background="#e6979797"
-                android:minHeight="210dp" />
+                android:minHeight="216dp" />
 
             <ImageButton
                 android:id="@+id/fragment_card_img_button_photo"

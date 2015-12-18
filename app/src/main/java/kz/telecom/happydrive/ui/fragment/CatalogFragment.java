@@ -2,24 +2,28 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -43,7 +47,8 @@ public class CatalogFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        actionBar.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(R.string.action_catalog);
 
         adapter = new CatalogAdapter(getContext());

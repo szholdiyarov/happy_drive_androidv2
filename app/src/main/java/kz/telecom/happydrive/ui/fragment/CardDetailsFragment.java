@@ -44,7 +44,6 @@ import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
-import kz.telecom.happydrive.ui.widget.BackgroundChangeable;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -496,20 +495,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     .into(userPhoto);
         } else {
             userPhoto.setImageDrawable(null);
-        }
-
-        if (getActivity() instanceof BackgroundChangeable) {
-            final ImageView backgroundImgView = ((BackgroundChangeable) getActivity())
-                    .getBackgroundImageView();
-            if (!Utils.isEmpty(card.getBackground())) {
-                NetworkManager.getGlide()
-                        .load(card.getBackground())
-                        .signature(card.compareTo(User.currentUser().card) == 0 ?
-                                GlideCacheSignature.ownerBackgroundKey(card.getBackground()) :
-                                GlideCacheSignature.foreignCacheKey(card.getBackground()))
-                        .centerCrop()
-                        .into(backgroundImgView);
-            }
         }
     }
 

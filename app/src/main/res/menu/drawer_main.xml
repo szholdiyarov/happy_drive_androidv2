@@ -27,10 +27,10 @@
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings_24p"
             android:title="@string/action_settings"/>
-        <item
-            android:id="@+id/action_help"
-            android:icon="@drawable/ic_help_24p"
-            android:title="@string/action_help"/>
+        <!--<item-->
+            <!--android:id="@+id/action_help"-->
+            <!--android:icon="@drawable/ic_help_24p"-->
+            <!--android:title="@string/action_help"/>-->
         <!--<item-->
             <!--android:id="@+id/action_about"-->
             <!--android:icon="@drawable/ic_about_24p"-->

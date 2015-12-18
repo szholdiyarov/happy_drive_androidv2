@@ -8,18 +8,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.FolderObject;
-import kz.telecom.happydrive.data.network.GlideCacheSignature;
-import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.StorageDocFragment;
 import kz.telecom.happydrive.ui.fragment.StorageMusicFragment;
 import kz.telecom.happydrive.ui.fragment.StoragePhotoFragment;
 import kz.telecom.happydrive.ui.fragment.StorageVideoFragment;
-import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by shgalym on 11/22/15.
@@ -55,21 +51,6 @@ public class StorageActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
-
-        final ImageView backgroundImgView = (ImageView) findViewById(R.id.activity_storage_img_view_background);
-        if (!Utils.isEmpty(card.getBackground()))
-            backgroundImgView.post(new Runnable() {
-                @Override
-                public void run() {
-                    NetworkManager.getGlide()
-                            .load(card.getBackground())
-                            .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
-                            .override(backgroundImgView.getWidth(),
-                                    backgroundImgView.getHeight())
-                            .centerCrop()
-                            .into(backgroundImgView);
-                }
-            });
 
         if (savedInstanceState == null) {
             if (type == TYPE_PHOTO) {
