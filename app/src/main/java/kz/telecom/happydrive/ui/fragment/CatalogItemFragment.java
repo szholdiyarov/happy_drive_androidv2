@@ -13,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -47,7 +49,7 @@ public class CatalogItemFragment extends BaseFragment {
     private View.OnClickListener starClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int position = listView.getPositionForView(v);
+            int position = (Integer) v.getTag();
             final Card pickedCard = adapter.data.get(position);
             new Thread() {
                 @Override
@@ -64,22 +66,11 @@ public class CatalogItemFragment extends BaseFragment {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.notifyDataSetInvalidated();
+                            adapter.notifyDataSetChanged();
                         }
                     });
                 }
             }.start();
-        }
-    };
-
-    private View.OnClickListener cardClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = listView.getPositionForView(v);
-            BaseActivity activity = (BaseActivity) getActivity();
-            Card card = (Card) adapter.getItem(position);
-            activity.replaceContent(CardDetailsFragment.newInstance(card),
-                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     };
 
@@ -106,9 +97,21 @@ public class CatalogItemFragment extends BaseFragment {
                 ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(categoryName);
 
-        adapter = new ItemAdapter(getContext());
+        if (adapter == null) {
+            adapter = new ItemAdapter(getContext());
+        }
+
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BaseActivity activity = (BaseActivity) getActivity();
+                Card card = (Card) adapter.getItem(position);
+                activity.replaceContent(CardDetailsFragment.newInstance(card),
+                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
+        });
 
         loadData();
     }
@@ -193,27 +196,37 @@ public class CatalogItemFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View vi = convertView;
-            if (vi == null)
-                vi = LayoutInflater.from(getContext())
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.fragment_catalog_item_row, parent, false);
 
-            TextView name = (TextView) vi.findViewById(R.id.name);
-            name.setOnClickListener(cardClickListener);
-            TextView description = (TextView) vi.findViewById(R.id.description);
-            description.setOnClickListener(cardClickListener);
-
-            final Card card = data.get(position);
-            String fullName = card.getFirstName();
-            if (!Utils.isEmpty(card.getLastName())) {
-                fullName += " " + card.getLastName();
+                ImageView imageView = (ImageView) convertView.findViewById(R.id.avatar);
+                TextView titleTextView = (TextView) convertView.findViewById(R.id.name);
+                TextView descTextView = (TextView) convertView.findViewById(R.id.description);
+                ImageButton actionBtn = (ImageButton) convertView.findViewById(R.id.star);
+                actionBtn.setOnClickListener(starClickListener);
+                viewHolder = new ViewHolder(imageView, titleTextView, descTextView, actionBtn);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            name.setText(fullName);
-            description.setText(card.getPosition());
+            final Card card = data.get(position);
 
-            final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
-            imageView.setOnClickListener(cardClickListener);
+            String lastName = card.getLastName();
+            String username = card.getFirstName();
+            if (!Utils.isEmpty(lastName)) {
+                if (!Utils.isEmpty(username)) {
+                    username += " " + lastName;
+                } else {
+                    username = lastName;
+                }
+            }
+
+            viewHolder.titleTextView.setText(username);
+            viewHolder.descTextView.setText(card.getPosition());
+
             if (card.getAvatar() != null) {
                 if (!Utils.isEmpty(card.getAvatar())) {
                     DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -226,22 +239,38 @@ public class CatalogItemFragment extends BaseFragment {
                                             Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
                             .error(R.drawable.user_photo)
                             .placeholder(R.drawable.user_photo_load)
-                            .into(imageView);
+                            .into(viewHolder.imageView);
                 }
             } else {
-                imageView.setImageResource(R.drawable.user_photo);
+                viewHolder.imageView.setImageResource(R.drawable.user_photo);
             }
 
-            ImageView starView = (ImageView) vi.findViewById(R.id.star);
+            ImageView starView = viewHolder.actionImageBtn;
             if (card.compareTo(myCard) == 0) {
                 starView.setVisibility(View.INVISIBLE);
             } else {
+                starView.setTag(position);
                 starView.setVisibility(View.VISIBLE);
                 starView.setColorFilter(card.isStarred() ?
                         ContextCompat.getColor(getContext(), R.color.colorAccent) : 0xffcccccc);
-                starView.setOnClickListener(starClickListener);
             }
-            return vi;
+
+            return convertView;
+        }
+    }
+
+    static class ViewHolder {
+        private final ImageView imageView;
+        private final TextView titleTextView;
+        private final TextView descTextView;
+        private final ImageButton actionImageBtn;
+
+        ViewHolder(ImageView imageView, TextView titleTextView,
+                   TextView descTextView, ImageButton actionImageBtn) {
+            this.imageView = imageView;
+            this.titleTextView = titleTextView;
+            this.descTextView = descTextView;
+            this.actionImageBtn = actionImageBtn;
         }
     }
 }
