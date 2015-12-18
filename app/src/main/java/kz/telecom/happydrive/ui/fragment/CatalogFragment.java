@@ -1,6 +1,5 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,10 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +29,7 @@ import kz.telecom.happydrive.ui.CatalogItemActivity;
  */
 public class CatalogFragment extends BaseFragment {
     private ListView listView;
-    private CatalogAdapter adapter;
+    private ArrayAdapter<Category> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,12 +49,14 @@ public class CatalogFragment extends BaseFragment {
                 ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(R.string.action_catalog);
 
-        adapter = new CatalogAdapter(getContext());
+        adapter = new ArrayAdapter<>(getContext(), R.layout.fragment_catalog_row,
+                new ArrayList<Category>());
+
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Category category = (Category) adapter.getItem(i);
+                Category category = adapter.getItem(i);
                 Intent intent = new Intent(getContext(), CatalogItemActivity.class);
                 intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_ID, category.id);
                 intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_NAME, category.name);
@@ -85,9 +85,8 @@ public class CatalogFragment extends BaseFragment {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (Category c : data) {
-                                    adapter.data.add(c);
-                                }
+                                adapter.clear();
+                                adapter.addAll(data);
                                 adapter.notifyDataSetChanged();
                                 disableProgressBar();
                             }
@@ -108,43 +107,5 @@ public class CatalogFragment extends BaseFragment {
                 }
             }
         }.start();
-    }
-
-    class CatalogAdapter extends BaseAdapter {
-        Context context;
-        List<Category> data;
-        LayoutInflater inflater = null;
-
-        public CatalogAdapter(Context context) {
-            this.context = context;
-            this.data = new ArrayList<>();
-            inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return data.get(position).id;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View vi = convertView;
-            if (vi == null)
-                vi = inflater.inflate(R.layout.fragment_catalog_row, null);
-            TextView text = (TextView) vi.findViewById(R.id.text);
-            text.setText(data.get(position).name);
-            return vi;
-        }
     }
 }
