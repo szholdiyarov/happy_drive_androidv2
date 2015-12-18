@@ -14,8 +14,6 @@
     <ListView
         android:id="@+id/cardsListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@drawable/catalog_list_divider"
-        android:dividerHeight="1dp" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

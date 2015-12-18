@@ -1,12 +1,12 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -30,7 +30,6 @@ import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
@@ -103,32 +102,13 @@ public class CatalogItemFragment extends BaseFragment {
 
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        actionBar.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(categoryName);
 
         adapter = new ItemAdapter(getContext());
         listView = (ListView) view.findViewById(R.id.cardsListView);
         listView.setAdapter(adapter);
-
-//        if (getActivity() instanceof BackgroundChangeable) {
-//            final ImageView backgroundImgView = ((BackgroundChangeable) getActivity())
-//                    .getBackgroundImageView();
-//            final Card card = User.currentUser().card;
-//            if (!Utils.isEmpty(card.getBackground())) {
-//                backgroundImgView.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        NetworkManager.getGlide()
-//                                .load(card.getBackground())
-//                                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
-//                                .override(backgroundImgView.getWidth(),
-//                                        backgroundImgView.getHeight())
-//                                .centerCrop()
-//                                .into(backgroundImgView);
-//                    }
-//                });
-//            }
-//        }
 
         loadData();
     }
@@ -232,30 +212,24 @@ public class CatalogItemFragment extends BaseFragment {
             name.setText(fullName);
             description.setText(card.getPosition());
 
+            final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
+            imageView.setOnClickListener(cardClickListener);
             if (card.getAvatar() != null) {
-                final ImageView imageView = (ImageView) vi.findViewById(R.id.avatar);
-                imageView.setOnClickListener(cardClickListener);
                 if (!Utils.isEmpty(card.getAvatar())) {
-                    imageView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            String tempAvatarUrl = Request.DEFAULT_HOST + "/card/download/avatar/" + card.id;
-                            DisplayMetrics dm = getResources().getDisplayMetrics();
-                            NetworkManager.getGlide()
-                                    .load(tempAvatarUrl)
-                                    .signature(GlideCacheSignature
-                                            .foreignCacheKey(tempAvatarUrl))
-                                    .override(imageView.getWidth(),
-                                            imageView.getHeight())
-                                    .bitmapTransform(new CenterCrop(getContext()),
-                                            new GlideRoundedCornersTransformation(getContext(),
-                                                    Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
-                                    .error(R.drawable.user_photo)
-                                    .placeholder(R.drawable.user_photo_load)
-                                    .into(imageView);
-                        }
-                    });
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                    NetworkManager.getGlide()
+                            .load(card.getAvatar())
+                            .signature(GlideCacheSignature
+                                    .foreignCacheKey(card.getAvatar()))
+                            .bitmapTransform(new CenterCrop(getContext()),
+                                    new GlideRoundedCornersTransformation(getContext(),
+                                            Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
+                            .error(R.drawable.user_photo)
+                            .placeholder(R.drawable.user_photo_load)
+                            .into(imageView);
                 }
+            } else {
+                imageView.setImageResource(R.drawable.user_photo);
             }
 
             ImageView starView = (ImageView) vi.findViewById(R.id.star);
@@ -263,7 +237,8 @@ public class CatalogItemFragment extends BaseFragment {
                 starView.setVisibility(View.INVISIBLE);
             } else {
                 starView.setVisibility(View.VISIBLE);
-                starView.setColorFilter(card.isStarred() ? Color.BLACK : Color.WHITE);
+                starView.setColorFilter(card.isStarred() ?
+                        ContextCompat.getColor(getContext(), R.color.colorAccent) : 0xffcccccc);
                 starView.setOnClickListener(starClickListener);
             }
             return vi;

@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="@drawable/catalog_list_background"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     tools:ignore="MissingPrefix">
@@ -26,7 +25,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Bob Marley"
-        android:textColor="@color/app_white"
+        android:textColor="@color/app_black"
         android:textSize="18sp" />
 
     <TextView
@@ -39,7 +38,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Description"
-        android:textColor="@color/app_white"
+        android:textColor="@color/app_black"
         android:textSize="16sp" />
 
     <ImageButton
@@ -47,7 +46,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
         android:background="@null"
         android:src="@drawable/ic_favourite_24p" />
 </RelativeLayout>
