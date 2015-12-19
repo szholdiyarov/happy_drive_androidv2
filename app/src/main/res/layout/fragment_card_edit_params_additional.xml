@@ -58,13 +58,15 @@
             android:inputType="text|textPostalAddress|textCapSentences"
             android:singleLine="true" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <android.support.v4.widget.Space
+            android:layout_width="0px"
+            android:layout_height="16dp" />
+
+        <Spinner
+            android:id="@+id/fragment_card_edit_additional_spinner_about"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="3dp"
-            android:paddingTop="16dp"
-            android:text="О себе"
-            android:textColor="#6000" />
+            android:background="@null" />
 
         <EditText
             android:id="@+id/fragment_card_edit_additional_et_about"

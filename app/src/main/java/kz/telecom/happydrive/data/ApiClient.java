@@ -64,37 +64,37 @@ public class ApiClient {
         cardMap.put(Card.API_KEY_POSITION, card.getPosition());
 
         String lastName = card.getLastName();
-        if (!Utils.isEmpty(lastName)) {
+        if (lastName != null) {
             cardMap.put(Card.API_KEY_LAST_NAME, lastName);
         }
 
         String email = card.getEmail();
-        if (!Utils.isEmpty(email)) {
+        if (email != null) {
             cardMap.put(Card.API_KEY_EMAIL, email);
         }
 
         String address = card.getAddress();
-        if (!Utils.isEmpty(address)) {
+        if (address != null) {
             cardMap.put(Card.API_KEY_ADDRESS, address);
         }
 
         String workPlace = card.getWorkPlace();
-        if (!Utils.isEmpty(workPlace)) {
+        if (workPlace != null) {
             cardMap.put(Card.API_KEY_WORK_PLACE, workPlace);
         }
 
         String shortDesc = card.getShortDesc();
-        if (!Utils.isEmpty(shortDesc)) {
+        if (shortDesc != null) {
             cardMap.put(Card.API_KEY_SHORT_DESC, shortDesc);
         }
 
         String fullDesc = card.getFullDesc();
-        if (!Utils.isEmpty(fullDesc)) {
+        if (fullDesc != null) {
             cardMap.put(Card.API_KEY_FULL_DESC, fullDesc);
         }
 
         String avatar = card.getAvatar();
-        if (!Utils.isEmpty(avatar)) {
+        if (avatar != null) {
             cardMap.put(Card.API_KEY_AVATAR, avatar);
         }
 

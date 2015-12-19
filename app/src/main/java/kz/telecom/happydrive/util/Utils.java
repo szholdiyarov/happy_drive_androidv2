@@ -36,6 +36,10 @@ public class Utils {
         return text == null || text.trim().length() <= 0;
     }
 
+    public static boolean isEmail(String text) {
+        return Patterns.EMAIL_ADDRESS.matcher(text).matches();
+    }
+
     public static boolean isDomain(String text) {
         return Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-))")
                 .matcher(text).matches();

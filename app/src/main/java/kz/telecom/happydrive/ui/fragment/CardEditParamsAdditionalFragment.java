@@ -6,11 +6,16 @@ import android.media.MediaRecorder;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -20,6 +25,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.util.Utils;
 
 /**
  * Created by Galymzhan Sh on 11/7/15.
@@ -32,6 +38,7 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
     private EditText mWebsiteEditText;
     private EditText mAddressEditText;
     private EditText mAboutEditText;
+    private Spinner mAboutOptionsSpinner;
     private View mMicImageButton;
     private View mMicPlayImageButton;
 
@@ -72,10 +79,30 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
         mAboutEditText = (EditText) view.findViewById(R.id.fragment_card_edit_additional_et_about);
         mMicImageButton = view.findViewById(R.id.fragment_card_edit_additional_img_btn_mic);
         mMicPlayImageButton = view.findViewById(R.id.fragment_card_edit_additional_img_btn_mic_play);
+        mAboutOptionsSpinner = (Spinner) view.findViewById(R.id.fragment_card_edit_additional_spinner_about);
+        mAboutOptionsSpinner.setAdapter(new AboutOptionsAdapter());
+        mAboutOptionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    mCard.setFullDesc(mAboutEditText.getText().toString());
+                    mAboutEditText.setText(mCard.getShortDesc());
+                    mAboutEditText.setHint("Укажите информацию о себе");
+                } else {
+                    mCard.setShortDesc(mAboutEditText.getText().toString());
+                    mAboutEditText.setText(mCard.getFullDesc());
+                    mAboutEditText.setHint("Укажите информацию о компании");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         mEmailEditText.setText(mCard.getEmail());
         mAddressEditText.setText(mCard.getAddress());
-        mAboutEditText.setText(mCard.getShortDesc());
+        mAboutOptionsSpinner.setSelection(Utils.isEmpty(mCard.getFullDesc()) ? 0 : 1, false);
 
         mMicImageButton.setOnTouchListener(this);
         mMicPlayImageButton.setOnClickListener(new View.OnClickListener() {
@@ -126,9 +153,11 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
             mMicImageButton.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mRecorder.start();
+                    if (mRecorder != null) {
+                        mRecorder.start();
+                    }
                 }
-            }, 120l);
+            }, 120L);
         } catch (Exception e) {
             Toast.makeText(getContext(), "Произошла ошибка во время записи",
                     Toast.LENGTH_SHORT).show();
@@ -152,12 +181,15 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
     private void togglePlayback(boolean play) {
         if (play) {
             try {
-                mPlayer = new MediaPlayer();
                 if (mAudioFile != null && mAudioFile.length() > 0) {
+                    mPlayer = new MediaPlayer();
                     mPlayer.setDataSource(mAudioFile.getAbsolutePath());
-                } else {
+                } else if (!Utils.isEmpty(mCard.getAudio())) {
+                    mPlayer = new MediaPlayer();
                     mPlayer.setDataSource(getContext(), Uri.parse(mCard.getAudio()),
                             Collections.singletonMap("Auth-Token", User.currentUser().token));
+                } else {
+                    return;
                 }
 
                 mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -192,9 +224,21 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
             return false;
         }
 
+        final String email = mEmailEditText.getText().toString();
+        if (!Utils.isEmpty(email) && !Utils.isEmail(email)) {
+            mEmailEditText.setError("Неправильный формат");
+            return false;
+        }
+
         mCard.setEmail(mEmailEditText.getText().toString());
         mCard.setAddress(mAddressEditText.getText().toString());
-        mCard.setShortDesc(mAboutEditText.getText().toString());
+        if (mAboutOptionsSpinner.getSelectedItemPosition() == 0) {
+            mCard.setShortDesc(mAboutEditText.getText().toString());
+            mCard.setFullDesc("");
+        } else {
+            mCard.setFullDesc(mAboutEditText.getText().toString());
+            mCard.setShortDesc("");
+        }
 
         return true;
     }
@@ -203,5 +247,49 @@ public class CardEditParamsAdditionalFragment extends BaseFragment
     public boolean onBackPressed() {
         readyForSave();
         return super.onBackPressed();
+    }
+
+    class AboutOptionsAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    3, getResources().getDisplayMetrics());
+            TextView textView = new TextView(getContext());
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down_black_24dp, 0);
+            textView.setTextColor(0x66000000);
+            textView.setPadding(pad, 0, pad, 0);
+
+            textView.setText(position == 0 ? "О себе" : "О компании");
+            return textView;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    8, getResources().getDisplayMetrics());
+            TextView textView = new TextView(getContext());
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            textView.setTextColor(0xcc000000);
+            textView.setPadding(pad, pad, pad, pad);
+
+            textView.setText(position == 0 ? "О себе" : "О компании");
+            return textView;
+        }
     }
 }
