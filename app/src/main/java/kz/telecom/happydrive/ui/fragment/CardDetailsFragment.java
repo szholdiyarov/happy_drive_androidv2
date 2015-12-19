@@ -41,6 +41,7 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.ui.CatalogItemActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
@@ -345,6 +346,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     .into(userPhoto);
         } else {
             userPhoto.setImageDrawable(null);
+        }
+
+        if (getActivity() instanceof CatalogItemActivity) {
+            ((CatalogItemActivity) getActivity()).changeBackgroundImage(card);
         }
     }
 

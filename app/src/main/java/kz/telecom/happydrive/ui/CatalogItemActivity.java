@@ -1,7 +1,6 @@
 package kz.telecom.happydrive.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -11,8 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogItemFragment;
 
@@ -37,9 +41,9 @@ public class CatalogItemActivity extends BaseActivity {
         ActionBar actionBar = initToolbar(toolbar);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        final Card card = intent.getParcelableExtra(EXTRA_CARD);
         if (savedInstanceState == null) {
-            Intent intent = getIntent();
-            Card card = intent.getParcelableExtra(EXTRA_CARD);
             if (card != null) {
                 replaceContent(CardDetailsFragment.newInstance(card),
                         false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -53,6 +57,17 @@ public class CatalogItemActivity extends BaseActivity {
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         }
+    }
+
+    public void changeBackgroundImage(Card card) {
+        NetworkManager.getGlide()
+                .load(card.getBackground())
+                .signature(GlideCacheSignature.foreignCacheKey(card.getBackground()))
+                .placeholder(R.drawable.bkg_auth)
+                .bitmapTransform(new CenterCrop(this),
+                        new BlurTransformation(this))
+                .error(R.drawable.bkg_auth)
+                .into((ImageView) findViewById(R.id.activity_catalog_img_view_background));
     }
 
     @Override
