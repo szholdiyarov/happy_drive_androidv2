@@ -44,7 +44,6 @@ import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
@@ -53,6 +52,7 @@ import kz.telecom.happydrive.ui.widget.AutoGridLayoutManager;
 import kz.telecom.happydrive.ui.widget.ItemOffsetDecoration;
 import kz.telecom.happydrive.ui.widget.PhotoAdapter;
 import kz.telecom.happydrive.ui.widget.StorageAdapter;
+import kz.telecom.happydrive.ui.widget.VideoAdapter;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -130,20 +130,31 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
 
         mErrorContainerView.setVisibility(View.GONE);
         if (mAdapter == null) {
-            mAdapter = new PhotoAdapter(getContext());
+            if (mType == StorageActivity.TYPE_VIDEO) {
+                mAdapter = new VideoAdapter(getContext());
+            } else {
+                mAdapter = new PhotoAdapter(getContext());
+            }
+
             mAdapter.setStorageItemClickListener(this);
             updateData();
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_storage_recycler_view);
-        mRecyclerView.setLayoutManager(new AutoGridLayoutManager(getContext(),
-                getResources().getDimensionPixelSize(R.dimen.storage_image_width),
-                LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new ItemOffsetDecoration(
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
-                        getResources().getDisplayMetrics())));
+        mRecyclerView.setAdapter(mAdapter);
+
+        if (mType == StorageActivity.TYPE_VIDEO) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.VERTICAL, false));
+        } else {
+            mRecyclerView.setLayoutManager(new AutoGridLayoutManager(getContext(),
+                    getResources().getDimensionPixelSize(R.dimen.storage_image_width),
+                    LinearLayoutManager.VERTICAL, false));
+            mRecyclerView.addItemDecoration(new ItemOffsetDecoration(
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
+                            getResources().getDisplayMetrics())));
+        }
 
         View fab = view.findViewById(R.id.fragment_storage_fab);
         fab.setOnClickListener(this);
@@ -252,7 +263,9 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
         } else if (action.action == StorageAction.ACTION_TAKE_PHOTO) {
             EasyImage.openCamera(StorageFragment.this);
         } else if (action.action == StorageAction.ACTION_PICK_PHOTO) {
-            EasyImage.openGallery(StorageFragment.this);
+            EasyImage.openDocuments(StorageFragment.this);
+        } else if (action.action == StorageAction.ACTION_PICK_VIDEO) {
+        } else if (action.action == StorageAction.ACTION_PICK_DOC) {
         }
     }
 

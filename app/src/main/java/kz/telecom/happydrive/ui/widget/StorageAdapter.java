@@ -18,9 +18,11 @@ public abstract class StorageAdapter extends RecyclerView.Adapter<StorageAdapter
     final List<ApiObject> items = new ArrayList<>();
     final LayoutInflater inflater;
     private OnStorageItemClickListener mListener;
+    private final Context mContext;
 
     public StorageAdapter(Context context) {
         inflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     public void setStorageItemClickListener(OnStorageItemClickListener listener) {
@@ -92,6 +94,10 @@ public abstract class StorageAdapter extends RecyclerView.Adapter<StorageAdapter
         if (mListener != null) {
             mListener.onItemLongClick(object);
         }
+    }
+
+    Context getContext() {
+        return mContext;
     }
 
     @Override
