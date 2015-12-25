@@ -144,6 +144,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     public void updateView(View view, final Card card) {
         final Button createButton = (Button) view.findViewById(R.id.fragment_card_btn_create);
         final ImageButton photoButton = (ImageButton) view.findViewById(R.id.fragment_card_img_button_photo);
+        final ImageButton shareButton = (ImageButton) view.findViewById(R.id.fragment_card_img_button_share);
         final View aboutContainer = view.findViewById(R.id.fragment_card_rl_about_container);
         final View portfolioContainer = view.findViewById(R.id.fragment_card_rl_portfolio_container);
         if (card == null || card.getCategoryId() <= 0) {
@@ -347,6 +348,86 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         } else {
             userPhoto.setImageDrawable(null);
         }
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(card.getFirstName());
+                        String lastName = card.getLastName();
+                        if (!Utils.isEmpty(lastName)) {
+                            if (stringBuilder.length() != 0) {
+                                stringBuilder.append(" ");
+                            }
+
+                            stringBuilder.append(lastName);
+                        }
+
+                        if (!Utils.isEmpty(card.getWorkPlace())) {
+                            stringBuilder.append(", ")
+                                    .append(card.getWorkPlace());
+                        }
+
+                        if (!Utils.isEmpty(card.getPhone())) {
+                            stringBuilder.append(",\n").append(card.getPhone());
+                        }
+
+                        if (!Utils.isEmpty(card.getEmail())) {
+                            stringBuilder.append(",\n").append(card.getEmail());
+                        }
+
+                        if (!Utils.isEmpty(card.getDomain())) {
+                            stringBuilder.append("\nhttps://")
+                                    .append(card.getDomain())
+                                    .append(".happy-drive.kz");
+                        }
+
+                        Uri pictureUri = Utils.getLocalBitmapUri(userPhoto);
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+                        shareIntent.setType("image/*");
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
+                    }
+                };
+
+                if (!card.isVisible() && User.currentUser().card.compareTo(card) == 0) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Визитка скрыта")
+                            .setMessage("Ваша визитка скрыта и не показывается в каталоге. Хотите показать?")
+                            .setPositiveButton("Показать", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                ApiClient.setVisibility(!card.isVisible());
+                                                User.currentUser().updateCard();
+                                            } catch (Exception ignored) {
+                                            }
+                                        }
+                                    }.start();
+                                }
+                            }).setNegativeButton("Отмена", null)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    runnable.run();
+                                }
+                            }).show();
+                    return;
+                }
+
+                runnable.run();
+            }
+        });
 
         if (getActivity() instanceof CatalogItemActivity) {
             ((CatalogItemActivity) getActivity()).changeBackgroundImage(card);

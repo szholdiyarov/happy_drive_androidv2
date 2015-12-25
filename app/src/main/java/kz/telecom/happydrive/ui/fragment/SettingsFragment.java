@@ -246,7 +246,6 @@ public class SettingsFragment extends BaseFragment implements AdapterView.OnItem
                 isLoading = false;
             }
         }.start();
-
     }
 
     private void uploadFile(final File file) {
