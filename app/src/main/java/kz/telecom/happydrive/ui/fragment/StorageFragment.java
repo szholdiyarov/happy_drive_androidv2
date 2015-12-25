@@ -48,7 +48,9 @@ import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
 import kz.telecom.happydrive.ui.StorageDetailsActivity;
+import kz.telecom.happydrive.ui.StorageMediaPlayerActivity;
 import kz.telecom.happydrive.ui.widget.AutoGridLayoutManager;
+import kz.telecom.happydrive.ui.widget.DocumentAdapter;
 import kz.telecom.happydrive.ui.widget.ItemOffsetDecoration;
 import kz.telecom.happydrive.ui.widget.MusicAdapter;
 import kz.telecom.happydrive.ui.widget.PhotoAdapter;
@@ -131,12 +133,14 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
 
         mErrorContainerView.setVisibility(View.GONE);
         if (mAdapter == null) {
-            if (mType == StorageActivity.TYPE_VIDEO) {
+            if (mType == StorageActivity.TYPE_PHOTO) {
+                mAdapter = new PhotoAdapter(getContext());
+            } else if (mType == StorageActivity.TYPE_VIDEO) {
                 mAdapter = new VideoAdapter(getContext());
             } else if (mType == StorageActivity.TYPE_MUSIC) {
                 mAdapter = new MusicAdapter(getContext());
             } else {
-                mAdapter = new PhotoAdapter(getContext());
+                mAdapter = new DocumentAdapter(getContext());
             }
 
             mAdapter.setStorageItemClickListener(this);
@@ -211,17 +215,23 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
                     Intent intent = new Intent(activity, StorageDetailsActivity.class);
                     intent.putExtra(StorageDetailsActivity.EXTRA_FILE, object);
                     intent.putExtra(StorageDetailsActivity.EXTRA_CARD, mCard);
-                    intent.putExtra(StorageDetailsActivity.EXTRA_TYPE, StorageActivity.TYPE_PHOTO);
                     startActivity(intent);
                     break;
                 }
-
-                default: {
-                    Intent intent = new Intent(activity, StorageDetailsActivity.class);
-                    intent.putExtra(StorageDetailsActivity.EXTRA_FILE, object);
-                    intent.putExtra(StorageDetailsActivity.EXTRA_CARD, mCard);
-                    intent.putExtra(StorageDetailsActivity.EXTRA_TYPE, mType);
+                case ApiObject.TYPE_FILE_MUSIC:
+                case ApiObject.TYPE_FILE_VIDEO: {
+                    Intent intent = new Intent(activity, StorageMediaPlayerActivity.class);
+                    intent.putExtra(StorageMediaPlayerActivity.EXTRA_FILE, object);
                     startActivity(intent);
+                    break;
+                }
+                case ApiObject.TYPE_FILE_DOCUMENT:
+                default: {
+                    // open the file
+//                    Intent intent = new Intent(activity, StorageDetailsActivity.class);
+//                    intent.putExtra(StorageDetailsActivity.EXTRA_FILE, object);
+//                    intent.putExtra(StorageDetailsActivity.EXTRA_CARD, mCard);
+//                    startActivity(intent);
                 }
             }
         }

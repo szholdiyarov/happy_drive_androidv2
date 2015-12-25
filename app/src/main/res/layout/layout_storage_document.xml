@@ -7,13 +7,13 @@
     android:padding="8dp">
 
     <ImageView
-        android:id="@+id/layout_storage_music_image_view"
+        android:id="@+id/layout_storage_document_image_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:src="@drawable/ic_storage_video_album" />
 
     <TextView
-        android:id="@+id/layout_storage_music_tv_title"
+        android:id="@+id/layout_storage_document_tv_title"
         fontPath="fonts/Roboto-Medium.ttf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

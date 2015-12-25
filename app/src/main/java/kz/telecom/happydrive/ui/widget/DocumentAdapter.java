@@ -16,19 +16,17 @@ import kz.telecom.happydrive.data.network.NetworkManager;
 /**
  * Created by shgalym on 25.12.2015.
  */
-public class MusicAdapter extends StorageAdapter {
-    public MusicAdapter(Context context) {
+public class DocumentAdapter extends StorageAdapter {
+    public DocumentAdapter(Context context) {
         super(context);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new PhotoViewHolder(inflater.inflate(R.layout.layout_storage_music, parent, false));
+        return new PhotoViewHolder(inflater.inflate(R.layout.layout_storage_document, parent, false));
     }
 
     private class PhotoViewHolder extends ViewHolder {
-        int imgRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6,
-                getContext().getResources().getDisplayMetrics());
         private final ImageView imageView;
         private final TextView textView;
 
@@ -50,8 +48,8 @@ public class MusicAdapter extends StorageAdapter {
                 }
             });
 
-            imageView = (ImageView) itemView.findViewById(R.id.layout_storage_music_image_view);
-            textView = (TextView) itemView.findViewById(R.id.layout_storage_music_tv_title);
+            imageView = (ImageView) itemView.findViewById(R.id.layout_storage_document_image_view);
+            textView = (TextView) itemView.findViewById(R.id.layout_storage_document_tv_title);
         }
 
         @Override

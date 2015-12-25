@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_storage_media_player_v_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_black"
+    android:focusable="true"
+    android:keepScreenOn="true">
+
+    <com.google.android.exoplayer.AspectRatioFrameLayout
+        android:id="@+id/activity_storage_media_player_fl_video_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <SurfaceView
+            android:id="@+id/activity_storage_media_player_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/activity_storage_media_player_img_view_shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:scaleType="center" />
+    </com.google.android.exoplayer.AspectRatioFrameLayout>
+
+    <include layout="@layout/layout_toolbar" />
+</FrameLayout>

@@ -82,6 +82,21 @@
         <activity
             android:name=".ui.StorageDetailsActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".ui.StorageMediaPlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="com.google.android.exoplayer.demo.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+                <data android:scheme="asset" />
+                <data android:scheme="file" />
+            </intent-filter>
+        </activity>
 
         <service android:name="com.parse.PushService" />
 

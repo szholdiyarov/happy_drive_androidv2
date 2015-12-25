@@ -22,7 +22,6 @@ import kz.telecom.happydrive.ui.fragment.StoragePhotoDetailsFragment;
 public class StorageDetailsActivity extends BaseActivity {
     public static final String EXTRA_FILE = "extra:file";
     public static final String EXTRA_CARD = "extra:card";
-    public static final String EXTRA_TYPE = "extra:type";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +41,6 @@ public class StorageDetailsActivity extends BaseActivity {
             Intent intent = getIntent();
             FileObject fileObject = intent.getParcelableExtra(EXTRA_FILE);
             final Card card = intent.getParcelableExtra(EXTRA_CARD);
-            int type = intent.getIntExtra(EXTRA_TYPE, StorageActivity.TYPE_UNKNOWN);
-
             if (fileObject == null || card == null) {
                 throw new IllegalStateException("EXTRA_FILE or EXTRA_CARD not passed");
             }
@@ -52,7 +49,6 @@ public class StorageDetailsActivity extends BaseActivity {
                     false, FragmentTransaction.TRANSIT_NONE);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
