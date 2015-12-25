@@ -2,12 +2,15 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -23,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -30,6 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -227,11 +237,148 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
                 }
                 case ApiObject.TYPE_FILE_DOCUMENT:
                 default: {
-                    // open the file
-//                    Intent intent = new Intent(activity, StorageDetailsActivity.class);
-//                    intent.putExtra(StorageDetailsActivity.EXTRA_FILE, object);
-//                    intent.putExtra(StorageDetailsActivity.EXTRA_CARD, mCard);
-//                    startActivity(intent);
+                    FileObject fileObject = (FileObject) object;
+                    final File destFile = new File(getContext().getExternalCacheDir(),
+                            mFolderObject.id + File.separator + fileObject.name);
+
+                    final Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Logger.i(TAG, "Открытие файла:" + destFile.getAbsolutePath());
+                            Logger.i(TAG, "размер файла: " + destFile.length());
+
+                            String fileExtension = Utils.fileExtension(destFile.getAbsolutePath());
+                            if (fileExtension != null && fileExtension.length() > 0) {
+                                fileExtension = fileExtension.substring(1);
+                            }
+
+                            Intent newIntent = new Intent(Intent.ACTION_VIEW);
+                            String mimeType = MimeTypeMap.getSingleton()
+                                    .getMimeTypeFromExtension(fileExtension);
+                            if (mimeType == null) {
+                                mimeType = "application/" + fileExtension;
+                            }
+                            newIntent.setDataAndType(Uri.fromFile(destFile), mimeType);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            try {
+                                getContext().startActivity(newIntent);
+                            } catch (ActivityNotFoundException e) {
+                                Toast.makeText(getContext(), "Не найдено приложение для открытия этого файла",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    };
+
+                    if (!destFile.exists() || destFile.length() == 0) {
+                        if (!destFile.getParentFile().mkdirs()) {
+                            Toast.makeText(getContext(), "Не удалось загрузить файл", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                        progressDialog.setMessage("Открытие файла...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        new AsyncTask<String, Integer, String>() {
+                            private PowerManager.WakeLock mWakeLock;
+
+                            @Override
+                            protected String doInBackground(String... params) {
+                                InputStream input = null;
+                                OutputStream output = null;
+                                HttpURLConnection connection = null;
+                                try {
+                                    URL url = new URL(params[0]);
+                                    connection = (HttpURLConnection) url.openConnection();
+                                    connection.addRequestProperty("Auth-Token", User.currentUser().token);
+                                    connection.connect();
+
+                                    // expect HTTP 200 OK, so we don't mistakenly save error report
+                                    // instead of the file
+                                    if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                                        return "Server returned HTTP " + connection.getResponseCode()
+                                                + " " + connection.getResponseMessage();
+                                    }
+
+                                    // this will be useful to display download percentage
+                                    // might be -1: server did not report the length
+                                    int fileLength = connection.getContentLength();
+
+                                    // download the file
+                                    input = connection.getInputStream();
+                                    output = new FileOutputStream(destFile);
+
+                                    byte data[] = new byte[4096];
+                                    long total = 0;
+                                    int count;
+                                    while ((count = input.read(data)) != -1) {
+                                        // allow canceling with back button
+                                        if (isCancelled()) {
+                                            input.close();
+                                            return null;
+                                        }
+                                        total += count;
+                                        // publishing the progress....
+                                        if (fileLength > 0) // only if total length is known
+                                            publishProgress((int) (total * 100 / fileLength));
+                                        output.write(data, 0, count);
+                                    }
+                                } catch (Exception e) {
+                                    return e.toString();
+                                } finally {
+                                    try {
+                                        if (output != null)
+                                            output.close();
+                                        if (input != null)
+                                            input.close();
+                                    } catch (IOException ignored) {
+                                    }
+
+                                    if (connection != null)
+                                        connection.disconnect();
+                                }
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                // take CPU lock to prevent CPU from going off if the user
+                                // presses the power button during download
+                                PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+                                mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                                        getClass().getName());
+                                mWakeLock.acquire();
+                            }
+
+                            @Override
+                            protected void onProgressUpdate(Integer... progress) {
+                                super.onProgressUpdate(progress);
+                                // if we get here, length is known, now set indeterminate to false
+                                progressDialog.setIndeterminate(false);
+                                progressDialog.setMax(100);
+                                progressDialog.setProgress(progress[0]);
+                            }
+
+                            @Override
+                            protected void onPostExecute(String result) {
+                                mWakeLock.release();
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
+
+                                if (result != null) {
+                                    Toast.makeText(getContext(), "Не удалось загрузить", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                runnable.run();
+                            }
+                        }.execute(fileObject.url);
+                    } else {
+                        runnable.run();
+                    }
                 }
             }
         }

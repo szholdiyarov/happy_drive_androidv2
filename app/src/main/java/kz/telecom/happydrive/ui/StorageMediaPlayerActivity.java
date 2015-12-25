@@ -103,7 +103,7 @@ public class StorageMediaPlayerActivity extends BaseActivity implements SurfaceH
         if (mFileObject.getType() == ApiObject.TYPE_FILE_MUSIC) {
             mShutterImageView.setImageResource(R.drawable.ic_cloud_music);
             mShutterImageView.setColorFilter(ColorUtils.setAlphaComponent(
-                    ContextCompat.getColor(this, R.color.colorAccent), 120));
+                    ContextCompat.getColor(this, R.color.colorAccent), 160));
         }
 
         mediaController = new KeyCompatibleMediaController(this);
