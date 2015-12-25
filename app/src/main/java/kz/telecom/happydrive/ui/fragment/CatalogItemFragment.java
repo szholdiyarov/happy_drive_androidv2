@@ -99,6 +99,7 @@ public class CatalogItemFragment extends BaseFragment {
 
         if (adapter == null) {
             adapter = new ItemAdapter();
+            loadData();
         }
 
         listView = (ListView) view.findViewById(R.id.cardsListView);
@@ -112,8 +113,6 @@ public class CatalogItemFragment extends BaseFragment {
                         true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
-
-        loadData();
     }
 
     @Override
