@@ -7,26 +7,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.network.NetworkManager;
-import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 
 /**
  * Created by shgalym on 25.12.2015.
  */
-public class VideoAdapter extends StorageAdapter {
-    public VideoAdapter(Context context) {
+public class MusicAdapter extends StorageAdapter {
+    public MusicAdapter(Context context) {
         super(context);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new PhotoViewHolder(inflater.inflate(R.layout.layout_storage_video, parent, false));
+        return new PhotoViewHolder(inflater.inflate(R.layout.layout_storage_music, parent, false));
     }
 
     private class PhotoViewHolder extends ViewHolder {
@@ -53,8 +50,8 @@ public class VideoAdapter extends StorageAdapter {
                 }
             });
 
-            imageView = (ImageView) itemView.findViewById(R.id.layout_storage_video_image_view);
-            textView = (TextView) itemView.findViewById(R.id.layout_storage_video_tv_title);
+            imageView = (ImageView) itemView.findViewById(R.id.layout_storage_music_image_view);
+            textView = (TextView) itemView.findViewById(R.id.layout_storage_music_tv_title);
         }
 
         @Override
@@ -62,7 +59,7 @@ public class VideoAdapter extends StorageAdapter {
             mObject = object;
             if (object.isFolder()) {
                 textView.setText(((FolderObject) object).name);
-                imageView.setImageResource(R.drawable.ic_storage_video_folder);
+                imageView.setImageResource(R.drawable.ic_storage_music_folder);
                 return;
             }
 
@@ -71,23 +68,22 @@ public class VideoAdapter extends StorageAdapter {
             final int type = fileObject.getType();
             switch (type) {
                 case ApiObject.TYPE_FILE_VIDEO:
-                    imageView.setImageResource(R.drawable.ic_storage_video);
+                    imageView.setImageResource(R.drawable.ic_storage_music_video);
                     break;
                 case ApiObject.TYPE_FILE_MUSIC:
-                    imageView.setImageResource(R.drawable.ic_storage_video_music);
-                    break;
-                case ApiObject.TYPE_FILE_DOCUMENT:
-                    imageView.setImageResource(R.drawable.ic_storage_video_doc);
+                    imageView.setImageResource(R.drawable.ic_storage_music);
                     break;
                 case ApiObject.TYPE_FILE_PHOTO:
-                default:
                     NetworkManager.getGlide()
                             .load(fileObject.url)
-                            .placeholder(R.drawable.ic_storage_video_doc)
-                            .error(R.drawable.ic_storage_video_doc)
-                            .bitmapTransform(new CenterCrop(getContext()),
-                                    new GlideRoundedCornersTransformation(getContext(), imgRadius, 0))
+                            .placeholder(R.drawable.ic_storage_music_photo)
+                            .error(R.drawable.ic_storage_music_photo)
+                            .centerCrop()
                             .into(imageView);
+                    break;
+                case ApiObject.TYPE_FILE_DOCUMENT:
+                default:
+                    imageView.setImageResource(R.drawable.ic_storage_music_doc);
             }
         }
     }

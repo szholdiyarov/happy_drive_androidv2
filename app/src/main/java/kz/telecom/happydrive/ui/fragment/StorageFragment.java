@@ -50,6 +50,7 @@ import kz.telecom.happydrive.ui.StorageActivity;
 import kz.telecom.happydrive.ui.StorageDetailsActivity;
 import kz.telecom.happydrive.ui.widget.AutoGridLayoutManager;
 import kz.telecom.happydrive.ui.widget.ItemOffsetDecoration;
+import kz.telecom.happydrive.ui.widget.MusicAdapter;
 import kz.telecom.happydrive.ui.widget.PhotoAdapter;
 import kz.telecom.happydrive.ui.widget.StorageAdapter;
 import kz.telecom.happydrive.ui.widget.VideoAdapter;
@@ -132,6 +133,8 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
         if (mAdapter == null) {
             if (mType == StorageActivity.TYPE_VIDEO) {
                 mAdapter = new VideoAdapter(getContext());
+            } else if (mType == StorageActivity.TYPE_MUSIC) {
+                mAdapter = new MusicAdapter(getContext());
             } else {
                 mAdapter = new PhotoAdapter(getContext());
             }
@@ -144,16 +147,16 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
 
-        if (mType == StorageActivity.TYPE_VIDEO) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                    LinearLayoutManager.VERTICAL, false));
-        } else {
+        if (mType == StorageActivity.TYPE_PHOTO) {
             mRecyclerView.setLayoutManager(new AutoGridLayoutManager(getContext(),
                     getResources().getDimensionPixelSize(R.dimen.storage_image_width),
                     LinearLayoutManager.VERTICAL, false));
             mRecyclerView.addItemDecoration(new ItemOffsetDecoration(
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4,
                             getResources().getDisplayMetrics())));
+        } else {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.VERTICAL, false));
         }
 
         View fab = view.findViewById(R.id.fragment_storage_fab);
