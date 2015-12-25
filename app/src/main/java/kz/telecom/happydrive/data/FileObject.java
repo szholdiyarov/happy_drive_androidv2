@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.data;
 
 import android.os.Parcel;
+import android.webkit.MimeTypeMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -38,6 +39,38 @@ public class FileObject extends ApiObject {
                 put("gif", TYPE_FILE_PHOTO);
 
                 // video file types
+                put("flv", TYPE_FILE_VIDEO);
+                put("webm", TYPE_FILE_VIDEO);
+                put("mkv", TYPE_FILE_VIDEO);
+                put("avi", TYPE_FILE_VIDEO);
+                put("mov", TYPE_FILE_VIDEO);
+                put("wmv", TYPE_FILE_VIDEO);
+                put("mp4", TYPE_FILE_VIDEO);
+                put("m4p", TYPE_FILE_VIDEO);
+                put("mpg", TYPE_FILE_VIDEO);
+                put("mp2", TYPE_FILE_VIDEO);
+                put("mpeg", TYPE_FILE_VIDEO);
+                put("mpe", TYPE_FILE_VIDEO);
+                put("mpv", TYPE_FILE_VIDEO);
+                put("m2v", TYPE_FILE_VIDEO);
+                put("3gp", TYPE_FILE_VIDEO);
+
+                // music file types
+                put("aac", TYPE_FILE_MUSIC);
+                put("amr", TYPE_FILE_MUSIC);
+                put("flac", TYPE_FILE_MUSIC);
+                put("m4p", TYPE_FILE_MUSIC);
+                put("mp3", TYPE_FILE_MUSIC);
+                put("ogg", TYPE_FILE_MUSIC);
+                put("wav", TYPE_FILE_MUSIC);
+                put("wma", TYPE_FILE_MUSIC);
+
+                // doc file types
+                put("doc", TYPE_FILE_DOCUMENT);
+                put("docx", TYPE_FILE_DOCUMENT);
+                put("xls", TYPE_FILE_DOCUMENT);
+                put("xlsx", TYPE_FILE_DOCUMENT);
+                put("pdf", TYPE_FILE_DOCUMENT);
             }};
 
     public FileObject(int id, String name, long size, long timestamp, String url) {
@@ -86,6 +119,10 @@ public class FileObject extends ApiObject {
         String[] comps = name.split("\\.");
         if (comps.length > 0) {
             mExtension = comps[comps.length - 1].toLowerCase();
+
+            if (mExtension.length() > 5) {
+                mExtension = "jpg";
+            }
         }
 
         return mExtension;

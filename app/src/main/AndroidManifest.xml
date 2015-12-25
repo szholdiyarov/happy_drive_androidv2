@@ -79,6 +79,9 @@
             android:name=".ui.ChangeDomainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.StorageDetailsActivity"
+            android:label="@string/app_name" />
 
         <service android:name="com.parse.PushService" />
 

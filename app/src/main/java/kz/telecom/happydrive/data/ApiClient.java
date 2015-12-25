@@ -280,8 +280,18 @@ public class ApiClient {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
         request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
 
+        String fileName = file.getName();
+        String[] comps = fileName.split("\\.");
+        if (comps.length > 0) {
+            String extension = comps[comps.length - 1].toLowerCase();
+
+            if (extension.length() > 5) {
+                fileName += ".jpg";
+            }
+        }
+
         Map<String, String> headers = new HashMap<>(2);
-        headers.put("File-Name", file.getName());
+        headers.put("File-Name", fileName);
         if (folderId > 0) {
             headers.put("Folder-ID", folderId + "");
         }
