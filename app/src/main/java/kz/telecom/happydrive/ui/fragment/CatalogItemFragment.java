@@ -100,6 +100,8 @@ public class CatalogItemFragment extends BaseFragment {
         if (adapter == null) {
             adapter = new ItemAdapter();
             loadData();
+        } else {
+            disableProgressBar();
         }
 
         listView = (ListView) view.findViewById(R.id.cardsListView);

@@ -9,7 +9,7 @@ android {
         applicationId "kz.telecom.happydrive"
         minSdkVersion 15
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
+        versionCode 5
         versionName "1.0"
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled true
