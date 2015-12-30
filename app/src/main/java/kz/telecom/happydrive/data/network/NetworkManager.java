@@ -4,16 +4,19 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
-import com.squareup.picasso.OkHttpDownloader;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.MalformedURLException;
@@ -24,9 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import kz.telecom.happydrive.BuildConfig;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.internal.NetworkResponse;
 import kz.telecom.happydrive.data.network.internal.OkHttpCallerWrapper;
@@ -37,7 +40,7 @@ import kz.telecom.happydrive.data.network.internal.OkHttpCallerWrapper;
 public class NetworkManager {
     private static NetworkManager sManager;
     private final OkHttpClient httpClient;
-    private final Picasso picasso;
+    private final RequestManager glide;
 
     private final NetworkDispatcher[] mNetworkDispatchers = new NetworkDispatcher[4];
     private final ResponsePoster mResponsePoster = new ResponsePoster(new Handler(Looper.getMainLooper()));
@@ -69,8 +72,12 @@ public class NetworkManager {
         }
     }
 
-    public static Picasso getPicasso() {
-        return sManager.picasso;
+    public static RequestManager getGlide() {
+        return sManager.glide;
+    }
+
+    static OkHttpClient getOkHttpClient() {
+        return sManager.httpClient;
     }
 
     public synchronized static void setCookie(String host, String name, String value)
@@ -169,6 +176,9 @@ public class NetworkManager {
 
     private NetworkManager(Context context) {
         httpClient = new OkHttpClient();
+        httpClient.setConnectTimeout(2, TimeUnit.MINUTES);
+        httpClient.setReadTimeout(2, TimeUnit.MINUTES);
+        httpClient.setWriteTimeout(2, TimeUnit.MINUTES);
         httpClient.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
@@ -181,11 +191,10 @@ public class NetworkManager {
             }
         });
 
-        picasso = new Picasso.Builder(context)
-                .downloader(new OkHttpDownloader(httpClient))
-                .loggingEnabled(BuildConfig.DEBUG)
-                .indicatorsEnabled(BuildConfig.DEBUG)
-                .build();
+        Glide g = Glide.get(context);
+        g.register(GlideUrl.class, InputStream.class,
+                new OkHttpUrlLoader.Factory(httpClient));
+        glide = Glide.with(context);
+        GlideCacheSignature.init(context);
     }
-
 }

@@ -81,20 +81,18 @@ public class ChangePasswordFragment extends BaseFragment implements View.OnClick
                 @Override
                 public void run() {
                     final boolean result = ApiClient.changePassword(oldPwd, newPwd1);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (result) {
-                                // Dummy clear
-                                etOldPassword.setText("");
-                                etPassword1.setText("");
-                                etPassword2.setText("");
-                                Snackbar.make(v, "Пароль успешно изменен", Snackbar.LENGTH_LONG).show();
-                            } else {
-                                etOldPassword.setError("Текущий пароль не верный");
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (result) {
+                                    getActivity().onBackPressed();
+                                } else {
+                                    etOldPassword.setError("Текущий пароль не верный");
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
 
 

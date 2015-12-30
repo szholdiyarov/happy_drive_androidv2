@@ -12,7 +12,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import kz.telecom.happydrive.data.network.JsonRequest;
 import kz.telecom.happydrive.data.network.NetworkManager;
@@ -27,8 +32,11 @@ import kz.telecom.happydrive.util.Utils;
  * Created by shgalym on 11/22/15.
  */
 public class ApiClient {
+    public static final String API_KEY_FOLDERS = "folders";
+    public static final String API_KEY_FILES = "files";
+    public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
+    public static final String API_PATH_CHANGE_DOMAIN = "auth/change_domain/";
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
-
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
     private static final String API_PATH_CATEGORY_CARDS = "card/list/";
@@ -36,16 +44,19 @@ public class ApiClient {
     private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
     private static final String API_PATH_CARD_VISIBILITY = "card/visibility/";
     private static final String API_PATH_CARD_STARRED = "card/starred/";
-    private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
     private static final String API_PATH_FILES_LIST = "files/list/";
-
-    public static final String API_KEY_FOLDERS = "folders";
-    public static final String API_KEY_FILES = "files";
-    public static final String API_PATH_CHANGE_PASSWORD = "auth/change_password/";
-
+    private static final String API_PATH_FILE_UPLOAD = "files/file/upload/";
+    private static final String API_PATH_FOLDER_CREATE = "files/folder/create/";
+    private static final String API_PATH_FOLDER_DELETE = "files/folder/delete/";
+    private static final String API_PATH_FILE_DELETE = "files/file/delete/";
+    private static final String API_PATH_COMMENTS_LIST = "comments/list/";
+    private static final String API_PATH_COMMENTS_POST = "comments/add/";
     private static ObjectMapper sObjectMapper;
 
-    static void updateCard(Card card) throws NoConnectionError, ApiResponseError, ResponseParseError {
+    private ApiClient() {
+    }
+
+    public static void updateCard(Card card) throws NoConnectionError, ApiResponseError, ResponseParseError {
         Map<String, Object> cardMap = new HashMap<>();
         cardMap.put(Card.API_KEY_CATEGORY_ID, card.getCategoryId());
         cardMap.put(Card.API_KEY_FIRST_NAME, card.getFirstName());
@@ -53,37 +64,37 @@ public class ApiClient {
         cardMap.put(Card.API_KEY_POSITION, card.getPosition());
 
         String lastName = card.getLastName();
-        if (!Utils.isEmpty(lastName)) {
+        if (lastName != null) {
             cardMap.put(Card.API_KEY_LAST_NAME, lastName);
         }
 
         String email = card.getEmail();
-        if (!Utils.isEmpty(email)) {
+        if (email != null) {
             cardMap.put(Card.API_KEY_EMAIL, email);
         }
 
         String address = card.getAddress();
-        if (!Utils.isEmpty(address)) {
+        if (address != null) {
             cardMap.put(Card.API_KEY_ADDRESS, address);
         }
 
         String workPlace = card.getWorkPlace();
-        if (!Utils.isEmpty(workPlace)) {
+        if (workPlace != null) {
             cardMap.put(Card.API_KEY_WORK_PLACE, workPlace);
         }
 
         String shortDesc = card.getShortDesc();
-        if (!Utils.isEmpty(shortDesc)) {
+        if (shortDesc != null) {
             cardMap.put(Card.API_KEY_SHORT_DESC, shortDesc);
         }
 
         String fullDesc = card.getFullDesc();
-        if (!Utils.isEmpty(fullDesc)) {
+        if (fullDesc != null) {
             cardMap.put(Card.API_KEY_FULL_DESC, fullDesc);
         }
 
         String avatar = card.getAvatar();
-        if (!Utils.isEmpty(avatar)) {
+        if (avatar != null) {
             cardMap.put(Card.API_KEY_AVATAR, avatar);
         }
 
@@ -120,9 +131,20 @@ public class ApiClient {
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
-            Card cCard = new Card((Map<String, Object>) getObjectMapper()
-                                    .convertValue(response.result, Map.class).get("card"));
-            cCard.visible = getObjectMapper().convertValue(response.result.get("visible"), Boolean.class);
+            Map<String, Object> nodeMap = getObjectMapper()
+                    .convertValue(response.result, Map.class);
+            Map<String, Object> cardData = (Map<String, Object>) nodeMap.get("card");
+            if (nodeMap.containsKey(Card.API_KEY_VISIBILITY)) {
+                cardData.put(Card.API_KEY_VISIBILITY, nodeMap.get(Card.API_KEY_VISIBILITY));
+            }
+            if (nodeMap.containsKey(Card.API_KEY_PAYED_STATUS)) {
+                cardData.put(Card.API_KEY_PAYED_STATUS, nodeMap.get(Card.API_KEY_PAYED_STATUS));
+            }
+            if (nodeMap.containsKey(Card.API_KEY_EXPIRATION_DATE)) {
+                cardData.put(Card.API_KEY_EXPIRATION_DATE, nodeMap.get(Card.API_KEY_EXPIRATION_DATE));
+            }
+
+            Card cCard = new Card(cardData, (List<Map<String, Object>>) nodeMap.get(API_KEY_FOLDERS));
             return cCard;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
@@ -138,8 +160,8 @@ public class ApiClient {
             checkResponseAndThrowIfNeeded(response);
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
-            for (Object o: arrayList) {
-                result.add(new Card((Map<String, Object>) o));
+            for (Object o : arrayList) {
+                result.add(new Card((Map<String, Object>) o, new ArrayList<Map<String, Object>>()));
             }
             return result;
         } catch (MalformedURLException e) {
@@ -159,8 +181,8 @@ public class ApiClient {
             checkResponseAndThrowIfNeeded(response);
             List<Card> result = new ArrayList<>();
             ArrayList arrayList = (ArrayList) getObjectMapper().convertValue(response.result, Map.class).get("cards");
-            for (Object o: arrayList) {
-                result.add(new Card((Map<String, Object>) o));
+            for (Object o : arrayList) {
+                result.add(new Card((Map<String, Object>) o, new ArrayList<Map<String, Object>>()));
             }
             return result;
         } catch (MalformedURLException e) {
@@ -184,7 +206,6 @@ public class ApiClient {
         // Failed to put star (Maybe already starred?)
         return false;
     }
-
 
     @NonNull
     public static boolean removeStar(int cardId) {
@@ -236,6 +257,22 @@ public class ApiClient {
         return false;
     }
 
+    @WorkerThread
+    public static void changeDomain(final String domain)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_CHANGE_DOMAIN);
+        request.setBody(new Request.StringBody.Builder()
+                .add(Card.API_KEY_DOMAIN, domain)
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
     @NonNull
     @WorkerThread
     public static FileObject uploadFile(int folderId, File file)
@@ -243,8 +280,18 @@ public class ApiClient {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
         request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
 
+        String fileName = file.getName();
+        String[] comps = fileName.split("\\.");
+        if (comps.length > 0) {
+            String extension = comps[comps.length - 1].toLowerCase();
+
+            if (extension.length() > 5) {
+                fileName += ".jpg";
+            }
+        }
+
         Map<String, String> headers = new HashMap<>(2);
-        headers.put("File-Name", file.getName());
+        headers.put("File-Name", fileName);
         if (folderId > 0) {
             headers.put("Folder-ID", folderId + "");
         }
@@ -260,11 +307,77 @@ public class ApiClient {
         }
     }
 
+    @NonNull
+    @WorkerThread
+    public static FolderObject createFolder(int folderId, boolean isPublic, String name)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FOLDER_CREATE);
+        Request.StringBody.Builder builder = new Request.StringBody.Builder();
+        builder.add("folder_name", name);
+        builder.add(FolderObject.API_IS_PUBLIC,
+                isPublic ? "true" : "false");
+        if (folderId > 0) {
+            builder.add(FolderObject.API_FOLDER_ID, folderId + "");
+        }
+
+        request.setBody(builder.build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return new FolderObject(response.result.get("folder"));
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static List<Comment> getComments(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_COMMENTS_LIST);
+        Map<String, String> params = Collections.singletonMap(FileObject.API_FILE_ID, fileId + "");
+        request.setParams(params);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            List<Comment> comments = new ArrayList<>();
+            JsonNode node = response.result.get("comments");
+            if (node != null) {
+                for (JsonNode c : node) {
+                    comments.add(new Comment(c));
+                }
+            }
+
+            return comments;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static boolean postComment(int fileId, String text)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_COMMENTS_POST);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FileObject.API_FILE_ID, fileId + "")
+                .add(Comment.API_TEXT, text)
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return true;
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
     @WorkerThread
     public static Map<String, List<ApiObject>> getFiles(int folderId, boolean isPublic, String tokenIfNeeded)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.GET, API_PATH_FILES_LIST);
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new LinkedHashMap<>();
         params.put(FolderObject.API_IS_PUBLIC, "false");
         if (folderId > 0) {
             params.put(FolderObject.API_FOLDER_ID, folderId + "");
@@ -315,6 +428,38 @@ public class ApiClient {
         }
     }
 
+    @WorkerThread
+    public static void deleteFolder(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FOLDER_DELETE);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FolderObject.API_FOLDER_ID, fileId + "")
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @WorkerThread
+    public static void deleteFile(int fileId)
+            throws NoConnectionError, ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_DELETE);
+        request.setBody(new Request.StringBody.Builder()
+                .add(FileObject.API_FILE_ID, fileId + "")
+                .build());
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
     static void checkResponseAndThrowIfNeeded(Response<JsonNode> response)
             throws ResponseParseError, ApiResponseError {
         JsonNode jsonNode = response.result;
@@ -333,7 +478,7 @@ public class ApiClient {
         }
     }
 
-    private static ObjectMapper getObjectMapper() {
+    static ObjectMapper getObjectMapper() {
         if (sObjectMapper == null) {
             sObjectMapper = new ObjectMapper();
             sObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
@@ -341,8 +486,5 @@ public class ApiClient {
         }
 
         return sObjectMapper;
-    }
-
-    private ApiClient() {
     }
 }

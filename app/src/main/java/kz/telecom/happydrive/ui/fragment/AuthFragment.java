@@ -47,8 +47,8 @@ import kz.telecom.happydrive.util.Logger;
 /**
  * Created by Galymzhan Sh on 11/15/15.
  */
-public class AuthFragment extends BaseFragment implements View.OnClickListener, FacebookCallback<LoginResult>, GoogleApiClient.OnConnectionFailedListener {
-
+public class AuthFragment extends BaseFragment implements View.OnClickListener,
+        FacebookCallback<LoginResult>, GoogleApiClient.OnConnectionFailedListener {
     private static final int GOOGLE_SIGN_IN = 999;
     private CallbackManager callbackManager;
 
@@ -58,7 +58,6 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -165,7 +164,6 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
         }.start();
     }
 
-
     // Facebook callbacks
     @Override
     public void onSuccess(LoginResult loginResult) {
@@ -184,7 +182,6 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
     }
     // end Facebook callbacks
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -199,7 +196,6 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
     }
 
     private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
-
         @Override
         protected String doInBackground(String... params) {
             String accountName = params[0];
@@ -226,6 +222,8 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Snackbar.make(getView(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

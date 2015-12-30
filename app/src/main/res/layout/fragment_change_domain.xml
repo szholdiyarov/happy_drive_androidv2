@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_toolbar_auth" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="0px"
+        android:layout_height="30dp" />
+
+    <EditText
+        android:id="@+id/fragment_change_domain_et"
+        style="@style/Widget.EditText.Auth"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:hint="Укажите новый домен"
+        android:inputType="text|textNoSuggestions" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="0px"
+        android:layout_height="16dp" />
+
+    <Button
+        android:id="@+id/fragment_change_domain_btn"
+        android:layout_width="268dp"
+        android:layout_height="wrap_content"
+        android:text="Установить"
+        android:textAllCaps="false"
+        android:textColor="@color/app_white" />
+</LinearLayout>

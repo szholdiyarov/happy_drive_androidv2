@@ -4,13 +4,13 @@
         android:id="@+id/action_block_main"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/action_main"
-            android:icon="@drawable/ic_main_24p"
-            android:title="@string/action_main"/>
-        <item
             android:id="@+id/action_card"
             android:icon="@drawable/ic_card_24p"
             android:title="@string/action_card"/>
+        <item
+            android:id="@+id/action_cloud"
+            android:icon="@drawable/ic_cloud_black_24dp"
+            android:title="@string/action_cloud"/>
         <item
             android:id="@+id/action_favourite"
             android:icon="@drawable/ic_favourite_24p"
@@ -27,13 +27,14 @@
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings_24p"
             android:title="@string/action_settings"/>
-        <item
-            android:id="@+id/action_help"
-            android:icon="@drawable/ic_help_24p"
-            android:title="@string/action_help"/>
-        <item
-            android:id="@+id/action_about"
-            android:icon="@drawable/ic_about_24p"
-            android:title="@string/action_about"/>
+        <!--<item-->
+            <!--android:id="@+id/action_help"-->
+            <!--android:icon="@drawable/ic_help_24p"-->
+            <!--android:title="@string/action_help"/>-->
+        <!--<item-->
+            <!--android:id="@+id/action_about"-->
+            <!--android:icon="@drawable/ic_about_24p"-->
+            <!--android:checkable="false"-->
+            <!--android:title="@string/action_about"/>-->
     </group>
 </menu>

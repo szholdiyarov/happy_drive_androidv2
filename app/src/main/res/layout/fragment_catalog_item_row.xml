@@ -1,53 +1,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="?android:attr/listPreferredItemHeight"
-                android:padding="6dip" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    tools:ignore="MissingPrefix">
 
     <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
-            android:padding="0dp"
-            android:layout_marginLeft="6dip"
-            android:layout_marginRight="12dip"
-            android:contentDescription="TODO"
-            android:src="@drawable/user_photo" />
+        android:id="@+id/avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/user_photo" />
 
-    <TextView
-            android:id="@+id/description"
-            android:layout_width="fill_parent"
-            android:layout_height="26dip"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@id/avatar"
-            android:ellipsize="marquee"
-            android:singleLine="true"
-            android:text="Description"
-            android:textSize="13sp"
-            android:textColor="@color/app_black"/>
-
-    <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/description"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_toRightOf="@id/avatar"
-            android:gravity="center_vertical"
-            android:text="Bob Marley"
-            android:textColor="@color/app_black"
-            android:textSize="17sp" />
     <ImageButton
-            android:id="@+id/star"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:layout_marginRight="8dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/favorite_off_icon" />
+        android:id="@+id/star"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@null"
+        android:src="@drawable/ic_favourite_24p" />
 
-</RelativeLayout> 
+    <TextView
+        android:id="@+id/name"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/avatar"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@id/star"
+        android:layout_toRightOf="@id/avatar"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Bob Marley"
+        android:textColor="@color/app_black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/description"
+        fontPath="fonts/Roboto-Light.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/name"
+        android:layout_below="@id/name"
+        android:layout_toLeftOf="@id/star"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Description"
+        android:textColor="@color/app_black"
+        android:textSize="16sp" />
+</RelativeLayout>

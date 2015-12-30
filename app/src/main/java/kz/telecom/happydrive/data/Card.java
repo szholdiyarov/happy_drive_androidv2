@@ -6,15 +6,10 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 /**
@@ -40,8 +35,10 @@ public class Card implements Comparable<Card>, Parcelable {
     static final String API_KEY_VKONTAKTE = "vkontakte";
     static final String API_KEY_INSTAGRAM = "instagram";
     static final String API_KEY_VISIBILITY = "visible";
-    static final String API_PATH_GET_CARDS = "card/list/";
-
+    static final String API_KEY_PAYED_STATUS = "payed_status";
+    static final String API_KEY_EXPIRATION_DATE = "expiration_date";
+    static final String API_KEY_STARRED = "starred";
+    static final String API_KEY_DOMAIN = "domain";
 
     public final int id;
     private int mCategoryId;
@@ -54,15 +51,24 @@ public class Card implements Comparable<Card>, Parcelable {
     private String mPosition;
     private String mShortDesc;
     private String mFullDesc;
+    private String mAudio;
     private String mAvatar;
     private String mBackground;
-    public boolean visible;
+    private boolean visible;
+    private boolean payedStatus;
+    private String expirationDate;
+    private boolean isStarred;
+    private String mDomain;
 
-    public Card(int id) {
+    public final List<FolderObject> publicFolders;
+
+    // internal only
+    private Card(int id, List<FolderObject> publicFolders) {
         this.id = id;
+        this.publicFolders = publicFolders;
     }
 
-    public Card(Map<String, Object> data) {
+    public Card(Map<String, Object> data, List<Map<String, Object>> folders) {
         if (data == null || !data.containsKey(API_KEY_CARD_ID)) {
             throw new IllegalArgumentException("data argument is null or it doesn't contain " +
                     API_KEY_CARD_ID + " value");
@@ -83,9 +89,40 @@ public class Card implements Comparable<Card>, Parcelable {
         mPosition = Utils.getValue(String.class, API_KEY_POSITION, null, data);
         mShortDesc = Utils.getValue(String.class, API_KEY_SHORT_DESC, null, data);
         mFullDesc = Utils.getValue(String.class, API_KEY_FULL_DESC, null, data);
+        mAudio = Utils.getValue(String.class, API_KEY_AUDIO_FILE_URL, null, data);
         mAvatar = Utils.getValue(String.class, API_KEY_AVATAR, null, data);
         mBackground = Utils.getValue(String.class, API_KEY_BACKGROUND_FILE_URL, null, data);
         visible = Utils.getValue(Boolean.class, API_KEY_VISIBILITY, false, data);
+        payedStatus = Utils.getValue(Boolean.class, API_KEY_PAYED_STATUS, false, data);
+        expirationDate = Utils.getValue(String.class, API_KEY_EXPIRATION_DATE, null, data);
+        isStarred = Utils.getValue(Boolean.class, API_KEY_STARRED, false, data);
+        mDomain = Utils.getValue(String.class, API_KEY_DOMAIN, null, data);
+
+        publicFolders = new ArrayList<>(2);
+        if (folders != null) {
+            for (Map<String, Object> f : folders) {
+                try {
+                    publicFolders.add(new FolderObject(
+                            Utils.getValue(Integer.class, FolderObject.API_FOLDER_ID, -1, f),
+                            Utils.getValue(String.class, FolderObject.API_FOLDER_NAME, "", f),
+                            true, 0
+                    ));
+                } catch (Exception ignored) {
+                }
+            }
+        } else {
+            int photoFolderId = Utils.getValue(Integer.class,
+                    UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, -1, data);
+            if (photoFolderId > 0) {
+                publicFolders.add(new FolderObject(photoFolderId, "Фотографии", true, 0));
+            }
+
+            int videoFolderId = Utils.getValue(Integer.class,
+                    UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, -1, data);
+            if (videoFolderId > 0) {
+                publicFolders.add(new FolderObject(videoFolderId, "Видеозаписи", true, 0));
+            }
+        }
     }
 
     protected Card(Parcel in) {
@@ -100,8 +137,16 @@ public class Card implements Comparable<Card>, Parcelable {
         mPosition = in.readString();
         mShortDesc = in.readString();
         mFullDesc = in.readString();
+        mAudio = in.readString();
         mAvatar = in.readString();
         mBackground = in.readString();
+        visible = in.readInt() != 0;
+        payedStatus = in.readInt() != 0;
+        expirationDate = in.readString();
+        isStarred = in.readInt() != 0;
+        mDomain = in.readString();
+        publicFolders = in.readArrayList(getClass()
+                .getClassLoader());
     }
 
     public static final Creator<Card> CREATOR = new Creator<Card>() {
@@ -196,6 +241,14 @@ public class Card implements Comparable<Card>, Parcelable {
         return mFullDesc;
     }
 
+    public void setAudio(String audio) {
+        mAudio = audio;
+    }
+
+    public String getAudio() {
+        return mAudio;
+    }
+
     public void setAvatar(String avatar) {
         mAvatar = avatar;
     }
@@ -210,6 +263,46 @@ public class Card implements Comparable<Card>, Parcelable {
 
     public String getBackground() {
         return mBackground;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setPayedStatus(boolean status) {
+        this.payedStatus = status;
+    }
+
+    public boolean isPayedStatus() {
+        return payedStatus;
+    }
+
+    public void setExpirationDate(String date) {
+        this.expirationDate = date;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setStarred(boolean starred) {
+        isStarred = starred;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
+    public void setDomain(String domain) {
+        mDomain = domain;
+    }
+
+    public String getDomain() {
+        return mDomain;
     }
 
     @Override
@@ -235,8 +328,15 @@ public class Card implements Comparable<Card>, Parcelable {
         dest.writeString(mPosition);
         dest.writeString(mShortDesc);
         dest.writeString(mFullDesc);
+        dest.writeString(mAudio);
         dest.writeString(mAvatar);
         dest.writeString(mBackground);
+        dest.writeInt(visible ? 1 : 0);
+        dest.writeInt(payedStatus ? 1 : 0);
+        dest.writeString(expirationDate);
+        dest.writeInt(isStarred ? 1 : 0);
+        dest.writeString(mDomain);
+        dest.writeList(publicFolders);
     }
 
     static void saveUserCard(Card card, SharedPreferences prefs) {
@@ -252,11 +352,63 @@ public class Card implements Comparable<Card>, Parcelable {
         editor.putString(API_KEY_POSITION, card.mPosition);
         editor.putString(API_KEY_SHORT_DESC, card.mShortDesc);
         editor.putString(API_KEY_FULL_DESC, card.mFullDesc);
+        editor.putString(API_KEY_AUDIO_FILE_URL, card.mAudio);
         editor.putString(API_KEY_AVATAR, card.mAvatar);
         editor.putString(API_KEY_BACKGROUND_FILE_URL, card.mBackground);
         editor.putBoolean(API_KEY_VISIBILITY, card.visible);
+        editor.putBoolean(API_KEY_PAYED_STATUS, card.payedStatus);
+        editor.putString(API_KEY_EXPIRATION_DATE, card.expirationDate);
+        editor.putString(API_KEY_DOMAIN, card.mDomain);
+
+        for (FolderObject fo : card.publicFolders) {
+            if ("фотографии".equalsIgnoreCase(fo.name)) {
+                editor.putInt(UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, fo.id);
+            } else if ("видеозаписи".equalsIgnoreCase(fo.name)) {
+                editor.putInt(UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, fo.id);
+            }
+        }
 
         editor.apply();
+    }
+
+    public static Card copyOf(Card card) {
+        List<FolderObject> publicFolders = new ArrayList<>(card.publicFolders);
+        Collections.copy(publicFolders, card.publicFolders);
+        Card newCard = new Card(card.id, publicFolders);
+        newCard.mCategoryId = card.mCategoryId;
+        newCard.mFirstName = card.mFirstName;
+        newCard.mLastName = card.mLastName;
+        newCard.mPhone = card.mPhone;
+        newCard.mEmail = card.mEmail;
+        newCard.mAddress = card.mAddress;
+        newCard.mWorkPlace = card.mWorkPlace;
+        newCard.mPosition = card.mPosition;
+        newCard.mShortDesc = card.mShortDesc;
+        newCard.mFullDesc = card.mFullDesc;
+        newCard.mAudio = card.mAudio;
+        newCard.mAvatar = card.mAvatar;
+        newCard.mBackground = card.mBackground;
+        newCard.visible = card.visible;
+        newCard.payedStatus = card.payedStatus;
+        newCard.expirationDate = card.expirationDate;
+        newCard.isStarred = card.isStarred;
+        newCard.mDomain = card.mDomain;
+        return newCard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Card card = (Card) o;
+
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     static Map<String, Object> restoreUserCard(SharedPreferences prefs) {
@@ -272,19 +424,11 @@ public class Card implements Comparable<Card>, Parcelable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public static class OnBackgroundUpdatedEvent {
+        public final Card card;
 
-        Card card = (Card) o;
-
-        return id == card.id;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
+        public OnBackgroundUpdatedEvent(Card card) {
+            this.card = card;
+        }
     }
 }

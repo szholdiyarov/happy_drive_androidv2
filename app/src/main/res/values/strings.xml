@@ -37,8 +37,8 @@
         письмо с дальнейшими инструкциями для восстановления пароля</string>
 
     <!-- drawer menu -->
-    <string name="action_main">Главная</string>
-    <string name="action_card">Моя визитка</string>
+    <string name="action_card">Визитка</string>
+    <string name="action_cloud">Облачное хранилище</string>
     <string name="action_favourite">Избранное</string>
     <string name="action_catalog">Каталог</string>
     <string name="action_settings">Настройки</string>
@@ -51,11 +51,17 @@
 
     <string name="title_activity_login">LoginActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_main_login">MainLoginActivity</string>
     <string name="title_activity_reset">ResetActivity</string>
     <string name="facebook_app_id">983139428414718</string>
     <string name="canceled">Отменено</string>
 
+    <string name="drawer_footer_storage_size_fmt">Использовано %1$s из %2$s</string>
+    <string name="drawer_footer_expiration_fmt">До оплаты осталось %d дней</string>
+
+    <string-array name="about_options">
+        <item>О себе</item>
+        <item>О компании</item>
+    </string-array>
 </resources>

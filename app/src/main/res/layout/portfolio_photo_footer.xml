@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
+
+    <EditText
+        android:id="@+id/portfolio_footer_et"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:hint="Текст комментария"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/portfolio_footer_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Написать" />
+
+</LinearLayout>

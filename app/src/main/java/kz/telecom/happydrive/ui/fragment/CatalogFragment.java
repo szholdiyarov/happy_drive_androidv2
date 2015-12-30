@@ -1,36 +1,39 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.Category;
-import kz.telecom.happydrive.ui.BaseActivity;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.Category;
+import kz.telecom.happydrive.ui.BaseActivity;
+import kz.telecom.happydrive.ui.CatalogItemActivity;
 
 
 /**
  * Created by Galymzhan Sh on 11/15/15.
  */
 public class CatalogFragment extends BaseFragment {
-
     private ListView listView;
-    private CatalogAdapter adapter;
+    private ArrayAdapter<Category> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -42,23 +45,25 @@ public class CatalogFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         BaseActivity activity = (BaseActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(
+                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(R.string.action_catalog);
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        adapter = new CatalogAdapter(getContext());
+        adapter = new ArrayAdapter<>(getContext(), R.layout.fragment_catalog_row,
+                new ArrayList<Category>());
+
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("categoryId", ((Category) adapter.getItem(i)).id);
-                bundle.putString("categoryName", ((Category) adapter.getItem(i)).name);
-                CatalogItemFragment catalogItemFragment = new CatalogItemFragment();
-                catalogItemFragment.setArguments(bundle);
-                ((BaseActivity)getActivity()).replaceContent(catalogItemFragment, true,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                Category category = adapter.getItem(i);
+                Intent intent = new Intent(getContext(), CatalogItemActivity.class);
+                intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_ID, category.id);
+                intent.putExtra(CatalogItemActivity.EXTRA_CATEGORY_NAME, category.name);
+                startActivity(intent);
             }
         });
+
         loadData();
     }
 
@@ -73,16 +78,15 @@ public class CatalogFragment extends BaseFragment {
             @Override
             public void run() {
                 try {
-                    final List<Category> data = Category.getCategoriesListTemp();
+                    final List<Category> data = Category.getCategories();
                     BaseActivity activity = (BaseActivity) getActivity();
                     final View view = getView();
                     if (activity != null && view != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (Category c: data) {
-                                    adapter.data.add(c);
-                                }
+                                adapter.clear();
+                                adapter.addAll(data);
                                 adapter.notifyDataSetChanged();
                                 disableProgressBar();
                             }
@@ -104,57 +108,4 @@ public class CatalogFragment extends BaseFragment {
             }
         }.start();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean handled = false;
-        final int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            getActivity().onBackPressed();
-            handled = true;
-        }
-
-        return handled || super.onOptionsItemSelected(item);
-    }
-
-    class CatalogAdapter extends BaseAdapter {
-
-        Context context;
-        List<Category> data;
-        LayoutInflater inflater = null;
-
-        public CatalogAdapter(Context context) {
-            this.context = context;
-            this.data = new ArrayList<>();
-            inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return data.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return data.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return data.get(position).id;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View vi = convertView;
-            if (vi == null)
-                vi = inflater.inflate(R.layout.fragment_catalog_row, null);
-            TextView text = (TextView) vi.findViewById(R.id.text);
-            text.setText(data.get(position).name);
-            return vi;
-        }
-    }
-
-
 }

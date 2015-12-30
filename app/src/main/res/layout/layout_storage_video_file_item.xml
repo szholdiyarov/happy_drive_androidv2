@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/catalog_list_background"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="86dp"
+        android:src="@drawable/ic_storage_video_album" />
+
+    <TextView
+        android:id="@+id/layout_storage_video_title"
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/app_white"
+        android:textSize="16sp"
+        tools:ignore="MissingPrefix" />
+</LinearLayout>

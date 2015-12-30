@@ -73,8 +73,8 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                ((BaseActivity) getActivity()).replaceContent(
-                        new SignUpFragment(), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ((BaseActivity) getActivity()).replaceContent(new SignUpFragment(),
+                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         };
 
@@ -113,7 +113,8 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                     mPasswordEditText.getText().toString());
         } else if (viewId == R.id.fragment_sign_in_tv_password_recovery) {
             ((BaseActivity) getActivity()).replaceContent(
-                    new PasswordRecoveryFragment(), true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    new PasswordRecoveryFragment(), true,
+                    FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     }
 
@@ -138,7 +139,7 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                         });
                     }
                 } catch (final Exception e) {
-                    BaseActivity activity = (BaseActivity) getActivity();
+                    final BaseActivity activity = (BaseActivity) getActivity();
                     final View view = getView();
                     if (activity != null && view != null) {
                         activity.runOnUiThread(new Runnable() {
@@ -153,9 +154,15 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                                                 }
                                             }).show();
                                 } else if (e instanceof ApiResponseError) {
-                                    Snackbar.make(view, R.string.sign_in_user_cred_invalid, Snackbar.LENGTH_LONG)
-                                            .setDuration(Snackbar.LENGTH_LONG)
-                                            .show();
+                                    ApiResponseError error = (ApiResponseError) e;
+                                    if (error.apiErrorCode == 16) {
+                                        activity.replaceContent(MigrationUpgradeFragment.newInstance(email, password),
+                                                true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                    } else {
+                                        Snackbar.make(view, R.string.sign_in_user_cred_invalid, Snackbar.LENGTH_LONG)
+                                                .setDuration(Snackbar.LENGTH_LONG)
+                                                .show();
+                                    }
                                 }
                             }
                         });
