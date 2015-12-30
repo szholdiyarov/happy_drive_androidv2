@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:text="E-mail"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите электронный адрес"
+            android:inputType="text|textEmailAddress"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="Веб-сайт"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите адрес веб-сайта"
+            android:inputType="text|textUri"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="Адрес"
+            android:textColor="#6000" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите адрес компании"
+            android:inputType="text|textPostalAddress|textCapSentences"
+            android:singleLine="true" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0px"
+            android:layout_height="16dp" />
+
+        <Spinner
+            android:id="@+id/fragment_card_edit_additional_spinner_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null" />
+
+        <EditText
+            android:id="@+id/fragment_card_edit_additional_et_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Укажите информацию о себе"
+            android:inputType="text|textCapSentences|textMultiLine" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingTop="16dp"
+            android:text="Аудио-приветствие"
+            android:textColor="#6000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:padding="2dp"
+                android:text="Удерживайте микрофон"
+                android:textColor="#222"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/fragment_card_edit_additional_img_btn_mic_play"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:paddingBottom="3dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_mic_play" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/fragment_card_edit_additional_img_btn_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:paddingBottom="3dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_mic" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="#666" />
+
+    </LinearLayout>
+</ScrollView>

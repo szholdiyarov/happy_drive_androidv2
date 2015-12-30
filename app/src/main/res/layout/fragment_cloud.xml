@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="48dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="64dp"
+        tools:ignore="MissingPrefix">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="154dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/fragment_cloud_fl_photo"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg">
+
+                <TextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha=".94"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_cloud_photo"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="8dp"
+                    android:text="фото"
+                    android:textColor="@color/app_white"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="32dp"
+                android:layout_height="0px" />
+
+            <FrameLayout
+                android:id="@+id/fragment_cloud_fl_video"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg">
+
+                <TextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha=".94"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_cloud_video"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="8dp"
+                    android:text="видео"
+                    android:textColor="@color/app_white"
+                    android:textSize="16sp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="0px"
+            android:layout_height="32dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="154dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/fragment_cloud_fl_music"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg">
+
+                <TextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha=".94"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_cloud_music"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="8dp"
+                    android:text="музыка"
+                    android:textColor="@color/app_white"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="32dp"
+                android:layout_height="0px" />
+
+            <FrameLayout
+                android:id="@+id/fragment_cloud_fl_documents"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg">
+
+                <TextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha=".94"
+                    android:drawablePadding="8dp"
+                    android:drawableTop="@drawable/ic_cloud_docs"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="8dp"
+                    android:text="документы"
+                    android:textColor="@color/app_white"
+                    android:textSize="16sp" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+<include
+        layout="@layout/layout_toolbar_auth"/>
+
+<ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="30dp"
+            tools:ignore="MissingPrefix">
+
+        <EditText
+                android:id="@+id/etOldPassword"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/change_pwd_hint_password1"
+                android:inputType="text|textPassword"/>
+
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="8dp"/>
+
+        <EditText
+                android:id="@+id/etPassword1"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/change_pwd_hint_password2"
+                android:inputType="text|textPassword"/>
+
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="8dp"/>
+
+        <EditText
+                android:id="@+id/etPassword2"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:hint="Повторите новый пароль"
+                android:inputType="text|textPassword"
+                />
+
+        <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="16dp"/>
+
+        <Button
+                android:id="@+id/bChangePassword"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:text="Сменить"
+                android:textColor="@color/app_white"/>
+
+    </LinearLayout>
+</ScrollView>
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <ImageView
+        android:id="@+id/layout_settings_row_image_view"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="20dp"
+        android:layout_height="0px" />
+
+    <TextView
+        android:id="@+id/layout_settings_row_tv_title"
+        fontPath="fonts/Roboto-Light.ttf"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textColor="@color/app_black"
+        android:textSize="16sp"
+        tools:ignore="MissingPrefix" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/layout_settings_row_switch_compat"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+</LinearLayout>

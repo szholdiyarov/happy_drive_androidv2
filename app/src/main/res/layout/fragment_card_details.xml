@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="56dp"
+        tools:ignore="MissingPrefix">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha=".9"
+            android:background="#fff">
+
+            <ImageView
+                android:id="@+id/fragment_card_img_view_avatar"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:background="#e6979797"
+                android:minHeight="216dp" />
+
+            <ImageButton
+                android:id="@+id/fragment_card_img_button_photo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignLeft="@id/fragment_card_img_view_avatar"
+                android:layout_alignTop="@id/fragment_card_img_view_avatar"
+                android:alpha=".8"
+                android:background="@null"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_photo_camera" />
+
+            <ImageButton
+                android:id="@+id/fragment_card_img_button_audio"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@id/fragment_card_img_view_avatar"
+                android:layout_alignLeft="@id/fragment_card_img_view_avatar"
+                android:layout_margin="6dp"
+                android:alpha=".9"
+                android:background="@null"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_mic_white" />
+
+            <ImageButton
+                android:id="@+id/fragment_card_img_button_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@id/fragment_card_img_view_avatar"
+                android:layout_alignRight="@id/fragment_card_img_view_avatar"
+                android:layout_margin="6dp"
+                android:alpha=".9"
+                android:background="@null"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_share" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/fragment_card_img_view_avatar">
+
+                <LinearLayout
+                    android:id="@+id/fragment_card_v_info_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingBottom="14dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="14dp">
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_name"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_black"
+                        android:textSize="18sp" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0px"
+                        android:layout_height="6dp" />
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_position"
+                        fontPath="fonts/Roboto-Light.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_work_place"
+                        fontPath="fonts/Roboto-Light.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_black"
+                        android:textSize="16sp" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0px"
+                        android:layout_height="8dp" />
+
+                    <LinearLayout
+                        android:id="@+id/fragment_card_ll_phone_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp">
+
+                        <ImageView
+                            android:id="@+id/fragment_card_img_view_phone"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_call_white_18dp" />
+
+                        <android.support.v4.widget.Space
+                            android:layout_width="6dp"
+                            android:layout_height="0px" />
+
+                        <TextView
+                            android:id="@+id/fragment_card_tv_phone"
+                            fontPath="fonts/Roboto-Light.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/app_black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/fragment_card_ll_email_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp">
+
+                        <ImageView
+                            android:id="@+id/fragment_card_img_view_email"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_email_white_18dp" />
+
+                        <android.support.v4.widget.Space
+                            android:layout_width="6dp"
+                            android:layout_height="0px" />
+
+                        <TextView
+                            android:id="@+id/fragment_card_tv_email"
+                            fontPath="fonts/Roboto-Light.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/app_black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/fragment_card_ll_address_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp"
+                        android:paddingTop="4dp">
+
+                        <ImageView
+                            android:id="@+id/fragment_card_img_view_address"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_location_on_white_18dp" />
+
+                        <android.support.v4.widget.Space
+                            android:layout_width="6dp"
+                            android:layout_height="0px" />
+
+                        <TextView
+                            android:id="@+id/fragment_card_tv_address"
+                            fontPath="fonts/Roboto-Light.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/app_black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/fragment_card_btn_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Создать" />
+            </FrameLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fragment_card_rl_about_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_block_bkg">
+
+            <ImageView
+                android:id="@+id/fragment_card_img_btn_about_expander"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_expand" />
+
+            <TextView
+                android:id="@+id/fragment_card_tv_about_title"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/fragment_card_img_btn_about_expander"
+                android:paddingBottom="12dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="12dp"
+                android:textColor="@color/app_white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/fragment_card_tv_about_text"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fragment_card_tv_about_title"
+                android:paddingBottom="12dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="6dp"
+                android:textColor="@color/app_white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/fragment_card_rl_portfolio_container"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/fragment_card_tv_portfolio_photo"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg"
+                android:drawablePadding="-6dp"
+                android:drawableTop="@drawable/ic_photo_camera"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="фото"
+                android:textColor="@color/app_white"
+                android:textSize="16sp" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0px" />
+
+            <TextView
+                android:id="@+id/fragment_card_tv_portfolio_video"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/card_block_bkg"
+                android:drawablePadding="-6dp"
+                android:drawableTop="@drawable/ic_movie_creation"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="видео"
+                android:textColor="@color/app_white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/stub_error"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/app_white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:ignore="MissingPrefix">
+
+    <TextView
+        fontPath="fonts/Roboto-Medium.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Приветствуем Вас!"
+        android:textColor="@color/app_white"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/stub_error_tv_msg"
+        fontPath="fonts/Roboto-Light.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Создайте свою визитку"
+        android:textColor="@color/app_text"
+        android:textSize="16sp" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="0px"
+        android:layout_height="12dp" />
+
+    <Button
+        android:id="@+id/stub_error_btn_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="создать" />
+</LinearLayout>

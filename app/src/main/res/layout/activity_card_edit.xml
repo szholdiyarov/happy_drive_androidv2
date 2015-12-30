@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="kz.telecom.happydrive.ui.CardEditActivity">
+
+    <include layout="@layout/layout_toolbar" />
+
+    <FrameLayout
+        android:id="@+id/activity_card_edit_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height=".7dp"
+        android:background="#bbb" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#ebebeb"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/stepper_btn_left"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:drawableLeft="@drawable/stepper_left"
+            android:text="НАЗАД"
+            android:textColor="#959595" />
+
+        <RelativeLayout
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="0px"
+                android:layout_centerHorizontal="true" />
+
+            <ImageView
+                android:id="@+id/stepper1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/divider"
+                android:scaleType="center"
+                android:src="@drawable/stepper" />
+
+            <ImageView
+                android:id="@+id/stepper2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/divider"
+                android:scaleType="center"
+                android:src="@drawable/stepper" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/stepper_btn_right"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:drawableRight="@drawable/stepper_right"
+            android:text="ДАЛЕЕ"
+            android:textColor="#959595" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,26 +1,89 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "kz.telecom.happydrive"
-        minSdkVersion 10
-        targetSdkVersion 23
-        versionCode 1
+        minSdkVersion 15
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 5
         versionName "1.0"
+        renderscriptTargetApi 21
+        renderscriptSupportModeEnabled true
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('keystore.jks')
+            storePassword 'P@$$w0rd'
+            keyAlias 'debug'
+            keyPassword 'P@$$w0rd'
+        }
+
+        release {
+            storeFile file('keystore.jks')
+            storePassword 'P@$$w0rd'
+            keyAlias 'release'
+            keyPassword 'AIzaSyC9v3_WfDcWIOyMQ22ejqTz_gABL8Kz_Q0'
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+            ext.enableCrashlytics = false
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:support-annotations:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+
+    compile 'com.facebook.android:facebook-android-sdk:4.5.0'
+    compile 'com.google.android.gms:play-services-auth:8.3.0'
+
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile 'com.kbeanie:image-chooser-library:1.5.2@aar'
+    compile 'com.github.jkwiecien:EasyImage:1.1.0'
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.squareup:otto:1.3.8'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+
+    compile 'com.parse.bolts:bolts-android:1.+'
+    compile 'com.parse:parse-android:1.+'
+
+    compile 'jp.wasabeef:glide-transformations:1.3.1'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.3'
+
+    compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true
+    }
 }
