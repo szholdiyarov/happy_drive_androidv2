@@ -208,7 +208,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                     @Override
                     public void onClick(View v) {
                         new AlertDialog.Builder(getContext())
-                                .setItems(new String[]{"Снять фото", "Из Галлереи"},
+                                .setItems(new String[]{"Снять фото", "Из Галереи"},
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
