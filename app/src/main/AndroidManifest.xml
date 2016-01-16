@@ -119,7 +119,9 @@
                 <category android:name="kz.telecom.happydrive" />
             </intent-filter>
         </receiver>
-
+        <provider android:authorities="com.facebook.app.FacebookContentProvider983139428414718"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="444a8bc27f1541207a800de39f493a507f9e8708" />

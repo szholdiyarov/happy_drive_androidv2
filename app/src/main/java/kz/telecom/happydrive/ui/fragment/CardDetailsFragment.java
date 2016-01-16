@@ -5,11 +5,14 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -23,9 +26,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 
 import kz.telecom.happydrive.R;
@@ -355,7 +364,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 final Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append(card.getFirstName());
                         String lastName = card.getLastName();
@@ -386,14 +394,134 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                     .append(".happy-drive.kz");
                         }
 
-                        Uri pictureUri = Utils.getLocalBitmapUri(userPhoto);
-                        Intent shareIntent = new Intent();
-                        shareIntent.setAction(Intent.ACTION_SEND);
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, stringBuilder.toString());
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
-                        shareIntent.setType("image/*");
-                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(Intent.createChooser(shareIntent, "Поделиться..."));
+                        final String contentString = stringBuilder.toString();
+                        new AlertDialog.Builder(getContext())
+                                .setItems(new String[]{"Facebook", "WhatsApp", "Instagram", "VK"},
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                switch (which) {
+                                                    case 0: {
+                                                        if (Utils.isEmpty(card.getDomain())) {
+                                                            final int photoButtoNVisibility = photoButton.getVisibility();
+                                                            final int audioButtonVisibility = audioImgBtn.getVisibility();
+
+                                                            photoButton.setVisibility(View.INVISIBLE);
+                                                            audioImgBtn.setVisibility(View.INVISIBLE);
+                                                            shareButton.setVisibility(View.INVISIBLE);
+
+                                                            View shareView = (ViewGroup) shareButton.getParent();
+                                                            Bitmap bitmap = Bitmap.createBitmap(shareView.getWidth(),
+                                                                    shareView.getHeight(), Bitmap.Config.ARGB_8888);
+                                                            Canvas canvas = new Canvas(bitmap);
+                                                            shareView.draw(canvas);
+
+                                                            photoButton.setVisibility(photoButtoNVisibility);
+                                                            audioImgBtn.setVisibility(audioButtonVisibility);
+                                                            shareButton.setVisibility(View.VISIBLE);
+
+                                                            SharePhoto photo = new SharePhoto.Builder()
+                                                                    .setBitmap(bitmap)
+                                                                    .build();
+
+                                                            FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
+                                                            SharePhotoContent photoContent = new SharePhotoContent.Builder()
+                                                                    .addPhoto(photo)
+                                                                    .build();
+                                                            ShareDialog.show(CardDetailsFragment.this, photoContent);
+                                                        } else {
+                                                            ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
+                                                                    .setContentDescription(contentString)
+                                                                    .setContentUrl(Uri.parse("https://" + card.getDomain()
+                                                                            + ".happy-drive.kz"))
+                                                                    .build();
+                                                            ShareDialog.show(CardDetailsFragment.this, shareLinkContent);
+                                                        }
+                                                        break;
+                                                    }
+                                                    case 1:
+                                                    case 2: {
+                                                        final int photoButtoNVisibility = photoButton.getVisibility();
+                                                        final int audioButtonVisibility = audioImgBtn.getVisibility();
+
+                                                        photoButton.setVisibility(View.INVISIBLE);
+                                                        audioImgBtn.setVisibility(View.INVISIBLE);
+                                                        shareButton.setVisibility(View.INVISIBLE);
+
+                                                        try {
+                                                            File imageFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
+                                                            Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+
+                                                            Intent shareIntent = new Intent();
+                                                            shareIntent.setAction(Intent.ACTION_SEND);
+                                                            shareIntent.setPackage(which == 1 ?
+                                                                    "com.whatsapp" : "com.instagram.android");
+                                                            if (which == 1) {
+                                                                shareIntent.putExtra(Intent.EXTRA_TEXT, contentString);
+                                                            }
+                                                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(imageFile));
+                                                            shareIntent.setType("image/jpeg");
+                                                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                                            try {
+                                                                startActivity(shareIntent);
+                                                            } catch (android.content.ActivityNotFoundException ex) {
+                                                                Toast.makeText(getContext(), "Приложение " +
+                                                                                (which == 1 ? "WhatsApp" : "Instagram") + " не найдено",
+                                                                        Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        } catch (IOException e) {
+                                                        } finally {
+                                                            photoButton.setVisibility(photoButtoNVisibility);
+                                                            audioImgBtn.setVisibility(audioButtonVisibility);
+                                                            shareButton.setVisibility(View.VISIBLE);
+                                                        }
+                                                        break;
+                                                    }
+                                                    case 3: {
+                                                        final int photoButtoNVisibility = photoButton.getVisibility();
+                                                        final int audioButtonVisibility = audioImgBtn.getVisibility();
+
+                                                        photoButton.setVisibility(View.INVISIBLE);
+                                                        audioImgBtn.setVisibility(View.INVISIBLE);
+                                                        shareButton.setVisibility(View.INVISIBLE);
+
+                                                        try {
+                                                            File imageFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
+                                                            Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+
+                                                            Intent shareIntent = new Intent();
+                                                            shareIntent.setAction(Intent.ACTION_SEND);
+                                                            shareIntent.setPackage("com.vkontakte.android");
+                                                            String shareText = "Моя визитка";
+                                                            if (!Utils.isEmpty(card.getDomain())) {
+                                                                shareText += "\nhttps://" + card.getDomain()
+                                                                        + ".happy-drive.kz\n";
+                                                            }
+
+                                                            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+                                                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(imageFile));
+                                                            shareIntent.setType("image/jpeg");
+                                                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                                            try {
+                                                                startActivity(shareIntent);
+                                                            } catch (android.content.ActivityNotFoundException ex) {
+                                                                Toast.makeText(getContext(), "Приложение VK не найдено",
+                                                                        Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        } catch (IOException e) {
+                                                        } finally {
+                                                            photoButton.setVisibility(photoButtoNVisibility);
+                                                            audioImgBtn.setVisibility(audioButtonVisibility);
+                                                            shareButton.setVisibility(View.VISIBLE);
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }).show();
                     }
                 };
 

@@ -6,6 +6,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
@@ -28,6 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import kz.telecom.happydrive.R;
+import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 
 /**
@@ -179,6 +183,20 @@ public class Utils {
         }
     }
 
+    public static void takeScreenshot(View view, File file) throws IOException {
+        Drawable drawable = view.getBackground();
+        view.setBackgroundResource(R.drawable.card_share_bkg);
+        view.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setBackgroundDrawable(drawable);
+        view.setPadding(0, 0, 0, 0);
+        view.setDrawingCacheEnabled(false);
+
+        FileOutputStream outputStream = new FileOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
 
     // Returns the URI path to the Bitmap displayed in specified ImageView
     public static Uri getLocalBitmapUri(ImageView imageView) {
