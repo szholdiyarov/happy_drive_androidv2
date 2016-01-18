@@ -275,6 +275,37 @@ public class ApiClient {
 
     @NonNull
     @WorkerThread
+    public static FileObject uploadScreenshot(File file) throws NoConnectionError,
+            ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
+        request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
+
+        String fileName = file.getName();
+        String[] comps = fileName.split("\\.");
+        if (comps.length > 0) {
+            String extension = comps[comps.length - 1].toLowerCase();
+
+            if (extension.length() > 5) {
+                fileName += ".jpg";
+            }
+        }
+
+        Map<String, String> headers = new HashMap<>(2);
+        headers.put("is_card", "true");
+        headers.put("File-Name", fileName);
+        request.setHeaders(headers);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return new FileObject(response.result.get("file"));
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @NonNull
+    @WorkerThread
     public static FileObject uploadFile(int folderId, File file)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);

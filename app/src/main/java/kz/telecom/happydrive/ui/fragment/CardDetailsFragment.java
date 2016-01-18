@@ -43,6 +43,7 @@ import kz.telecom.happydrive.data.ApiObject;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
+import kz.telecom.happydrive.data.FileObject;
 import kz.telecom.happydrive.data.FolderObject;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
@@ -160,6 +161,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             aboutContainer.setVisibility(View.GONE);
             portfolioContainer.setVisibility(View.GONE);
             photoButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.GONE);
             createButton.setVisibility(View.VISIBLE);
             createButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -169,6 +171,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             });
         } else {
             createButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.VISIBLE);
 
             if (card.publicFolders.size() > 0) {
                 portfolioContainer.setVisibility(View.VISIBLE);
@@ -431,12 +434,52 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                                     .build();
                                                             ShareDialog.show(CardDetailsFragment.this, photoContent);
                                                         } else {
-                                                            ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
-                                                                    .setContentDescription(contentString)
-                                                                    .setContentUrl(Uri.parse("https://" + card.getDomain()
-                                                                            + ".happy-drive.kz"))
-                                                                    .build();
-                                                            ShareDialog.show(CardDetailsFragment.this, shareLinkContent);
+                                                            final int photoButtoNVisibility = photoButton.getVisibility();
+                                                            final int audioButtonVisibility = audioImgBtn.getVisibility();
+
+                                                            photoButton.setVisibility(View.INVISIBLE);
+                                                            audioImgBtn.setVisibility(View.INVISIBLE);
+                                                            shareButton.setVisibility(View.INVISIBLE);
+
+                                                            try {
+                                                                final File imageFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
+                                                                Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+
+                                                                final ProgressDialog progDlg = new ProgressDialog(getContext());
+
+                                                                progDlg.show();
+                                                                new Thread() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        try {
+                                                                            final FileObject fo = ApiClient.uploadScreenshot(imageFile);
+                                                                            if (getActivity() != null) {
+                                                                                getActivity().runOnUiThread(new Runnable() {
+                                                                                    @Override
+                                                                                    public void run() {
+                                                                                        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
+                                                                                                .setContentTitle("Моя визитка")
+                                                                                                .setImageUrl(Uri.parse(fo.url))
+                                                                                                .setContentDescription(contentString)
+                                                                                                .setContentUrl(Uri.parse("https://" + card.getDomain()
+                                                                                                        + ".happy-drive.kz"))
+                                                                                                .build();
+                                                                                        ShareDialog.show(CardDetailsFragment.this, shareLinkContent);
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        } catch (Exception ignored) {
+                                                                        } finally {
+                                                                            progDlg.dismiss();
+                                                                        }
+                                                                    }
+                                                                }.start();
+                                                            } catch (IOException e) {
+                                                            } finally {
+                                                                photoButton.setVisibility(photoButtoNVisibility);
+                                                                audioImgBtn.setVisibility(audioButtonVisibility);
+                                                                shareButton.setVisibility(View.VISIBLE);
+                                                            }
                                                         }
                                                         break;
                                                     }
