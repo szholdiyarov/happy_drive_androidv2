@@ -291,7 +291,7 @@ public class ApiClient {
         }
 
         Map<String, String> headers = new HashMap<>(2);
-        headers.put("is_card", "true");
+        headers.put("Is-Card", "true");
         headers.put("File-Name", fileName);
         request.setHeaders(headers);
 
