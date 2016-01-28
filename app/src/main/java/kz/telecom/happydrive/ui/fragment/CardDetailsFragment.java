@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -26,10 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.squareup.otto.Subscribe;
 
@@ -367,37 +362,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 final Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append(card.getFirstName());
-                        String lastName = card.getLastName();
-                        if (!Utils.isEmpty(lastName)) {
-                            if (stringBuilder.length() != 0) {
-                                stringBuilder.append(" ");
-                            }
-
-                            stringBuilder.append(lastName);
-                        }
-
-                        if (!Utils.isEmpty(card.getWorkPlace())) {
-                            stringBuilder.append(", ")
-                                    .append(card.getWorkPlace());
-                        }
-
-                        if (!Utils.isEmpty(card.getPhone())) {
-                            stringBuilder.append(",\n").append(card.getPhone());
-                        }
-
-                        if (!Utils.isEmpty(card.getEmail())) {
-                            stringBuilder.append(",\n").append(card.getEmail());
-                        }
-
-                        if (!Utils.isEmpty(card.getDomain())) {
-                            stringBuilder.append("\nhttps://")
-                                    .append(card.getDomain())
-                                    .append(".happy-drive.kz");
-                        }
-
-                        final String contentString = stringBuilder.toString();
                         new AlertDialog.Builder(getContext())
                                 .setItems(new String[]{"Facebook", "WhatsApp", "Instagram", "VK"},
                                         new DialogInterface.OnClickListener() {
@@ -406,80 +370,52 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                 dialog.dismiss();
                                                 switch (which) {
                                                     case 0: {
-                                                        if (Utils.isEmpty(card.getDomain())) {
-                                                            final int photoButtoNVisibility = photoButton.getVisibility();
-                                                            final int audioButtonVisibility = audioImgBtn.getVisibility();
+                                                        final int photoButtoNVisibility = photoButton.getVisibility();
+                                                        final int audioButtonVisibility = audioImgBtn.getVisibility();
 
-                                                            photoButton.setVisibility(View.INVISIBLE);
-                                                            audioImgBtn.setVisibility(View.INVISIBLE);
-                                                            shareButton.setVisibility(View.INVISIBLE);
+                                                        photoButton.setVisibility(View.INVISIBLE);
+                                                        audioImgBtn.setVisibility(View.INVISIBLE);
+                                                        shareButton.setVisibility(View.INVISIBLE);
 
-                                                            View shareView = (ViewGroup) shareButton.getParent();
-                                                            Bitmap bitmap = Bitmap.createBitmap(shareView.getWidth(),
-                                                                    shareView.getHeight(), Bitmap.Config.ARGB_8888);
-                                                            Canvas canvas = new Canvas(bitmap);
-                                                            shareView.draw(canvas);
+                                                        try {
+                                                            final File imageFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
+                                                            Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
 
+                                                            final ProgressDialog progDlg = new ProgressDialog(getContext());
+
+                                                            progDlg.show();
+                                                            new Thread() {
+                                                                @Override
+                                                                public void run() {
+                                                                    try {
+                                                                        final FileObject fo = ApiClient.uploadScreenshot(imageFile);
+                                                                        if (getActivity() != null) {
+                                                                            getActivity().runOnUiThread(new Runnable() {
+                                                                                @Override
+                                                                                public void run() {
+                                                                                    ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
+                                                                                            .setContentTitle("Моя визитка")
+                                                                                            .setImageUrl(Uri.parse(fo.url))
+                                                                                            .setContentUrl(Utils.isEmpty(card.getDomain()) ?
+                                                                                                    Uri.parse("https://happy-drive.kz") :
+                                                                                                    Uri.parse("https://" + card.getDomain()
+                                                                                                            + ".happy-drive.kz"))
+                                                                                            .build();
+                                                                                    ShareDialog.show(CardDetailsFragment.this, shareLinkContent);
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    } catch (Exception ignored) {
+                                                                    } finally {
+                                                                        progDlg.dismiss();
+                                                                    }
+                                                                }
+                                                            }.start();
+                                                        } catch (IOException e) {
+                                                        } finally {
                                                             photoButton.setVisibility(photoButtoNVisibility);
                                                             audioImgBtn.setVisibility(audioButtonVisibility);
                                                             shareButton.setVisibility(View.VISIBLE);
-
-                                                            SharePhoto photo = new SharePhoto.Builder()
-                                                                    .setBitmap(bitmap)
-                                                                    .build();
-
-                                                            FacebookSdk.sdkInitialize(getActivity().getApplicationContext());
-                                                            SharePhotoContent photoContent = new SharePhotoContent.Builder()
-                                                                    .addPhoto(photo)
-                                                                    .build();
-                                                            ShareDialog.show(CardDetailsFragment.this, photoContent);
-                                                        } else {
-                                                            final int photoButtoNVisibility = photoButton.getVisibility();
-                                                            final int audioButtonVisibility = audioImgBtn.getVisibility();
-
-                                                            photoButton.setVisibility(View.INVISIBLE);
-                                                            audioImgBtn.setVisibility(View.INVISIBLE);
-                                                            shareButton.setVisibility(View.INVISIBLE);
-
-                                                            try {
-                                                                final File imageFile = Utils.tempFile(Environment.DIRECTORY_PICTURES, "jpg");
-                                                                Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
-
-                                                                final ProgressDialog progDlg = new ProgressDialog(getContext());
-
-                                                                progDlg.show();
-                                                                new Thread() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        try {
-                                                                            final FileObject fo = ApiClient.uploadScreenshot(imageFile);
-                                                                            if (getActivity() != null) {
-                                                                                getActivity().runOnUiThread(new Runnable() {
-                                                                                    @Override
-                                                                                    public void run() {
-                                                                                        ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
-                                                                                                .setContentTitle("Моя визитка")
-                                                                                                .setImageUrl(Uri.parse(fo.url))
-                                                                                                .setContentDescription(contentString)
-                                                                                                .setContentUrl(Uri.parse("https://" + card.getDomain()
-                                                                                                        + ".happy-drive.kz"))
-                                                                                                .build();
-                                                                                        ShareDialog.show(CardDetailsFragment.this, shareLinkContent);
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        } catch (Exception ignored) {
-                                                                        } finally {
-                                                                            progDlg.dismiss();
-                                                                        }
-                                                                    }
-                                                                }.start();
-                                                            } catch (IOException e) {
-                                                            } finally {
-                                                                photoButton.setVisibility(photoButtoNVisibility);
-                                                                audioImgBtn.setVisibility(audioButtonVisibility);
-                                                                shareButton.setVisibility(View.VISIBLE);
-                                                            }
                                                         }
                                                         break;
                                                     }
@@ -501,7 +437,11 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                             shareIntent.setPackage(which == 1 ?
                                                                     "com.whatsapp" : "com.instagram.android");
                                                             if (which == 1) {
-                                                                shareIntent.putExtra(Intent.EXTRA_TEXT, contentString);
+                                                                shareIntent.putExtra(Intent.EXTRA_TEXT, "Моя визитка\n" +
+                                                                        (Utils.isEmpty(card.getDomain()) ?
+                                                                                Uri.parse("https://happy-drive.kz") :
+                                                                                Uri.parse("https://" + card.getDomain()
+                                                                                        + ".happy-drive.kz")));
                                                             }
                                                             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(imageFile));
                                                             shareIntent.setType("image/jpeg");
