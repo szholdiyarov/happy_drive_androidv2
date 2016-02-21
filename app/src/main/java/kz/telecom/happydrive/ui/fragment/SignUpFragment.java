@@ -1,13 +1,15 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,11 +20,9 @@ import android.widget.EditText;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
-import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
-import kz.telecom.happydrive.ui.MainActivity;
 
 /**
  * Created by Galymzhan Sh on 11/16/15.
@@ -91,17 +91,23 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void run() {
                 try {
-                    final User user = User.signUp(email, password);
+                    User.signUp(email, password);
                     final BaseActivity activity = (BaseActivity) getActivity();
                     if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                DataManager.getInstance().bus
-                                        .post(new User.SignedUpEvent(user));
-                                activity.startActivity(new Intent(activity,
-                                        MainActivity.class));
-                                activity.finish();
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle(R.string.sign_up_successful_dlg_title)
+                                        .setMessage(R.string.sign_up_successful_dlg_msg)
+                                        .setPositiveButton(R.string.ok, null)
+                                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(DialogInterface dialog) {
+                                                ((BaseActivity) getActivity()).replaceContent(new SignInFragment(),
+                                                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                            }
+                                        }).show();
                             }
                         });
                     }

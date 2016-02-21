@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
@@ -158,6 +160,12 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                                     if (error.apiErrorCode == 16) {
                                         activity.replaceContent(MigrationUpgradeFragment.newInstance(email, password),
                                                 true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                    } else if (error.apiErrorCode == 27) {
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle(R.string.error)
+                                                .setMessage(R.string.sign_in_user_email_not_verified)
+                                                .setPositiveButton(R.string.ok, null)
+                                                .show();
                                     } else {
                                         Snackbar.make(view, R.string.sign_in_user_cred_invalid, Snackbar.LENGTH_LONG)
                                                 .setDuration(Snackbar.LENGTH_LONG)

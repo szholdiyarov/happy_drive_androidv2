@@ -224,12 +224,10 @@ public class User {
         return initStaticUser(user);
     }
 
-    @NonNull
     @WorkerThread
-    public static User signUp(final String email, final String password)
+    public static void signUp(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         UserHelper.register(email, password);
-        return signIn(email, password);
     }
 
     @WorkerThread
