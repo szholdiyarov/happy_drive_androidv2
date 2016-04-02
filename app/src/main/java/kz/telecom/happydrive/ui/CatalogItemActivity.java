@@ -10,9 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
@@ -64,9 +61,8 @@ public class CatalogItemActivity extends BaseActivity {
                 .load(card.getBackground())
                 .signature(GlideCacheSignature.foreignCacheKey(card.getBackground()))
                 .placeholder(R.drawable.bkg_auth)
-                .bitmapTransform(new CenterCrop(this),
-                        new BlurTransformation(this))
                 .error(R.drawable.bkg_auth)
+                .centerCrop()
                 .into((ImageView) findViewById(R.id.activity_catalog_img_view_background));
     }
 

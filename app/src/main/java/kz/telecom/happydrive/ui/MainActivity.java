@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -22,7 +21,6 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import kz.telecom.happydrive.BuildConfig;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
@@ -198,8 +196,7 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 .load(card.getBackground())
                 .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
                 .placeholder(R.drawable.bkg_auth)
-                .bitmapTransform(new CenterCrop(this),
-                        new BlurTransformation(this))
+                .centerCrop()
                 .error(R.drawable.bkg_auth)
                 .into(mBackgroundImageView);
     }

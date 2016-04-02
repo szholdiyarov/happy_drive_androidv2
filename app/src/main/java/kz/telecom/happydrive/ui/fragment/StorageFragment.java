@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -32,6 +33,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,6 +80,8 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
         StorageAdapter.OnStorageItemClickListener {
     @SuppressWarnings("unused")
     private static final String TAG = Logger.makeLogTag("StorageFragment");
+
+    private static final int GET_CONTENT_REQUEST_CODE = 1201;
 
     private static final int LAST_ERROR_NO_ISSUES = 0;
     private static final int LAST_ERROR_NO_NETWORK = 1;
@@ -421,11 +426,23 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             manager.enqueue(request);
         } else if (action.action == StorageAction.ACTION_TAKE_PHOTO) {
-            EasyImage.openCamera(StorageFragment.this);
-        } else if (action.action == StorageAction.ACTION_PICK_PHOTO) {
-            EasyImage.openDocuments(StorageFragment.this);
-        } else if (action.action == StorageAction.ACTION_PICK_VIDEO) {
-        } else if (action.action == StorageAction.ACTION_PICK_DOC) {
+            EasyImage.openCamera(this);
+        } else {
+            Intent intent = FileUtils.createGetContentIntent();
+            if (action.action == StorageAction.ACTION_PICK_PHOTO) {
+                intent.setType("image/*");
+            } else if (action.action == StorageAction.ACTION_PICK_VIDEO) {
+                intent.setType("video/*");
+            } else if (action.action == StorageAction.ACTION_PICK_MUSIC) {
+                intent.setType("audio/*");
+            }
+
+            try {
+                startActivityForResult(Intent.createChooser(intent, "Выберите файл"),
+                        GET_CONTENT_REQUEST_CODE);
+            } catch (ActivityNotFoundException afe) {
+                Toast.makeText(getContext(), "Приложение не найдено", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -749,33 +766,40 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new EasyImage.Callbacks() {
-            @Override
-            public void onImagePickerError(Exception e, EasyImage.ImageSource imageSource) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onImagePicked(File file, EasyImage.ImageSource imageSource) {
+        if (requestCode == GET_CONTENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                final File file = FileUtils.getFile(getContext(), data.getData());
                 uploadFile(file);
             }
-
-            @Override
-            public void onCanceled(EasyImage.ImageSource imageSource) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-
-                if (imageSource == EasyImage.ImageSource.CAMERA) {
-                    File photoFile = EasyImage.lastlyTakenButCanceledPhoto(getContext());
-                    if (photoFile != null) {
-                        photoFile.delete();
+        } else {
+            EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new EasyImage.Callbacks() {
+                @Override
+                public void onImagePickerError(Exception e, EasyImage.ImageSource imageSource) {
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
                     }
                 }
-            }
-        });
+
+                @Override
+                public void onImagePicked(File file, EasyImage.ImageSource imageSource) {
+                    uploadFile(file);
+                }
+
+                @Override
+                public void onCanceled(EasyImage.ImageSource imageSource) {
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
+
+                    if (imageSource == EasyImage.ImageSource.CAMERA) {
+                        File photoFile = EasyImage.lastlyTakenButCanceledPhoto(getContext());
+                        if (photoFile != null) {
+                            photoFile.delete();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     static class StorageAction {

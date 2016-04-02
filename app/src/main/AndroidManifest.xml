@@ -98,6 +98,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <service android:name="com.parse.PushService" />
 
         <receiver
@@ -119,9 +123,12 @@
                 <category android:name="kz.telecom.happydrive" />
             </intent-filter>
         </receiver>
-        <provider android:authorities="com.facebook.app.FacebookContentProvider983139428414718"
+
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"/>
+            android:authorities="com.facebook.app.FacebookContentProvider983139428414718"
+            android:exported="true" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="444a8bc27f1541207a800de39f493a507f9e8708" />

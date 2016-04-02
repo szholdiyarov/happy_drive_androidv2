@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.soundcloud.android.crop.Crop;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
@@ -66,6 +67,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     private boolean isCardUpdating = false;
 
     private MediaPlayer mPlayer = null;
+
+    private Uri mCroppedFileUri;
 
     public static BaseFragment newInstance(Card card) {
         Bundle bundle = new Bundle();
@@ -397,7 +400,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                                                             .setContentTitle("Моя визитка")
                                                                                             .setImageUrl(Uri.parse(fo.url))
                                                                                             .setContentUrl(Utils.isEmpty(card.getDomain()) ?
-                                                                                                    Uri.parse("https://happy-drive.kz") :
+                                                                                                    Uri.parse("https://happy-drive.kz/card/get/" + card.id) :
                                                                                                     Uri.parse("https://" + card.getDomain()
                                                                                                             + ".happy-drive.kz"))
                                                                                             .build();
@@ -439,7 +442,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                             if (which == 1) {
                                                                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Моя визитка\n" +
                                                                         (Utils.isEmpty(card.getDomain()) ?
-                                                                                Uri.parse("https://happy-drive.kz") :
+                                                                                Uri.parse("https://happy-drive.kz/card/get/" + card.id) :
                                                                                 Uri.parse("https://" + card.getDomain()
                                                                                         + ".happy-drive.kz")));
                                                             }
@@ -481,6 +484,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                                                             if (!Utils.isEmpty(card.getDomain())) {
                                                                 shareText += "\nhttps://" + card.getDomain()
                                                                         + ".happy-drive.kz\n";
+                                                            } else {
+                                                                shareText += "\nhttps://happy-drive.kz/card/get/" + card.id;
                                                             }
 
                                                             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
@@ -628,6 +633,11 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Crop.REQUEST_CROP && resultCode == Activity.RESULT_OK) {
+            uploadFile(new File(mCroppedFileUri.getPath()));
+            return;
+        }
+
         EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new EasyImage.Callbacks() {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource imageSource) {
@@ -638,6 +648,8 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
             @Override
             public void onImagePicked(File file, EasyImage.ImageSource imageSource) {
+                mCroppedFileUri = Uri.fromFile(file);
+                Crop.of(Uri.fromFile(file), mCroppedFileUri).start(getContext(), CardDetailsFragment.this);
                 uploadFile(file);
             }
 
