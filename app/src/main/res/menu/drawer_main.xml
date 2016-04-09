@@ -1,40 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/action_block_main"
+        android:id="@+id/action_block_main_1"
         android:checkableBehavior="single">
         <item
             android:id="@+id/action_card"
-            android:icon="@drawable/ic_card_24p"
-            android:title="@string/action_card"/>
-        <item
-            android:id="@+id/action_cloud"
-            android:icon="@drawable/ic_cloud_black_24dp"
-            android:title="@string/action_cloud"/>
-        <item
-            android:id="@+id/action_favourite"
-            android:icon="@drawable/ic_favourite_24p"
-            android:title="@string/action_favourite"/>
-        <item
-            android:id="@+id/action_catalog"
-            android:icon="@drawable/ic_catalog_24p"
-            android:title="@string/action_catalog"/>
+            android:icon="@drawable/ic_drawer_card"
+            android:title="@string/action_card" />
     </group>
     <group
-        android:id="@+id/action_block_extra"
+        android:id="@+id/action_block_main_2"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/action_cloud"
+            android:icon="@drawable/ic_drawer_cloud"
+            android:title="@string/action_cloud" />
+    </group>
+    <group
+        android:id="@+id/action_block_main_3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_favourite"
+            android:icon="@drawable/ic_drawer_favourite"
+            android:title="@string/action_favourite" />
+    </group>
+    <group
+        android:id="@+id/action_block_main_4"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_catalog"
+            android:icon="@drawable/ic_drawer_catalog"
+            android:title="@string/action_catalog" />
+    </group>
+    <group
+        android:id="@+id/action_block_extra_1"
+        android:checkableBehavior="single">
+        <item
+            android:checkable="false"
+            android:enabled="false"
+            android:title="@null" />
+        <item
             android:id="@+id/action_settings"
-            android:icon="@drawable/ic_settings_24p"
-            android:title="@string/action_settings"/>
+            android:icon="@drawable/ic_drawer_settings"
+            android:title="@string/action_settings" />
         <!--<item-->
-            <!--android:id="@+id/action_help"-->
-            <!--android:icon="@drawable/ic_help_24p"-->
-            <!--android:title="@string/action_help"/>-->
+        <!--android:id="@+id/action_help"-->
+        <!--android:icon="@drawable/ic_help_24p"-->
+        <!--android:title="@string/action_help"/>-->
         <!--<item-->
-            <!--android:id="@+id/action_about"-->
-            <!--android:icon="@drawable/ic_about_24p"-->
-            <!--android:checkable="false"-->
-            <!--android:title="@string/action_about"/>-->
+        <!--android:id="@+id/action_about"-->
+        <!--android:icon="@drawable/ic_about_24p"-->
+        <!--android:checkable="false"-->
+        <!--android:title="@string/action_about"/>-->
+    </group>
+    <group
+        android:id="@+id/action_block_extra_2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_promote"
+            android:icon="@drawable/ic_drawer_promote"
+            android:title="@string/action_promote" />
     </group>
 </menu>

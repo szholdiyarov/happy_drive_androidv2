@@ -3,14 +3,14 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "kz.telecom.happydrive"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "1.0.5"
+        versionCode 14
+        versionName "2.0"
     }
 
     signingConfigs {
@@ -56,10 +56,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':libraries:filechooser')
-    compile 'com.android.support:support-annotations:23.2.1'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:support-annotations:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
 
     compile 'com.facebook.android:facebook-android-sdk:4.9.0'
     compile 'com.google.android.gms:play-services-auth:8.3.0'
@@ -79,6 +79,7 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
 
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+    compile 'com.pacioianu.david:ink-page-indicator:1.1.1'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true

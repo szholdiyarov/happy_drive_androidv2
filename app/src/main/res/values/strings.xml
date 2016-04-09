@@ -43,11 +43,12 @@
         письмо с дальнейшими инструкциями для восстановления пароля</string>
 
     <!-- drawer menu -->
-    <string name="action_card">Визитка</string>
+    <string name="action_card">Облачная визитка</string>
     <string name="action_cloud">Облачное хранилище</string>
     <string name="action_favourite">Избранное</string>
-    <string name="action_catalog">Каталог</string>
+    <string name="action_catalog">Каталог визиток</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_promote">Продвижение</string>
     <string name="action_help">Помощь</string>
     <string name="action_about">О приложении</string>
     <string name="action_exit">Выйти</string>
@@ -64,7 +65,21 @@
     <string name="canceled">Отменено</string>
 
     <string name="drawer_footer_storage_size_fmt">Использовано %1$s из %2$s</string>
-    <string name="drawer_footer_expiration_fmt">До оплаты осталось %d дней</string>
+    <string name="slide_title_1">Happy Drive</string>
+    <string name="slide_title_2">Онлайн-визитка</string>
+    <string name="slide_title_3">Облачное хранилище данных</string>
+    <string name="slide_title_4">Поделитесь визиткой</string>
+    <string name="slide_title_5">Миссия Happy Drive</string>
+    <string name="slide_text_1">Это облачный продукт сочетающий в себе онлайн-визитку и облачное хранилище данных.</string>
+    <string name="slide_text_2">Ваша личная электронная визитка и ваше представительство в сети Интернет.
+        Продвигайте свои товары и услуги в несколько касаний экрана вашего смартфона.</string>
+    <string name="slide_text_3">Все нужные файлы будут доступными для Вас в любое время
+        с любого устройства (компьютера, смартфона, планшета) и в любой точке земного шара.</string>
+    <string name="slide_text_4">Поделитесь своей онлайн-визиткой по всем возможным каналам продвижения
+        и привлеките новых клиентов и партнеров, используя функцию раскрутки.</string>
+    <string name="slide_text_5">Дать возможность профессионалам, предпринимателям, активным деловым людям в несколько
+         касаний экрана своего смартфона создать свое собственное представительство в сети Интернет
+        с активным продвижением и расширением круга деловых контактов, клиентов и партнеров.</string>
 
     <string-array name="about_options">
         <item>О себе</item>

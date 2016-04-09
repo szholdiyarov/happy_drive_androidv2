@@ -5,14 +5,11 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.soundcloud.android.crop.Crop;
@@ -45,10 +43,11 @@ import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
-import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CardEditActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
+import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -93,12 +92,20 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DataManager.getInstance().bus.register(this);
-        BaseActivity activity = (BaseActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        actionBar.setTitle("");
-
         mCard = getArguments().getParcelable(EXTRA_CARD);
+
+        try {
+            final MainActivity activity = (MainActivity) getActivity();
+            view.findViewById(R.id.fragment_card_toolbar_fake_drawer_toggler)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.toggleDrawer();
+                        }
+                    });
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("used to work with MainActivity");
+        }
 
         final User user = User.currentUser();
         if (!isCardUpdating && mCard != null && user != null) {
@@ -212,7 +219,32 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 aboutContainer.setVisibility(View.GONE);
             }
 
+            View cardEditBtn = view.findViewById(R.id.fragment_card_toolbar_fake_card_edit);
+            View switchViewContainer = view.findViewById(R.id.fragment_card_cloud_switcher_container);
             if (card.compareTo(User.currentUser().card) == 0) {
+                switchViewContainer.setVisibility(View.VISIBLE);
+                final View cardSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_card);
+                cardSwitcher.setClickable(true);
+                cardSwitcher.setSelected(true);
+
+                View cloudSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_cloud);
+                cloudSwitcher.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        v.setSelected(true);
+                        cardSwitcher.setSelected(false);
+                        ((MainActivity) getActivity()).drawerMenuItemSelect(R.id.action_cloud);
+                    }
+                });
+
+                cardEditBtn.setVisibility(View.VISIBLE);
+                cardEditBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(getContext(), CardEditActivity.class));
+                    }
+                });
+
                 photoButton.setVisibility(View.VISIBLE);
                 photoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -240,13 +272,15 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 });
             } else {
                 photoButton.setVisibility(View.GONE);
+                switchViewContainer.setVisibility(View.VISIBLE);
+                cardEditBtn.setVisibility(View.GONE);
             }
 
             TextView userNameTextView = (TextView) view.findViewById(R.id.fragment_card_tv_name);
 
             String userText = card.getFirstName();
             if (!TextUtils.isEmpty(card.getLastName())) {
-                userText += "\n" + card.getLastName();
+                userText += card.getLastName();
             }
 
             userNameTextView.setText(userText);
@@ -254,7 +288,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             TextView positionTextView = (TextView) view.findViewById(R.id.fragment_card_tv_position);
             if (!TextUtils.isEmpty(card.getPosition())) {
                 positionTextView.setVisibility(View.VISIBLE);
-                positionTextView.setText(card.getPosition());
+                positionTextView.setText(card.getPosition().toUpperCase());
             } else {
                 positionTextView.setVisibility(View.GONE);
             }
@@ -262,7 +296,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             TextView workplaceTextView = (TextView) view.findViewById(R.id.fragment_card_tv_work_place);
             if (!TextUtils.isEmpty(card.getWorkPlace())) {
                 workplaceTextView.setVisibility(View.VISIBLE);
-                workplaceTextView.setText(card.getWorkPlace());
+                workplaceTextView.setText(card.getWorkPlace().toUpperCase());
             } else {
                 workplaceTextView.setVisibility(View.GONE);
             }
@@ -285,6 +319,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 phoneContainer.setVisibility(View.GONE);
             }
 
+            View emailSeparator = view.findViewById(R.id.separator_email);
             View emailContainer = view.findViewById(R.id.fragment_card_ll_email_container);
             if (!TextUtils.isEmpty(card.getEmail())) {
                 emailContainer.setVisibility(View.VISIBLE);
@@ -292,6 +327,12 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 ImageView imageView = (ImageView) emailContainer.findViewById(R.id.fragment_card_img_view_email);
                 imageView.setColorFilter(0xff959595);
                 emailTextView.setText(card.getEmail());
+
+                if (phoneContainer.getVisibility() == View.VISIBLE) {
+                    emailSeparator.setVisibility(View.VISIBLE);
+                } else {
+                    emailSeparator.setVisibility(View.GONE);
+                }
 
                 emailContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -307,8 +348,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 });
             } else {
                 emailContainer.setVisibility(View.GONE);
+                emailSeparator.setVisibility(View.GONE);
             }
 
+            View addressSeparator = view.findViewById(R.id.separator_address);
             View addressContainer = view.findViewById(R.id.fragment_card_ll_address_container);
             if (!TextUtils.isEmpty(card.getAddress())) {
                 addressContainer.setVisibility(View.VISIBLE);
@@ -316,6 +359,14 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 ImageView imageView = (ImageView) addressContainer.findViewById(R.id.fragment_card_img_view_address);
                 imageView.setColorFilter(0xff959595);
                 addressTextView.setText(card.getAddress());
+
+
+                if (emailContainer.getVisibility() == View.VISIBLE ||
+                        phoneContainer.getVisibility() == View.VISIBLE) {
+                    addressSeparator.setVisibility(View.VISIBLE);
+                } else {
+                    addressSeparator.setVisibility(View.GONE);
+                }
 
                 addressContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -330,6 +381,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 });
             } else {
                 addressContainer.setVisibility(View.GONE);
+                addressSeparator.setVisibility(View.GONE);
             }
         }
 
@@ -347,17 +399,17 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         final ImageView userPhoto = (ImageView) view.findViewById(R.id.fragment_card_img_view_avatar);
-        if (!Utils.isEmpty(card.getAvatar())) {
-            NetworkManager.getGlide()
-                    .load(card.getAvatar())
-                    .signature(card.compareTo(User.currentUser().card) == 0 ?
-                            GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
-                            GlideCacheSignature.foreignCacheKey(card.getAvatar()))
-                    .centerCrop()
-                    .into(userPhoto);
-        } else {
-            userPhoto.setImageDrawable(null);
-        }
+        NetworkManager.getGlide()
+                .load(card.getAvatar())
+                .signature(card.compareTo(User.currentUser().card) == 0 ?
+                        GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
+                        GlideCacheSignature.foreignCacheKey(card.getAvatar()))
+                .placeholder(R.drawable.ic_drawer_placeholder)
+                .error(R.drawable.ic_drawer_placeholder)
+                .bitmapTransform(new CenterCrop(getContext()),
+                        new GlideRoundedCornersTransformation(getContext(),
+                                Utils.dipToPixels(64f, getResources().getDisplayMetrics()), 0))
+                .into(userPhoto);
 
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override

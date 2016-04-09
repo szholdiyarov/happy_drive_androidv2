@@ -31,6 +31,5 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColorHint">#acacac</item>
         <item name="android:textSize">14sp</item>
-
     </style>
 </resources>

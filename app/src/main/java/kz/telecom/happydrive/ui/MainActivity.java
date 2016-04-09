@@ -8,9 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.parse.FindCallback;
@@ -26,8 +24,6 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
-import kz.telecom.happydrive.data.network.GlideCacheSignature;
-import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
@@ -43,7 +39,6 @@ import kz.telecom.happydrive.util.Utils;
  */
 public class MainActivity extends BaseActivity implements DrawerFragment.Callback {
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ImageView mBackgroundImageView;
 
     @Override
@@ -52,19 +47,12 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         setContentView(R.layout.activity_main);
 
         mBackgroundImageView = (ImageView) findViewById(R.id.activity_main_img_view_background);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
-        initToolbar(toolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mDrawerLayout.setFitsSystemWindows(false);
         }
-
-        mDrawerToggle = new ActionBarDrawerToggle(this,
-                mDrawerLayout, toolbar, 0, 0);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
 
         User user = User.currentUser();
         if (savedInstanceState == null) {
@@ -158,10 +146,7 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         } else if (itemId == R.id.action_settings) {
-            if (!(findDefaultContent() instanceof SettingsFragment)) {
-                replaceContent(new SettingsFragment(), false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            }
+            startActivity(new Intent(this, SettingsActivity.class));
 //        } else if (itemId == R.id.action_help) {
 //            if (!(findDefaultContent() instanceof HelpFragment)) {
 //                replaceContent(new HelpFragment(), false,
@@ -175,6 +160,17 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         return true;
     }
 
+    // TODO slow call, optimize
+    public void drawerMenuItemSelect(int itemId) {
+        if (onDrawerMenuItemSelected(itemId)) {
+            DrawerFragment drawerFragment = (DrawerFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.activity_main_fmt_drawer);
+            if (drawerFragment != null) {
+                drawerFragment.setCheckedDrawerItemById(itemId);
+            }
+        }
+    }
+
     @SuppressWarnings("unused")
     public void openDrawer() {
         mDrawerLayout.openDrawer(GravityCompat.START);
@@ -185,6 +181,15 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @SuppressWarnings("unused")
+    public void toggleDrawer() {
+        if (mDrawerLayout.isDrawerVisible(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
     @Subscribe
     @SuppressWarnings("unused")
     public void onCardBackgroundChanged(Card.OnBackgroundUpdatedEvent event) {
@@ -192,13 +197,12 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
     }
 
     private void updateBackground(@NonNull Card card) {
-        NetworkManager.getGlide()
-                .load(card.getBackground())
-                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
-                .placeholder(R.drawable.bkg_auth)
-                .centerCrop()
-                .error(R.drawable.bkg_auth)
-                .into(mBackgroundImageView);
+//        NetworkManager.getGlide()
+//                .load(card.getBackground())
+//                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
+//                .placeholder(R.drawable.default_bkg)
+//                .error(R.drawable.default_bkg)
+//                .into(mBackgroundImageView);
     }
 
     @Override

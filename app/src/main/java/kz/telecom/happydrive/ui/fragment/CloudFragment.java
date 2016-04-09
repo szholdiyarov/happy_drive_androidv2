@@ -1,10 +1,7 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +26,34 @@ public class CloudFragment extends BaseFragment implements View.OnClickListener 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        actionBar.setTitle(R.string.app_name);
+
+        try {
+            final MainActivity activity = (MainActivity) getActivity();
+            view.findViewById(R.id.fragment_card_toolbar_fake_drawer_toggler)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.toggleDrawer();
+                        }
+                    });
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("used to work with MainActivity");
+        }
+
+        final View switchViewContainer = view.findViewById(R.id.fragment_card_cloud_switcher_container);
+        View cloudSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_cloud);
+        cloudSwitcher.setClickable(true);
+        cloudSwitcher.setSelected(true);
+
+        View cardSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_card);
+        cardSwitcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setSelected(true);
+                switchViewContainer.setSelected(false);
+                getActivity().onBackPressed();
+            }
+        });
 
         view.findViewById(R.id.fragment_cloud_fl_photo).setOnClickListener(this);
         view.findViewById(R.id.fragment_cloud_fl_video).setOnClickListener(this);

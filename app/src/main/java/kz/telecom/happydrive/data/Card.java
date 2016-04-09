@@ -431,4 +431,12 @@ public class Card implements Comparable<Card>, Parcelable {
             this.card = card;
         }
     }
+
+    public static class OnAvatarUpdatedEvent {
+        public final Card card;
+
+        public OnAvatarUpdatedEvent(Card card) {
+            this.card = card;
+        }
+    }
 }

@@ -44,18 +44,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!(this instanceof AuthActivity) && !User.isAuthenticated()) {
+        if (!(this instanceof AuthActivity) && !(this instanceof SlideShowActivity)
+                && !User.isAuthenticated()) {
             Intent intent = new Intent(this, AuthActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             finish();
         } else if (!(this instanceof LockedActivity) &&
                 (User.currentUser() != null && !User.currentUser().card.isPayedStatus())) {
-            Intent intent = new Intent(this, LockedActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            intent.putExtra(LockedActivity.EXTRA_CAUSE, LockedActivity.CAUSE_PAYED_STATUS);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(this, LockedActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            intent.putExtra(LockedActivity.EXTRA_CAUSE, LockedActivity.CAUSE_PAYED_STATUS);
+//            startActivity(intent);
+//            finish();
         }
 
         busEventListener = new Object() {
