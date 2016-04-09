@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/bkg_auth" />
-
+        android:src="@drawable/default_bkg" />
 
     <include
         android:id="@+id/layout_toolbar"

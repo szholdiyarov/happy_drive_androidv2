@@ -26,7 +26,6 @@ public class CloudFragment extends BaseFragment implements View.OnClickListener 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         try {
             final MainActivity activity = (MainActivity) getActivity();
             view.findViewById(R.id.fragment_card_toolbar_fake_drawer_toggler)

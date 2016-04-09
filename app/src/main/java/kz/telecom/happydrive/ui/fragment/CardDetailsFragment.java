@@ -94,17 +94,24 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         DataManager.getInstance().bus.register(this);
         mCard = getArguments().getParcelable(EXTRA_CARD);
 
+        ImageButton togglerOrBackBtn = (ImageButton) view.findViewById(R.id.fragment_card_toolbar_fake_drawer_toggler);
+
         try {
             final MainActivity activity = (MainActivity) getActivity();
-            view.findViewById(R.id.fragment_card_toolbar_fake_drawer_toggler)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            activity.toggleDrawer();
-                        }
-                    });
-        } catch (ClassCastException cce) {
-            throw new IllegalStateException("used to work with MainActivity");
+            togglerOrBackBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.toggleDrawer();
+                }
+            });
+        } catch (ClassCastException ignored) {
+            togglerOrBackBtn.setImageResource(R.drawable.ic_drawer_back);
+            togglerOrBackBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().onBackPressed();
+                }
+            });
         }
 
         final User user = User.currentUser();
@@ -272,7 +279,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 });
             } else {
                 photoButton.setVisibility(View.GONE);
-                switchViewContainer.setVisibility(View.VISIBLE);
+                switchViewContainer.setVisibility(View.GONE);
                 cardEditBtn.setVisibility(View.GONE);
             }
 

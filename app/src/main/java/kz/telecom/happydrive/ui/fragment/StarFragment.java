@@ -1,12 +1,9 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +28,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.util.GlideRoundedCornersTransformation;
 import kz.telecom.happydrive.util.Utils;
 
@@ -73,16 +71,23 @@ public class StarFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_catalog_item, parent, false);
+        return inflater.inflate(R.layout.fragment_favourites, parent, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        BaseActivity activity = (BaseActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(
-                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
-        actionBar.setTitle(R.string.action_favourite);
+        try {
+            final MainActivity activity = (MainActivity) getActivity();
+            view.findViewById(R.id.fragment_favourite_toolbar_fake_drawer_toggler)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.toggleDrawer();
+                        }
+                    });
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("used to work with MainActivity");
+        }
 
         if (adapter == null) {
             adapter = new ItemAdapter();
@@ -105,7 +110,7 @@ public class StarFragment extends BaseFragment {
 
     @MainThread
     private void disableProgressBar() {
-        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_catalog_progress_bar);
+        ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.fragment_favourite_progress_bar);
         progressBar.setVisibility(View.GONE);
     }
 
@@ -168,7 +173,7 @@ public class StarFragment extends BaseFragment {
             ViewHolder viewHolder;
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext())
-                        .inflate(R.layout.fragment_catalog_item_row, parent, false);
+                        .inflate(R.layout.layout_item_favourite, parent, false);
 
                 ImageView imageView = (ImageView) convertView.findViewById(R.id.avatar);
                 TextView titleTextView = (TextView) convertView.findViewById(R.id.name);
@@ -205,18 +210,17 @@ public class StarFragment extends BaseFragment {
                                     .foreignCacheKey(card.getAvatar()))
                             .bitmapTransform(new CenterCrop(getContext()),
                                     new GlideRoundedCornersTransformation(getContext(),
-                                            Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
-                            .error(R.drawable.user_photo)
-                            .placeholder(R.drawable.user_photo_load)
+                                            Utils.dipToPixels(20f, dm), Utils.dipToPixels(1.5f, dm)))
+                            .error(R.drawable.user_photo_circle)
+                            .placeholder(R.drawable.user_photo_load_circle)
                             .into(viewHolder.imageView);
                 }
             } else {
-                viewHolder.imageView.setImageResource(R.drawable.user_photo);
+                viewHolder.imageView.setImageResource(R.drawable.user_photo_circle);
             }
 
             ImageView starView = viewHolder.actionImageBtn;
             starView.setTag(position);
-            starView.setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent));
 
             return convertView;
         }

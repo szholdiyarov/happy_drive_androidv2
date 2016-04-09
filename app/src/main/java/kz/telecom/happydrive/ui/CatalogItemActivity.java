@@ -8,12 +8,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
-import kz.telecom.happydrive.data.network.GlideCacheSignature;
-import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogItemFragment;
 
@@ -42,9 +40,11 @@ public class CatalogItemActivity extends BaseActivity {
         final Card card = intent.getParcelableExtra(EXTRA_CARD);
         if (savedInstanceState == null) {
             if (card != null) {
+                actionBar.hide();
                 replaceContent(CardDetailsFragment.newInstance(card),
                         false, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             } else {
+                actionBar.show();
                 Bundle bundle = new Bundle();
                 bundle.putInt("categoryId", intent.getIntExtra(EXTRA_CATEGORY_ID, -1));
                 bundle.putString("categoryName", intent.getStringExtra(EXTRA_CATEGORY_NAME));
@@ -57,13 +57,13 @@ public class CatalogItemActivity extends BaseActivity {
     }
 
     public void changeBackgroundImage(Card card) {
-        NetworkManager.getGlide()
-                .load(card.getBackground())
-                .signature(GlideCacheSignature.foreignCacheKey(card.getBackground()))
-                .placeholder(R.drawable.bkg_auth)
-                .error(R.drawable.bkg_auth)
-                .centerCrop()
-                .into((ImageView) findViewById(R.id.activity_catalog_img_view_background));
+//        NetworkManager.getGlide()
+//                .load(card.getBackground())
+//                .signature(GlideCacheSignature.foreignCacheKey(card.getBackground()))
+//                .placeholder(R.drawable.bkg_auth)
+//                .error(R.drawable.bkg_auth)
+//                .centerCrop()
+//                .into((ImageView) findViewById(R.id.activity_catalog_img_view_background));
     }
 
     @Override

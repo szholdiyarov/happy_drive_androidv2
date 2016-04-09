@@ -1,12 +1,9 @@
 package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +19,7 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Category;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
+import kz.telecom.happydrive.ui.MainActivity;
 
 
 /**
@@ -43,11 +41,18 @@ public class CatalogFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        BaseActivity activity = (BaseActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(
-                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
-        actionBar.setTitle(R.string.action_catalog);
+        try {
+            final MainActivity activity = (MainActivity) getActivity();
+            view.findViewById(R.id.fragment_catalog_toolbar_fake_drawer_toggler)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.toggleDrawer();
+                        }
+                    });
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("used to work with MainActivity");
+        }
 
         adapter = new ArrayAdapter<>(getContext(), R.layout.fragment_catalog_row,
                 new ArrayList<Category>());

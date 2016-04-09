@@ -1,6 +1,5 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
@@ -92,10 +91,11 @@ public class CatalogItemFragment extends BaseFragment {
         categoryName = bundle.getString("categoryName");
 
         BaseActivity activity = (BaseActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
+        final ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(
                 ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         actionBar.setTitle(categoryName);
+        actionBar.show();
 
         if (adapter == null) {
             adapter = new ItemAdapter();
@@ -113,6 +113,7 @@ public class CatalogItemFragment extends BaseFragment {
                 Card card = (Card) adapter.getItem(position);
                 activity.replaceContent(CardDetailsFragment.newInstance(card),
                         true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                actionBar.hide();
             }
         });
     }
