@@ -8,6 +8,7 @@
     <color name="app_black">#000</color>
     <color name="app_transparent">#0000</color>
     <color name="dark_blue">#111028</color>
+    <color name="app_transparent_white">#33FFFFFF</color>
 
     <color name="app_text">#464646</color>
 </resources>

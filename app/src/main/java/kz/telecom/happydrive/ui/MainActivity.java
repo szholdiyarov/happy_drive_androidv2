@@ -10,6 +10,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;

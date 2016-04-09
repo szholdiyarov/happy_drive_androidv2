@@ -26,10 +26,13 @@
         <EditText
                 android:id="@+id/etOldPassword"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password1"
-                android:inputType="text|textPassword"/>
+                android:inputType="text|textEmailAddress"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.34" />
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
@@ -38,10 +41,13 @@
         <EditText
                 android:id="@+id/etPassword1"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password2"
-                android:inputType="text|textPassword"/>
+                android:inputType="text|textEmailAddress"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.34" />
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
@@ -50,11 +56,13 @@
         <EditText
                 android:id="@+id/etPassword2"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
                 android:hint="Повторите новый пароль"
-                android:inputType="text|textPassword"
-                />
+                android:inputType="text|textEmailAddress"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.34" />
 
         <android.support.v4.widget.Space
                 android:layout_width="0px"
@@ -62,8 +70,8 @@
 
         <Button
                 android:id="@+id/bChangePassword"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
+                android:layout_width="308dp"
+                android:layout_height="64dp"
                 android:textAllCaps="false"
                 android:text="Сменить"
                 android:textColor="@color/app_white"/>

@@ -17,6 +17,8 @@
     <string name="sign_up_title">Регистрация</string>
     <string name="sign_up_hint_email">E-mail</string>
     <string name="sign_up_hint_password">Пароль</string>
+    <string name="sign_up_hint_password_confirm">Повторите пароль</string>
+
     <string name="change_pwd_hint_password1">Текущий пароль</string>
     <string name="change_pwd_hint_password2">Новый пароль</string>
     <string name="sign_up_successful_dlg_title">Успешная регистрация</string>
@@ -25,11 +27,12 @@
     <string name="sign_up_user_already_taken">Пользователь с таким e-mail уже существует</string>
     <string name="sign_up_user_cred_invalid">Неправильно указан e-mail или пароль</string>
 
-    <string name="sign_in_title">Войти по E-mail</string>
+    <string name="sign_in_title">Войти по E-mailL</string>
     <string name="sign_in_hint_email">@string/sign_up_hint_email</string>
     <string name="sign_in_hint_password">@string/sign_up_hint_password</string>
+
     <string name="sign_in_password_recovery">Забыли пароль?</string>
-    <string name="sign_in_btn">Войти</string>
+    <string name="sign_in_btn">ВОЙТИ</string>
     <string name="sign_in_sign_up">Не зарегистрированы? <u>Регистрация</u></string>
     <string name="sign_in_user_cred_invalid">Неправильно указан e-mail или пароль</string>
     <string name="sign_in_user_email_not_verified">К сожалению, Ваш e-mail не подтверждён.

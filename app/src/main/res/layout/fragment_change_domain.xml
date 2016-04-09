@@ -16,8 +16,10 @@
     <EditText
         android:id="@+id/fragment_change_domain_et"
         style="@style/Widget.EditText.Auth"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext"
+        android:textColor="@color/app_white"
         android:hint="Укажите новый домен"
         android:inputType="text|textNoSuggestions" />
 
@@ -27,8 +29,8 @@
 
     <Button
         android:id="@+id/fragment_change_domain_btn"
-        android:layout_width="268dp"
-        android:layout_height="wrap_content"
+        android:layout_width="308dp"
+        android:layout_height="64dp"
         android:text="Установить"
         android:textAllCaps="false"
         android:textColor="@color/app_white" />

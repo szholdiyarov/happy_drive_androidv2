@@ -26,31 +26,51 @@
             <EditText
                 android:id="@+id/fragment_sign_up_et_email"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
-                android:layout_height="wrap_content"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
                 android:hint="@string/sign_up_hint_email"
-                android:inputType="text|textEmailAddress"/>
+                android:inputType="text|textEmailAddress"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.34" />
+
+            <android.support.v4.widget.Space
+            android:layout_width="0px"
+            android:layout_height="8dp"/>
+
+            <EditText
+                android:id="@+id/fragment_sign_up_et_password"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:hint="@string/sign_up_hint_password"
+                android:inputType="text|textPassword"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.59" />
 
             <android.support.v4.widget.Space
                 android:layout_width="0px"
                 android:layout_height="8dp"/>
 
             <EditText
-                android:id="@+id/fragment_sign_up_et_password"
+                android:id="@+id/fragment_sign_up_et_password_confirm"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/sign_up_hint_password"
-                android:inputType="text|textPassword"/>
-
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:hint="@string/sign_up_hint_password_confirm"
+                android:inputType="text|textPassword"
+                android:background="@drawable/edittext"
+                android:textColor="@color/app_white"
+                android:layout_weight="0.59" />
             <android.support.v4.widget.Space
                 android:layout_width="0px"
                 android:layout_height="16dp"/>
 
             <Button
                 android:id="@+id/fragment_sign_up_btn"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
+                android:layout_width="308dp"
+                android:layout_height="64dp"
                 android:text="@string/auth_sign_up"
                 android:textAllCaps="false"
                 android:textColor="@color/app_white"/>

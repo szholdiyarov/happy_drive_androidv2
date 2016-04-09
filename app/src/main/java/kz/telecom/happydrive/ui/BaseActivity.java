@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
@@ -22,6 +23,7 @@ import com.squareup.otto.Subscribe;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
@@ -95,6 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public ActionBar initToolbar(@IdRes int toolbarId) {
         Toolbar toolbar = (Toolbar) findViewById(toolbarId);
+
         if (toolbar == null) {
             throw new Resources.NotFoundException("Toolbar not found");
         }
