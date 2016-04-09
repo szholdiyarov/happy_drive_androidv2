@@ -280,7 +280,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
             String userText = card.getFirstName();
             if (!TextUtils.isEmpty(card.getLastName())) {
-                userText += card.getLastName();
+                userText += " " + card.getLastName();
             }
 
             userNameTextView.setText(userText);
