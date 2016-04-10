@@ -32,4 +32,10 @@
         <item name="android:textColorHint">#acacac</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <style name="FacebookLoginButton" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/facebook_login_button_color</item>
+    </style>
+    <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/google_sign_in_button_color</item>
+    </style>
 </resources>

@@ -75,21 +75,28 @@ public class AuthFragment extends BaseFragment implements View.OnClickListener,
         ViewCompat.setBackgroundTintList(signUpButton, tintList);
         signUpButton.setOnClickListener(this);
 
-        SignInButton gSignInButton = (SignInButton) view.findViewById(R.id.google_login_button);
-        gSignInButton.setSize(SignInButton.SIZE_WIDE);
+        Button gSignInButton = (Button) view.findViewById(R.id.google_login_button);
+//        gSignInButton.setSize(SignInButton.SIZE_WIDE);
         gSignInButton.setOnClickListener(this);
 
-        LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        Button facebookLoginButton = (Button) view.findViewById(R.id.login_button);
+        final LoginButton loginButton = new LoginButton(getContext(), null, 0);
+        facebookLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginButton.performClick();
+            }
+        });
         loginButton.setReadPermissions("email");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, this);
 
 //        loginButton.
         // Set appropriate icon size.
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.com_facebook_button_icon);
-        drawable.setBounds(0, 0, (int) (drawable.getIntrinsicWidth() * 1.45F),
-                        (int) (drawable.getIntrinsicHeight() * 1.45F));
-        loginButton.setCompoundDrawables(drawable, null, null, null);
+//        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.com_facebook_button_icon);
+//        drawable.setBounds(0, 0, (int) (drawable.getIntrinsicWidth() * 1.45F),
+//                        (int) (drawable.getIntrinsicHeight() * 1.45F));
+//        loginButton.setCompoundDrawables(drawable, null, null, null);
     }
 
     @Override
