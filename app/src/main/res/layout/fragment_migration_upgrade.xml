@@ -42,7 +42,6 @@
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
                 android:hint="@string/sign_in_hint_email"
                 android:inputType="text|textEmailAddress" />
 
@@ -56,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Сохранить"
-                android:textAllCaps="false"
+                android:textAllCaps="true"
                 android:textColor="@color/app_white" />
         </LinearLayout>
     </ScrollView>

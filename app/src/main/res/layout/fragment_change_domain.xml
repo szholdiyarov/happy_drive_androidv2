@@ -5,6 +5,8 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_horizontal"
+    android:paddingLeft="@dimen/auth_left_right_padding"
+    android:paddingRight="@dimen/auth_left_right_padding"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar_auth" />
@@ -16,7 +18,7 @@
     <EditText
         android:id="@+id/fragment_change_domain_et"
         style="@style/Widget.EditText.Auth"
-        android:layout_width="260dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Укажите новый домен"
         android:inputType="text|textNoSuggestions" />
@@ -27,9 +29,10 @@
 
     <Button
         android:id="@+id/fragment_change_domain_btn"
-        android:layout_width="268dp"
+        android:theme="@style/SignInSingUpBorderlessButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Установить"
-        android:textAllCaps="false"
+        android:textAllCaps="true"
         android:textColor="@color/app_white" />
 </LinearLayout>
