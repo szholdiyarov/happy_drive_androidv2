@@ -38,4 +38,7 @@
     <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/google_sign_in_button_color</item>
     </style>
+    <style name="SignInSingUp" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+    </style>
 </resources>
