@@ -39,7 +39,6 @@
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
                 android:hint="@string/sign_in_hint_password"
                 android:inputType="text|textPassword" />
 
@@ -52,10 +51,9 @@
                 android:theme="@style/SignInSingUpButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
                 android:text="@string/sign_in_btn"
                 android:gravity="center"
-                android:textAllCaps="false"
+                android:textAllCaps="true"
                 android:textSize="16sp"
                 android:textColor="@color/app_white" />
 

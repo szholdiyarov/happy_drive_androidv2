@@ -3,6 +3,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+    android:background="@drawable/default_bkg"
               android:orientation="vertical">
 
 <include
@@ -18,15 +19,15 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="16dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/auth_left_right_padding"
+            android:paddingRight="@dimen/auth_left_right_padding"
             android:paddingTop="30dp"
             tools:ignore="MissingPrefix">
 
         <EditText
                 android:id="@+id/etOldPassword"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password1"
                 android:inputType="text|textPassword"/>
@@ -38,7 +39,7 @@
         <EditText
                 android:id="@+id/etPassword1"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/change_pwd_hint_password2"
                 android:inputType="text|textPassword"/>
@@ -50,7 +51,7 @@
         <EditText
                 android:id="@+id/etPassword2"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="260dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Повторите новый пароль"
                 android:inputType="text|textPassword"
@@ -62,9 +63,10 @@
 
         <Button
                 android:id="@+id/bChangePassword"
-                android:layout_width="260dp"
+                android:theme="@style/SignInSingUpButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
+                android:textAllCaps="true"
                 android:text="Сменить"
                 android:textColor="@color/app_white"/>
 
