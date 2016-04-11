@@ -39,10 +39,10 @@
     <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/google_sign_in_button_color</item>
     </style>
-    <style name="SignInSingUp" parent="Theme.AppCompat.Light">
+    <style name="SignInSingUpBorderlessButton" parent="Theme.AppCompat.Light">
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>
-    <style name="SignInButton" parent="Widget.AppCompat.Button">
+    <style name="SignInSingUpButton" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 </resources>

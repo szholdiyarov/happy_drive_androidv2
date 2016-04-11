@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -30,6 +32,7 @@ import kz.telecom.happydrive.ui.BaseActivity;
 public class SignUpFragment extends BaseFragment implements View.OnClickListener {
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
+    private EditText mPasswordRepeatEditText;
     private Button mButton;
 
     boolean isProcessing = false;
@@ -56,6 +59,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
         mEmailEditText = (EditText) view.findViewById(R.id.fragment_sign_up_et_email);
         mPasswordEditText = (EditText) view.findViewById(R.id.fragment_sign_up_et_password);
+        mPasswordRepeatEditText = (EditText) view.findViewById(R.id.fragment_sign_up_et_password_repeat);
 
         ColorStateList tintList = ContextCompat.getColorStateList(getContext(), R.color.auth_btn_accent);
         mButton = (Button) view.findViewById(R.id.fragment_sign_up_btn);
@@ -81,12 +85,26 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View view) {
         if (view.getId() == R.id.fragment_sign_up_btn) {
             signUp(mEmailEditText.getText().toString(),
-                    mPasswordEditText.getText().toString());
+                    mPasswordEditText.getText().toString(), mPasswordRepeatEditText.getText().toString());
         }
     }
 
-    private void signUp(final String email, final String password) {
+    private void signUp(final String email, final String password, final String passwordRepeat) {
         toggleViewStates(isProcessing = true);
+        // hide keyboard
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+        //
+        if (!password.equals(passwordRepeat)) {
+            Snackbar.make(getView(), R.string.sign_up_repeat_password_does_not_match, Snackbar.LENGTH_LONG).show();
+            toggleViewStates(isProcessing = false);
+            mPasswordEditText.setText("");
+            mPasswordRepeatEditText.setText("");
+            return;
+        }
         new Thread() {
             @Override
             public void run() {
@@ -123,7 +141,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
                                             .setAction(R.string.retry, new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    signUp(email, password);
+                                                    signUp(email, password, passwordRepeat);
                                                 }
                                             }).show();
                                 } else if (e instanceof ApiResponseError) {

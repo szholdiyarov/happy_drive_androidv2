@@ -18,15 +18,15 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="16dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:paddingTop="40dp"
             tools:ignore="MissingPrefix">
 
             <EditText
                 android:id="@+id/fragment_sign_up_et_email"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/sign_up_hint_email"
                 android:inputType="text|textEmailAddress"/>
@@ -38,9 +38,21 @@
             <EditText
                 android:id="@+id/fragment_sign_up_et_password"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/sign_up_hint_password"
+                android:inputType="text|textPassword"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0px"
+                android:layout_height="8dp"/>
+
+            <EditText
+                android:id="@+id/fragment_sign_up_et_password_repeat"
+                style="@style/Widget.EditText.Auth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/sign_up_hint_password_repeat"
                 android:inputType="text|textPassword"/>
 
             <android.support.v4.widget.Space
@@ -49,10 +61,11 @@
 
             <Button
                 android:id="@+id/fragment_sign_up_btn"
-                android:layout_width="260dp"
+                android:theme="@style/SignInSingUpButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/auth_sign_up"
-                android:textAllCaps="false"
+                android:textAllCaps="true"
                 android:textColor="@color/app_white"/>
         </LinearLayout>
     </ScrollView>

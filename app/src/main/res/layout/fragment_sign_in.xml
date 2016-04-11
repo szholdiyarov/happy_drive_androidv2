@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/default_bkg"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar_auth" />
@@ -51,7 +50,7 @@
 
             <Button
                 android:id="@+id/fragment_sign_in_btn_sign_in"
-                android:theme="@style/SignInButton"
+                android:theme="@style/SignInSingUpButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -68,7 +67,7 @@
             <Button
                 android:id="@+id/fragment_sign_in_btn_password_recovery"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:theme="@style/SignInSingUp"
+                android:theme="@style/SignInSingUpBorderlessButton"
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +81,7 @@
             <Button
                 android:id="@+id/fragment_sign_in_btn_sign_up"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:theme="@style/SignInSingUp"
+                android:theme="@style/SignInSingUpBorderlessButton"
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
