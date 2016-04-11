@@ -10,4 +10,7 @@
     <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
         <item name="android:colorButtonNormal">@color/google_sign_in_button_color</item>
     </style>
+    <style name="SignInButton" parent="Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+    </style>
 </resources>
