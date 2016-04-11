@@ -78,25 +78,23 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:theme="@style/SignInSingUpBorderlessButton"
             android:layout_width="230dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="@string/auth_sign_in"
-            android:textColor="@color/auth_text_color"
             android:textAllCaps="false"
-            android:textSize="16sp"/>
-
-        <android.support.v4.widget.Space
-            android:layout_width="0px"
-            android:layout_height="2dp"/>
+            android:textSize="14sp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_up"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:theme="@style/SignInSingUpBorderlessButton"
             android:layout_width="230dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="@string/auth_sign_up"
-            android:textColor="@color/auth_text_color"
             android:textAllCaps="false"
-            android:textSize="16sp"/>
+            android:textSize="14sp"
+            android:gravity="center"/>
     </LinearLayout>
 </ScrollView>

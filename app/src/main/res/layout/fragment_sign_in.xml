@@ -84,11 +84,12 @@
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:clickable="true"
                 android:text="@string/sign_in_sign_up"
-                android:textColor="@color/app_white"
+                android:textColor="@color/auth_tv_password_recovery"
                 android:textSize="14sp"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:gravity="center" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

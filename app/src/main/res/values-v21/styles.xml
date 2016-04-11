@@ -12,6 +12,7 @@
     </style>
     <style name="SignInSingUpBorderlessButton" parent="Theme.AppCompat.Light">
         <item name="android:colorControlHighlight">@color/colorPrimary</item>
+        <item name="android:textColor">@color/auth_tv_password_recovery</item>
     </style>
     <style name="SignInSingUpButton" parent="Widget.AppCompat.Button">
         <item name="android:colorButtonNormal">@color/colorAccent</item>
