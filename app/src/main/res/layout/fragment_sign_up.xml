@@ -28,6 +28,7 @@
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="6dp"
                 android:hint="@string/sign_up_hint_email"
                 android:inputType="text|textEmailAddress"/>
 
@@ -40,6 +41,7 @@
                 style="@style/Widget.EditText.Auth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="6dp"
                 android:hint="@string/sign_up_hint_password"
                 android:inputType="text|textPassword"/>
 
@@ -53,6 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/sign_up_hint_password_repeat"
+                android:layout_margin="6dp"
                 android:inputType="text|textPassword"/>
 
             <android.support.v4.widget.Space

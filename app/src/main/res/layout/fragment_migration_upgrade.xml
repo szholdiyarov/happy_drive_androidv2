@@ -17,17 +17,18 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingBottom="16dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/auth_left_right_padding"
+            android:paddingRight="@dimen/auth_left_right_padding"
             android:paddingTop="24dp"
             tools:ignore="MissingPrefix,RtlHardcoded,RtlSymmetry">
 
             <TextView
                 fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="252dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:gravity="center"
+                android:layout_margin="6dp"
                 android:text="Мы заметили, что у Вас не установлен электронный адрес. Пожалуйста, введите свой электронный адрес внизу"
                 android:textColor="@color/auth_tv_password_recovery"
                 android:textSize="15sp" />
@@ -39,8 +40,9 @@
             <EditText
                 android:id="@+id/fragment_migration_upgrade_et_email"
                 style="@style/Widget.EditText.Auth"
-                android:layout_width="252dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="6dp"
                 android:hint="@string/sign_in_hint_email"
                 android:inputType="text|textEmailAddress" />
 
@@ -50,7 +52,8 @@
 
             <Button
                 android:id="@+id/fragment_migration_upgrade_btn_sign_in"
-                android:layout_width="260dp"
+                android:theme="@style/SignInSingUpBorderlessButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Сохранить"
                 android:textAllCaps="false"
