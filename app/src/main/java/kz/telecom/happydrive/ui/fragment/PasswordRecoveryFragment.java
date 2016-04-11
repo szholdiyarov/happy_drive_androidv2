@@ -1,5 +1,6 @@
 package kz.telecom.happydrive.ui.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -14,8 +15,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
@@ -82,8 +87,26 @@ public class PasswordRecoveryFragment extends BaseFragment implements View.OnCli
         }
     }
 
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     private void restorePassword(final String email) {
         toggleViewStates(isProcessing = true);
+        //
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+        //
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
+        if (!matcher.find()) {
+            int stringId = email.isEmpty() ? R.string.password_recovery_empty_email : R.string.password_recovery_email_invalid;
+            Snackbar.make(getView(), stringId, Snackbar.LENGTH_LONG).show();
+            toggleViewStates(isProcessing = false);
+            return;
+        }
+        //
         new Thread() {
             @Override
             public void run() {

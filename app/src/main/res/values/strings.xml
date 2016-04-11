@@ -43,7 +43,8 @@
     <string name="password_recovery_btn">Отправить</string>
     <string name="password_recovery_successful_msg">На указанную Вами электронную почту отправлено
         письмо с дальнейшими инструкциями для восстановления пароля</string>
-
+    <string name="password_recovery_empty_email">Нужно указать e-mail</string>
+    <string name="password_recovery_email_invalid">Неправильно указан e-mail</string>
     <!-- drawer menu -->
     <string name="action_card">Облачная визитка</string>
     <string name="action_cloud">Облачное хранилище</string>
