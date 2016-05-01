@@ -34,132 +34,147 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="48dp"
+            android:paddingBottom="32dp"
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
-            android:paddingTop="64dp"
+            android:paddingTop="48dp"
             tools:ignore="MissingPrefix">
 
-            <LinearLayout
+            <android.support.v4.widget.Space
+                android:id="@+id/horz_divider"
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/fragment_cloud_fl_photo"
+                fontPath="fonts/Roboto-Light.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="154dp"
-                android:orientation="horizontal">
+                android:layout_toLeftOf="@id/horz_divider"
+                android:drawablePadding="6dp"
+                android:drawableTop="@drawable/ic_card_photo_112p"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="ФОТОГРАФИИ"
+                android:textColor="@color/app_white"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/fragment_cloud_fl_photo"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_photo_112p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="ФОТОГРАФИИ"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/fragment_cloud_fl_photo_counter"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@id/fragment_cloud_fl_photo"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bkg_counter"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#2f2f2f"
+                android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/fragment_cloud_fl_video"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_video_112p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="ВИДЕОЗАПИСИ"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/fragment_cloud_fl_video"
+                fontPath="fonts/Roboto-Light.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="154dp"
+                android:layout_toRightOf="@id/horz_divider"
+                android:drawablePadding="6dp"
+                android:drawableTop="@drawable/ic_card_video_112p"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="ВИДЕОЗАПИСИ"
+                android:textColor="@color/app_white"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/fragment_cloud_fl_video_counter"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@id/fragment_cloud_fl_video"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bkg_counter"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#2f2f2f"
+                android:textSize="11sp" />
 
             <android.support.v4.widget.Space
                 android:layout_width="0px"
                 android:layout_height="32dp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/fragment_cloud_fl_music"
+                fontPath="fonts/Roboto-Light.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="154dp"
-                android:orientation="horizontal">
+                android:layout_below="@id/fragment_cloud_fl_photo"
+                android:layout_marginTop="32dp"
+                android:layout_toLeftOf="@id/horz_divider"
+                android:drawablePadding="6dp"
+                android:drawableTop="@drawable/ic_card_music_112p"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="МУЗЫКА"
+                android:textColor="@color/app_white"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/fragment_cloud_fl_music"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_music_112p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="МУЗЫКА"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/fragment_cloud_fl_music_counter"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@id/fragment_cloud_fl_music"
+                android:layout_alignTop="@id/fragment_cloud_fl_music"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bkg_counter"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#2f2f2f"
+                android:textSize="11sp" />
 
-                <android.support.v4.widget.Space
-                    android:layout_width="32dp"
-                    android:layout_height="0px" />
+            <TextView
+                android:id="@+id/fragment_cloud_fl_documents"
+                fontPath="fonts/Roboto-Light.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="154dp"
+                android:layout_alignTop="@id/fragment_cloud_fl_music"
+                android:layout_toRightOf="@id/horz_divider"
+                android:drawablePadding="6dp"
+                android:drawableTop="@drawable/ic_card_doc_112p"
+                android:gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="ДОКУМЕНТЫ"
+                android:textColor="@color/app_white"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/fragment_cloud_fl_documents"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    android:layout_width="0px"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_doc_112p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="ДОКУМЕНТЫ"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
-            </LinearLayout>
-        </LinearLayout>
+            <TextView
+                android:id="@+id/fragment_cloud_fl_documents_counter"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@id/fragment_cloud_fl_documents"
+                android:layout_alignTop="@id/fragment_cloud_fl_documents"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bkg_counter"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#2f2f2f"
+                android:textSize="11sp" />
+        </RelativeLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/fragment_card_cloud_switcher_container"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/fragment_card_cloud_switcher_card"
-            fontPath="fonts/Roboto-Light.ttf"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/card_cloud_switch_bkg"
-            android:drawableLeft="@drawable/ic_cloud_white_36p"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="28dp"
-            android:text="Визитка"
-            android:textColor="@color/app_white"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/fragment_card_cloud_switcher_cloud"
-            fontPath="fonts/Roboto-Light.ttf"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/card_cloud_switch_bkg"
-            android:drawableLeft="@drawable/ic_cloud_white_36p"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="28dp"
-            android:text="Облачное хранилище"
-            android:textColor="@color/app_white"
-            android:textSize="14sp" />
-    </LinearLayout>
 </LinearLayout>

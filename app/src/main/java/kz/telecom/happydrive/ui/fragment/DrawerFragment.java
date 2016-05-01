@@ -88,7 +88,7 @@ public class DrawerFragment extends BaseFragment {
             }.start();
         }
 
-        setCheckedDrawerItemById(R.id.action_card);
+        setCheckedDrawerItemById(R.id.action_main);
         DataManager.getInstance().bus.register(this);
     }
 

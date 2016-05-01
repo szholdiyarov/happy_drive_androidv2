@@ -3,8 +3,9 @@
     <item name="action_playback" type="id" />
     <item name="stub_error" type="id" />
 
-    <item name="action_change_background" type="id" />
     <item name="action_edit_card" type="id" />
+    <item name="action_change_background" type="id" />
+    <item name="action_change_avatar" type="id" />
     <item name="action_change_password" type="id" />
     <item name="action_change_domain" type="id" />
     <item name="action_toggle_card_visibility" type="id" />

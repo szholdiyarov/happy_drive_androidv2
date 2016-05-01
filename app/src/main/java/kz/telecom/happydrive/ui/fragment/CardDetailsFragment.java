@@ -9,19 +9,23 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.soundcloud.android.crop.Crop;
@@ -44,6 +48,7 @@ import kz.telecom.happydrive.data.network.GlideCacheSignature;
 import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.CardEditActivity;
+import kz.telecom.happydrive.ui.CardMenuActivity;
 import kz.telecom.happydrive.ui.CatalogItemActivity;
 import kz.telecom.happydrive.ui.MainActivity;
 import kz.telecom.happydrive.ui.StorageActivity;
@@ -69,9 +74,10 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
     private Uri mCroppedFileUri;
 
-    public static BaseFragment newInstance(Card card) {
+    public static BaseFragment newInstance(Card card, boolean showControls) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_CARD, card);
+        bundle.putBoolean("show:controls", showControls);
 
         BaseFragment fragment = new CardDetailsFragment();
         fragment.setArguments(bundle);
@@ -81,7 +87,13 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        try {
+            if (getParentFragment() == null) {
+                setRetainInstance(true);
+            }
+        } catch (IllegalStateException ignored) {
+            Log.i(TAG, "can't have a retained instance");
+        }
     }
 
     @Override
@@ -116,55 +128,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
         final User user = User.currentUser();
         if (!isCardUpdating && mCard != null && user != null) {
-            new Thread() {
-                @Override
-                public void run() {
-                    isCardUpdating = true;
-
-                    try {
-                        if (user.card.compareTo(mCard) == 0) {
-                            if (user.updateCard()) {
-                                mCard = user.card;
-                            }
-                        } else {
-                            mCard = ApiClient.getCard(mCard.id);
-                        }
-
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
-                                }
-                            });
-                        }
-                    } catch (final Exception e) {
-                        final Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (e instanceof ApiResponseError && ((ApiResponseError) e)
-                                            .apiErrorCode == ApiResponseError.API_RESPONSE_CODE_CARD_INVISIBLE) {
-                                        Toast.makeText(activity, "Визитка закрыта из общего доступа",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                    isCardUpdating = false;
-                }
-            }.start();
+            updateCard(user);
         }
 
         updateView(view, mCard);
     }
 
     public void updateView(View view, final Card card) {
-        final Button createButton = (Button) view.findViewById(R.id.fragment_card_btn_create);
+        final boolean showControls = getArguments().getBoolean("show:controls");
+
+        final View createContainer = view.findViewById(R.id.fragment_card_details_create_container);
         final ImageButton photoButton = (ImageButton) view.findViewById(R.id.fragment_card_img_button_photo);
         final ImageButton shareButton = (ImageButton) view.findViewById(R.id.fragment_card_img_button_share);
         final View aboutContainer = view.findViewById(R.id.fragment_card_rl_about_container);
@@ -174,23 +147,48 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             portfolioContainer.setVisibility(View.GONE);
             photoButton.setVisibility(View.GONE);
             shareButton.setVisibility(View.GONE);
-            createButton.setVisibility(View.VISIBLE);
-            createButton.setOnClickListener(new View.OnClickListener() {
+            createContainer.setVisibility(View.VISIBLE);
+            createContainer.findViewById(R.id.fragment_card_btn_create).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(getContext(), CardEditActivity.class));
                 }
             });
         } else {
-            createButton.setVisibility(View.GONE);
+            createContainer.setVisibility(View.GONE);
             shareButton.setVisibility(View.VISIBLE);
 
             if (card.publicFolders.size() > 0) {
                 portfolioContainer.setVisibility(View.VISIBLE);
-                portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_photo)
-                        .setOnClickListener(this);
-                portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_video)
-                        .setOnClickListener(this);
+                final TextView photoBtn = (TextView) portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_photo);
+                photoBtn.setOnClickListener(this);
+
+                TextView photoCounterTextView = (TextView) portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_photo_counter);
+                TextView videoCounterTextView = (TextView) portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_video_counter);
+                for (FolderObject obj : mCard.publicFolders) {
+                    if (obj.getType() == ApiObject.TYPE_FOLDER_PHOTO) {
+                        photoCounterTextView.setText(obj.filesCount + "");
+                    } else if (obj.getType() == ApiObject.TYPE_FOLDER_VIDEO) {
+                        videoCounterTextView.setText(obj.filesCount + "");
+                    }
+                }
+
+                final TextView videoBtn = (TextView) portfolioContainer.findViewById(R.id.fragment_card_tv_portfolio_video);
+                videoBtn.setOnClickListener(this);
+
+                final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
+                scrollView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (scrollView.getMeasuredHeight() < scrollView.getChildAt(0).getMeasuredHeight()) {
+                            photoBtn.setText(null);
+                            photoBtn.setTextSize(.0f);
+                            videoBtn.setText(null);
+                            videoBtn.setTextSize(.0f);
+                        }
+                    }
+                });
+
             } else {
                 portfolioContainer.setVisibility(View.GONE);
             }
@@ -227,32 +225,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             }
 
             View cardEditBtn = view.findViewById(R.id.fragment_card_toolbar_fake_card_edit);
-            View switchViewContainer = view.findViewById(R.id.fragment_card_cloud_switcher_container);
-            if (card.compareTo(User.currentUser().card) == 0) {
-                switchViewContainer.setVisibility(View.VISIBLE);
-                final View cardSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_card);
-                cardSwitcher.setClickable(true);
-                cardSwitcher.setSelected(true);
-
-                View cloudSwitcher = switchViewContainer.findViewById(R.id.fragment_card_cloud_switcher_cloud);
-                cloudSwitcher.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        v.setSelected(true);
-                        cardSwitcher.setSelected(false);
-                        ((MainActivity) getActivity()).drawerMenuItemSelect(R.id.action_cloud);
-                    }
-                });
-
+            if (card.compareTo(User.currentUser().card) == 0 && showControls) {
                 cardEditBtn.setVisibility(View.VISIBLE);
                 cardEditBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(getContext(), CardEditActivity.class));
+                        startActivity(new Intent(getContext(), CardMenuActivity.class));
                     }
                 });
 
-                photoButton.setVisibility(View.VISIBLE);
+                photoButton.setVisibility(View.GONE);
                 photoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -279,7 +261,6 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
                 });
             } else {
                 photoButton.setVisibility(View.GONE);
-                switchViewContainer.setVisibility(View.GONE);
                 cardEditBtn.setVisibility(View.GONE);
             }
 
@@ -295,7 +276,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             TextView positionTextView = (TextView) view.findViewById(R.id.fragment_card_tv_position);
             if (!TextUtils.isEmpty(card.getPosition())) {
                 positionTextView.setVisibility(View.VISIBLE);
-                positionTextView.setText(card.getPosition().toUpperCase());
+                positionTextView.setText(card.getPosition());
             } else {
                 positionTextView.setVisibility(View.GONE);
             }
@@ -303,7 +284,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
             TextView workplaceTextView = (TextView) view.findViewById(R.id.fragment_card_tv_work_place);
             if (!TextUtils.isEmpty(card.getWorkPlace())) {
                 workplaceTextView.setVisibility(View.VISIBLE);
-                workplaceTextView.setText(card.getWorkPlace().toUpperCase());
+                workplaceTextView.setText(card.getWorkPlace());
             } else {
                 workplaceTextView.setVisibility(View.GONE);
             }
@@ -393,7 +374,7 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         final ImageButton audioImgBtn = (ImageButton) view.findViewById(R.id.fragment_card_img_button_audio);
-        if (!Utils.isEmpty(card.getAudio())) {
+        if (card != null && !Utils.isEmpty(card.getAudio())) {
             audioImgBtn.setVisibility(View.VISIBLE);
             audioImgBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -406,17 +387,54 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
 
         final ImageView userPhoto = (ImageView) view.findViewById(R.id.fragment_card_img_view_avatar);
-        NetworkManager.getGlide()
-                .load(card.getAvatar())
-                .signature(card.compareTo(User.currentUser().card) == 0 ?
-                        GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
-                        GlideCacheSignature.foreignCacheKey(card.getAvatar()))
-                .placeholder(R.drawable.ic_drawer_placeholder)
-                .error(R.drawable.ic_drawer_placeholder)
-                .bitmapTransform(new CenterCrop(getContext()),
-                        new GlideRoundedCornersTransformation(getContext(),
-                                Utils.dipToPixels(64f, getResources().getDisplayMetrics()), 0))
-                .into(userPhoto);
+        if (card != null && card.getCategoryId() > 0) {
+            view.findViewById(R.id.fragment_card_v_info_container).setVisibility(View.VISIBLE);
+            NetworkManager.getGlide()
+                    .load(card.getAvatar())
+                    .signature(card.compareTo(User.currentUser().card) == 0 ?
+                            GlideCacheSignature.ownerAvatarKey(card.getAvatar()) :
+                            GlideCacheSignature.foreignCacheKey(card.getAvatar()))
+                    .placeholder(R.drawable.ic_drawer_placeholder)
+                    .error(R.drawable.ic_drawer_placeholder)
+                    .bitmapTransform(new CenterCrop(getContext()),
+                            new GlideRoundedCornersTransformation(getContext(),
+                                    Utils.dipToPixels(4f, getResources().getDisplayMetrics()), 0))
+                    .into(new ImageViewTarget<GlideDrawable>(userPhoto) {
+                        @Override
+                        protected void setResource(GlideDrawable resource) {
+                            userPhoto.setImageDrawable(resource);
+                            userPhoto.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (getView() != null) {
+                                        try {
+                                            final File imageFile = Utils.tempFileWithName(Environment.DIRECTORY_PICTURES, "temp_card", "jpg");
+                                            Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+                                            PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext())
+                                                    .edit()
+                                                    .putString("temp_card_file_loc", imageFile.getAbsolutePath())
+                                                    .apply();
+                                        } catch (Exception ignored) {
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+        } else {
+            userPhoto.setImageDrawable(null);
+            view.findViewById(R.id.fragment_card_v_info_container).setVisibility(View.GONE);
+
+            try {
+                final File imageFile = Utils.tempFileWithName(Environment.DIRECTORY_PICTURES, "temp_card", "jpg");
+                Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+                PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext())
+                        .edit()
+                        .putString("temp_card_file_loc", imageFile.getAbsolutePath())
+                        .apply();
+            } catch (Exception ignored) {
+            }
+        }
 
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -682,11 +700,61 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
+    private void updateCard(final User user) {
+        new Thread() {
+            @Override
+            public void run() {
+                isCardUpdating = true;
+
+                try {
+                    if (user.card.compareTo(mCard) == 0) {
+                        if (user.updateCard()) {
+                            mCard = user.card;
+                        }
+                    } else {
+                        mCard = ApiClient.getCard(mCard.id);
+                    }
+
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DataManager.getInstance().bus.post(new Card.OnCardUpdatedEvent(mCard));
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    final Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (e instanceof ApiResponseError && ((ApiResponseError) e)
+                                        .apiErrorCode == ApiResponseError.API_RESPONSE_CODE_CARD_INVISIBLE) {
+                                    Toast.makeText(activity, "Визитка закрыта из общего доступа",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                }
+
+                isCardUpdating = false;
+            }
+        }.start();
+    }
+
     @Subscribe
     @SuppressWarnings("unused")
     public void onCardUpdate(Card.OnCardUpdatedEvent event) {
         updateView(getView(), event.card);
-        getActivity().supportInvalidateOptionsMenu();
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onStorageSizeUpdated(User.OnStorageSizeUpdatedEvent event) {
+        updateCard(User.currentUser());
     }
 
     @Override

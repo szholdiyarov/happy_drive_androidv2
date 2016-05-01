@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
+        android:id="@+id/action_block_main"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_main"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/action_main" />
+    </group>
+    <group
         android:id="@+id/action_block_main_1"
         android:checkableBehavior="single">
         <item
             android:id="@+id/action_card"
             android:icon="@drawable/ic_drawer_card"
             android:title="@string/action_card" />
-    </group>
-    <group
-        android:id="@+id/action_block_main_2"
-        android:checkableBehavior="single">
         <item
-            android:id="@+id/action_cloud"
-            android:icon="@drawable/ic_drawer_cloud"
-            android:title="@string/action_cloud" />
+            android:id="@+id/action_favourite"
+            android:icon="@drawable/ic_drawer_favourite"
+            android:title="@string/action_favourite" />
     </group>
     <group
         android:id="@+id/action_block_main_3"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/action_favourite"
-            android:icon="@drawable/ic_drawer_favourite"
-            android:title="@string/action_favourite" />
+            android:id="@+id/action_promote"
+            android:checkable="false"
+            android:icon="@drawable/ic_drawer_promote"
+            android:title="@string/action_promote" />
     </group>
     <group
         android:id="@+id/action_block_main_4"
@@ -44,14 +49,5 @@
             android:checkable="false"
             android:icon="@drawable/ic_drawer_settings"
             android:title="@string/action_settings" />
-    </group>
-    <group
-        android:id="@+id/action_block_extra_2"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/action_promote"
-            android:checkable="false"
-            android:icon="@drawable/ic_drawer_promote"
-            android:title="@string/action_promote" />
     </group>
 </menu>

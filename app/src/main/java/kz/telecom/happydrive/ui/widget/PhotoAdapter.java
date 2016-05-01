@@ -1,6 +1,7 @@
 package kz.telecom.happydrive.ui.widget;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -57,7 +58,7 @@ public class PhotoAdapter extends StorageAdapter {
             if (object.isFolder()) {
                 textView.setVisibility(View.VISIBLE);
                 textView.setText(((FolderObject) object).name);
-                imageView.setImageResource(R.drawable.image_album_folder);
+                imageView.setImageDrawable(new ColorDrawable(0xee141631));
                 return;
             } else {
                 textView.setVisibility(View.GONE);

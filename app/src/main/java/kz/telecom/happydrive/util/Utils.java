@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import kz.telecom.happydrive.R;
-import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 
 /**
@@ -77,6 +74,13 @@ public class Utils {
     public static File tempFile(String env, String extension) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String fileName = extension.toUpperCase() + "_" + timestamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(env);
+
+        return File.createTempFile(fileName, "." + extension, storageDir);
+    }
+
+    public static File tempFileWithName(String env, String name, String extension) throws IOException {
+        String fileName = extension.toUpperCase() + "_" + name + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(env);
 
         return File.createTempFile(fileName, "." + extension, storageDir);
@@ -184,12 +188,8 @@ public class Utils {
     }
 
     public static void takeScreenshot(View view, File file) throws IOException {
-        Drawable drawable = view.getBackground();
-        view.setBackgroundResource(R.drawable.card_share_bkg);
         view.setDrawingCacheEnabled(true);
         Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setBackgroundDrawable(drawable);
-        view.setPadding(0, 0, 0, 0);
         view.setDrawingCacheEnabled(false);
 
         FileOutputStream outputStream = new FileOutputStream(file);

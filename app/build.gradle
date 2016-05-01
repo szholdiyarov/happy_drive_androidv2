@@ -9,7 +9,7 @@ android {
         applicationId "kz.telecom.happydrive"
         minSdkVersion 16
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
+        versionCode 15
         versionName "2.0"
     }
 

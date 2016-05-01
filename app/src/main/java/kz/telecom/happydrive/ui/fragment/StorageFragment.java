@@ -132,8 +132,16 @@ public class StorageFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        BaseActivity activity = (BaseActivity) getActivity();
-        activity.getSupportActionBar().setTitle(mFolderObject.name);
+        view.findViewById(R.id.fragment_storage_toolbar_fake_drawer_back)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getActivity().onBackPressed();
+                    }
+                });
+
+        TextView toolbarTextView = (TextView) view.findViewById(R.id.fragment_storage_toolbar_fake_tv_title);
+        toolbarTextView.setText(mFolderObject.name.toUpperCase());
 
         mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.fragment_storage_progress_bar);
         mProgressBar.hide();

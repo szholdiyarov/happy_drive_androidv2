@@ -39,7 +39,7 @@ public class ApiClient {
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
-    private static final String API_PATH_CATEGORY_CARDS = "card/list/";
+    private static final String API_PATH_CATEGORY_CARDS = "card/list/v2/";
     private static final String API_PATH_CARD_STAR = "card/star/";
     private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
     private static final String API_PATH_CARD_VISIBILITY = "card/visibility/";

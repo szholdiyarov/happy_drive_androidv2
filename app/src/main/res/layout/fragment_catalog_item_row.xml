@@ -3,29 +3,29 @@
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:descendantFocusability="blocksDescendants"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:ignore="MissingPrefix">
 
     <ImageView
         android:id="@+id/avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/user_photo" />
+        android:src="@drawable/user_photo_circle" />
 
     <ImageButton
         android:id="@+id/star"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="12dp"
         android:background="@null"
         android:src="@drawable/ic_favourite_24p" />
 
     <TextView
         android:id="@+id/name"
-        fontPath="fonts/Roboto-Medium.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/avatar"
@@ -35,12 +35,11 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Bob Marley"
-        android:textColor="@color/app_black"
-        android:textSize="18sp" />
+        android:textColor="#d4d4de"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/description"
-        fontPath="fonts/Roboto-Light.ttf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/name"
@@ -49,6 +48,6 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Description"
-        android:textColor="@color/app_black"
-        android:textSize="16sp" />
+        android:textColor="#9a9ab0"
+        android:textSize="14sp" />
 </RelativeLayout>

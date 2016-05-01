@@ -1,13 +1,10 @@
 package kz.telecom.happydrive.ui;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import kz.telecom.happydrive.R;
@@ -31,17 +28,11 @@ public class StorageActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_storage);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
-        ActionBar actionBar = initToolbar(toolbar);
-        actionBar.setBackgroundDrawable(new ColorDrawable(
-                ContextCompat.getColor(this, R.color.colorPrimary)));
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
+
+        setContentView(R.layout.activity_storage);
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();

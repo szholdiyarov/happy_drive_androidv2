@@ -39,48 +39,10 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/card_edit_top_logo" />
 
-    <LinearLayout
-        android:id="@+id/fragment_card_cloud_switcher_container"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/fragment_card_cloud_switcher_card"
-            fontPath="fonts/Roboto-Light.ttf"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/card_cloud_switch_bkg"
-            android:drawableLeft="@drawable/ic_cloud_white_36p"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="28dp"
-            android:text="Визитка"
-            android:textColor="@color/app_white"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/fragment_card_cloud_switcher_cloud"
-            fontPath="fonts/Roboto-Light.ttf"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/card_cloud_switch_bkg"
-            android:drawableLeft="@drawable/ic_cloud_white_36p"
-            android:drawablePadding="12dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="28dp"
-            android:text="Облачное хранилище"
-            android:textColor="@color/app_white"
-            android:textSize="14sp" />
-    </LinearLayout>
-
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fragment_card_cloud_switcher_container"
         android:layout_below="@id/fragment_card_fake_toolbar">
 
         <LinearLayout
@@ -93,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="32dp"
                 android:background="@drawable/card_block_bkg"
                 android:paddingBottom="16dp"
                 android:paddingLeft="20dp"
@@ -133,7 +95,7 @@
                     android:id="@+id/fragment_card_v_info_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="6dp"
+                    android:layout_marginLeft="12dp"
                     android:layout_toRightOf="@id/fragment_card_img_view_avatar"
                     android:orientation="vertical">
 
@@ -273,12 +235,51 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/fragment_card_btn_create"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/fragment_card_details_create_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Создать" />
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_create_card" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0px"
+                        android:layout_height="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Приветствуем Вас!"
+                        android:textColor="#2c2c2c"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:padding="8dp"
+                        android:text="СОЗДАЙТЕ ВИЗИТКУ В\nНЕСКОЛЬКО ШАГОВ"
+                        android:textColor="#949494"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:id="@+id/fragment_card_btn_create"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/promote_btn_bkg"
+                        android:paddingBottom="0px"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp"
+                        android:paddingTop="0px"
+                        android:text="СОЗДАТЬ ВИЗИТКУ"
+                        android:textColor="@color/app_white" />
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -328,25 +329,43 @@
                 android:id="@+id/fragment_card_rl_portfolio_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/fragment_card_tv_portfolio_photo"
-                    fontPath="fonts/Roboto-Light.ttf"
+                <FrameLayout
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_photo_86p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="ФОТОГРАФИИ"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_portfolio_photo"
+                        fontPath="fonts/Roboto-Light.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:drawablePadding="6dp"
+                        android:drawableTop="@drawable/ic_card_photo_86p"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="8dp"
+                        android:text="ФОТОГРАФИИ"
+                        android:textColor="@color/app_white"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_portfolio_photo_counter"
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bkg_counter"
+                        android:gravity="center"
+                        android:textColor="#2f2f2f"
+                        android:textSize="10sp" />
+                </FrameLayout>
 
                 <ImageButton
                     android:id="@+id/fragment_card_img_button_audio"
@@ -355,19 +374,37 @@
                     android:background="@null"
                     android:src="@drawable/ic_card_audio_60p" />
 
-                <TextView
-                    android:id="@+id/fragment_card_tv_portfolio_video"
-                    fontPath="fonts/Roboto-Light.ttf"
+                <FrameLayout
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:drawablePadding="6dp"
-                    android:drawableTop="@drawable/ic_card_video_86p"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="8dp"
-                    android:text="ВИДЕОЗАПИСИ"
-                    android:textColor="@color/app_white"
-                    android:textSize="15sp" />
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_portfolio_video"
+                        fontPath="fonts/Roboto-Light.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:drawablePadding="6dp"
+                        android:drawableTop="@drawable/ic_card_video_86p"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="8dp"
+                        android:text="ВИДЕОЗАПИСИ"
+                        android:textColor="@color/app_white"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/fragment_card_tv_portfolio_video_counter"
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bkg_counter"
+                        android:gravity="center"
+                        android:textColor="#2f2f2f"
+                        android:textSize="10sp" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

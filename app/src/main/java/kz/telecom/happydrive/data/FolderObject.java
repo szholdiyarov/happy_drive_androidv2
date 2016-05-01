@@ -12,19 +12,22 @@ public class FolderObject extends ApiObject {
     static final String API_FOLDER_NAME = "name";
     static final String API_IS_PUBLIC = "is_public";
     static final String API_TIMESTAMP = "timestamp";
+    static final String API_FILES_COUNT = "files_count";
 
     public final int id;
     public final String name;
     public final boolean isPublic;
     public final long timestamp;
+    public int filesCount;
 
     private int mType = TYPE_INTERNAL_NOT_SET;
 
-    public FolderObject(int id, String name, boolean isPublic, long timestamp) {
+    public FolderObject(int id, String name, boolean isPublic, long timestamp, int filesCount) {
         this.id = id;
         this.name = name;
         this.isPublic = isPublic;
         this.timestamp = timestamp;
+        this.filesCount = filesCount;
     }
 
     protected FolderObject(Parcel in) {
@@ -32,6 +35,7 @@ public class FolderObject extends ApiObject {
         this.name = in.readString();
         this.isPublic = in.readInt() != 0;
         this.timestamp = in.readLong();
+        this.filesCount = in.readInt();
     }
 
     FolderObject(JsonNode node) {
@@ -43,6 +47,7 @@ public class FolderObject extends ApiObject {
         this.name = node.get(API_FOLDER_NAME).asText(null);
         this.isPublic = node.get(API_IS_PUBLIC).asBoolean(false);
         this.timestamp = node.get(API_TIMESTAMP).asLong(0);
+        this.filesCount = node.get(API_FILES_COUNT).asInt(0);
     }
 
     @Override
@@ -82,6 +87,7 @@ public class FolderObject extends ApiObject {
         dest.writeString(name);
         dest.writeInt(isPublic ? 1 : 0);
         dest.writeLong(timestamp);
+        dest.writeInt(filesCount);
     }
 
     public static final Creator<FolderObject> CREATOR = new Creator<FolderObject>() {

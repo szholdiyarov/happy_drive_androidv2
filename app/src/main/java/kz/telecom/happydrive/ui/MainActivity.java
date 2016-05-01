@@ -24,12 +24,14 @@ import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.DataManager;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.GlideCacheSignature;
+import kz.telecom.happydrive.data.network.NetworkManager;
 import kz.telecom.happydrive.ui.fragment.BaseFragment;
 import kz.telecom.happydrive.ui.fragment.CardDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.CatalogFragment;
 import kz.telecom.happydrive.ui.fragment.CloudFragment;
 import kz.telecom.happydrive.ui.fragment.DrawerFragment;
-import kz.telecom.happydrive.ui.fragment.SettingsFragment;
+import kz.telecom.happydrive.ui.fragment.MainFragment;
 import kz.telecom.happydrive.ui.fragment.StarFragment;
 import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
@@ -57,7 +59,7 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
         User user = User.currentUser();
         if (savedInstanceState == null) {
             if (user != null) {
-                replaceContent(CardDetailsFragment.newInstance(user.card), false,
+                replaceContent(new MainFragment(), false,
                         FragmentTransaction.TRANSIT_NONE);
             }
 
@@ -125,16 +127,21 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 
     @Override
     public boolean onDrawerMenuItemSelected(int itemId) {
-        if (itemId == R.id.action_card) {
+        if (itemId == R.id.action_main) {
+            if (!(findDefaultContent() instanceof MainFragment)) {
+                replaceContent(new MainFragment(), false,
+                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
+        } else if (itemId == R.id.action_card) {
             if (!(findDefaultContent() instanceof CardDetailsFragment)) {
-                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card), false,
+                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card, false), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
-        } else if (itemId == R.id.action_cloud) {
-            if (!(findDefaultContent() instanceof CloudFragment)) {
-                replaceContent(new CloudFragment(), false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            }
+//        } else if (itemId == R.id.action_cloud) {
+//            if (!(findDefaultContent() instanceof CloudFragment)) {
+//                replaceContent(new CloudFragment(), false,
+//                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            }
         } else if (itemId == R.id.action_favourite) {
             if (!(findDefaultContent() instanceof StarFragment)) {
                 replaceContent(new StarFragment(), false,
@@ -154,6 +161,8 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 //            }
 //        } else if (itemId == R.id.action_about) {
 //            this.startActivity(new Intent(this, AboutActivity.class));
+        } else if (itemId == R.id.action_promote) {
+            startActivity(new Intent(this, PromoteActivity.class));
         }
 
         closeDrawer();
@@ -197,12 +206,12 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
     }
 
     private void updateBackground(@NonNull Card card) {
-//        NetworkManager.getGlide()
-//                .load(card.getBackground())
-//                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
-//                .placeholder(R.drawable.default_bkg)
-//                .error(R.drawable.default_bkg)
-//                .into(mBackgroundImageView);
+        NetworkManager.getGlide()
+                .load(card.getBackground())
+                .signature(GlideCacheSignature.ownerBackgroundKey(card.getBackground()))
+                .placeholder(R.drawable.default_bkg)
+                .error(R.drawable.default_bkg)
+                .into(mBackgroundImageView);
     }
 
     @Override
@@ -219,15 +228,15 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
 
         BaseFragment fragment = findDefaultContent();
         if (fragment == null || !fragment.onBackPressed()) {
-            if (!(fragment instanceof CardDetailsFragment)) {
+            if (!(fragment instanceof MainFragment)) {
                 User user = User.currentUser();
                 if (user != null) {
-                    replaceContent(CardDetailsFragment.newInstance(user.card), false,
+                    replaceContent(new MainFragment(), false,
                             FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                     DrawerFragment drawerFragment = (DrawerFragment) getSupportFragmentManager()
                             .findFragmentById(R.id.activity_main_fmt_drawer);
                     if (drawerFragment != null) {
-                        drawerFragment.setCheckedDrawerItemById(R.id.action_card);
+                        drawerFragment.setCheckedDrawerItemById(R.id.action_main);
                     }
 
                     return;

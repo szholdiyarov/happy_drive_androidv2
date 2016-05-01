@@ -1,8 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fragment_storage_fake_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fake_toolbar_height"
+        android:background="#b5201e4b"
+        tools:ignore="MissingPrefix">
+
+        <ImageButton
+            android:id="@+id/fragment_storage_toolbar_fake_drawer_back"
+            android:layout_width="@dimen/fake_toolbar_icon_size"
+            android:layout_height="@dimen/fake_toolbar_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_drawer_back" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                fontPath="fonts/Roboto-Light.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ОБЛАЧНОЕ ХРАНИЛИЩЕ"
+                android:textColor="#a3a1b6"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/fragment_storage_toolbar_fake_tv_title"
+                fontPath="fonts/Roboto-Light.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-2dp"
+                android:textColor="@color/app_white"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </FrameLayout>
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
         android:id="@+id/fragment_storage_smooth_progress_bar"
@@ -21,19 +65,20 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_centerInParent="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_storage_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/fragment_storage_fake_toolbar"
         android:padding="4dp" />
 
     <LinearLayout
         android:id="@+id/fragment_storage_v_error_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -53,8 +98,9 @@
         android:id="@+id/fragment_storage_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_margin="16dp"
         android:background="@color/app_white"
         android:src="@drawable/ic_add_white_36dp" />
-</FrameLayout>
+</RelativeLayout>

@@ -82,6 +82,14 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.PromoteActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CardMenuActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
