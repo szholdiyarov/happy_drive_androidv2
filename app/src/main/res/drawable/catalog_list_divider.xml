@@ -2,19 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <inset
-            android:insetLeft="8dp"
-            android:insetRight="8dp">
+            android:insetLeft="16dp"
+            android:insetRight="16dp">
             <shape>
-                <solid android:color="#78ffffff" />
-            </shape>
-        </inset>
-    </item>
-    <item>
-        <inset
-            android:insetLeft="8dp"
-            android:insetRight="8dp">
-            <shape>
-                <solid android:color="#8ccc" />
+                <solid android:color="#2ae3e3e3" />
             </shape>
         </inset>
     </item>

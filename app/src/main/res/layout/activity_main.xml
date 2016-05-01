@@ -8,7 +8,7 @@
     tools:context="kz.telecom.happydrive.ui.MainActivity"
     tools:openDrawer="start">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,18 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/bkg_auth" />
-
-        <include
-            android:id="@+id/layout_toolbar"
-            layout="@layout/layout_toolbar" />
+            android:src="@drawable/default_bkg" />
 
         <FrameLayout
             android:id="@+id/activity_main_view_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/layout_toolbar" />
-    </RelativeLayout>
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <fragment
         android:id="@+id/activity_main_fmt_drawer"

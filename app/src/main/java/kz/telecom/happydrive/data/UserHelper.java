@@ -47,7 +47,7 @@ class UserHelper {
     static final String PREFS_KEY_STORAGE_USED = "hd.user.storageUsed";
     static final String PREFS_KEY_STORAGE_TOTAL = "hd.user.storageTotal";
 
-    static JsonNode register(final String email, final String password)
+    static void register(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_REGISTER);
         request.setBody(new Request.StringBody.Builder()
@@ -58,7 +58,6 @@ class UserHelper {
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             ApiClient.checkResponseAndThrowIfNeeded(response);
-            return response.result;
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }

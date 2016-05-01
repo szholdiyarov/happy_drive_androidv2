@@ -25,7 +25,6 @@ import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.network.Request;
 import kz.telecom.happydrive.data.network.Response;
 import kz.telecom.happydrive.data.network.ResponseParseError;
-import kz.telecom.happydrive.util.Logger;
 import kz.telecom.happydrive.util.Utils;
 
 
@@ -224,12 +223,10 @@ public class User {
         return initStaticUser(user);
     }
 
-    @NonNull
     @WorkerThread
-    public static User signUp(final String email, final String password)
+    public static void signUp(final String email, final String password)
             throws NoConnectionError, ApiResponseError, ResponseParseError {
         UserHelper.register(email, password);
-        return signIn(email, password);
     }
 
     @WorkerThread
@@ -260,6 +257,27 @@ public class User {
         UserHelper.saveCredentials(this, getDefaultSharedPrefs());
     }
 
+    @WorkerThread
+    public static void updatePrivateFolderCounters(User user) throws NoConnectionError, ApiResponseError, ResponseParseError {
+        Map<String, List<ApiObject>> mapOfFolders = ApiClient.getFiles(-1, false, user.token);
+        List<ApiObject> folders = mapOfFolders.get(ApiClient.API_KEY_FOLDERS);
+
+        List<FolderObject> userPrivateFolders = user.privateFolders;
+
+        if (folders != null) {
+            for (ApiObject obj : folders) {
+                if (obj instanceof FolderObject) {
+                    FolderObject folder = (FolderObject) obj;
+                    for (FolderObject userFolder : userPrivateFolders) {
+                        if (folder.id == userFolder.id) {
+                            userFolder.filesCount = folder.filesCount;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static SharedPreferences getDefaultSharedPrefs() {
         Context context = DataManager.getInstance().context;
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -276,25 +294,25 @@ public class User {
         final int photoFolderId = Utils.getValue(Integer.class,
                 UserHelper.PREFS_KEY_PRIVATE_PHOTO_FOLDER_ID, -1, rawData);
         if (photoFolderId > 0) {
-            privateFolders.add(new FolderObject(photoFolderId, "ФОТО", false, 0));
+            privateFolders.add(new FolderObject(photoFolderId, "ФОТО", false, 0, 0));
         }
 
         final int videoFolderId = Utils.getValue(Integer.class,
                 UserHelper.PREFS_KEY_PRIVATE_VIDEO_FOLDER_ID, -1, rawData);
         if (videoFolderId > 0) {
-            privateFolders.add(new FolderObject(videoFolderId, "ВИДЕО", false, 0));
+            privateFolders.add(new FolderObject(videoFolderId, "ВИДЕО", false, 0, 0));
         }
 
         final int musicFolderId = Utils.getValue(Integer.class,
                 UserHelper.PREFS_KEY_PRIVATE_MUSIC_FOLDER_ID, -1, rawData);
         if (musicFolderId > 0) {
-            privateFolders.add(new FolderObject(musicFolderId, "МУЗЫКА", false, 0));
+            privateFolders.add(new FolderObject(musicFolderId, "МУЗЫКА", false, 0, 0));
         }
 
         final int documentFolderId = Utils.getValue(Integer.class,
                 UserHelper.PREFS_KEY_PRIVATE_DOCUMENT_FOLDER_ID, -1, rawData);
         if (documentFolderId > 0) {
-            privateFolders.add(new FolderObject(documentFolderId, "ДОКУМЕНТЫ", false, 0));
+            privateFolders.add(new FolderObject(documentFolderId, "ДОКУМЕНТЫ", false, 0, 0));
         }
 
         Map<String, Object> cardData = (Map<String, Object>) rawData.get("card");

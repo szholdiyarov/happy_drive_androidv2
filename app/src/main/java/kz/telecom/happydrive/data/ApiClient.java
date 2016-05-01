@@ -39,7 +39,7 @@ public class ApiClient {
     private static final String TAG = Logger.makeLogTag(ApiClient.class.getSimpleName());
     private static final String API_PATH_CARD_UPDATE = "card/update/";
     private static final String API_PATH_CARD_GET = "card/get/";
-    private static final String API_PATH_CATEGORY_CARDS = "card/list/";
+    private static final String API_PATH_CATEGORY_CARDS = "card/list/v2/";
     private static final String API_PATH_CARD_STAR = "card/star/";
     private static final String API_PATH_CARD_UNSTAR = "card/unstar/";
     private static final String API_PATH_CARD_VISIBILITY = "card/visibility/";
@@ -268,6 +268,37 @@ public class ApiClient {
         try {
             Response<JsonNode> response = NetworkManager.execute(request);
             checkResponseAndThrowIfNeeded(response);
+        } catch (MalformedURLException e) {
+            throw new ResponseParseError("malformed request sent", e);
+        }
+    }
+
+    @NonNull
+    @WorkerThread
+    public static FileObject uploadScreenshot(File file) throws NoConnectionError,
+            ApiResponseError, ResponseParseError {
+        JsonRequest request = new JsonRequest(Request.Method.POST, API_PATH_FILE_UPLOAD);
+        request.setBody(new Request.FileBody(Request.FileBody.CONTENT_TYPE_RAW, file));
+
+        String fileName = file.getName();
+        String[] comps = fileName.split("\\.");
+        if (comps.length > 0) {
+            String extension = comps[comps.length - 1].toLowerCase();
+
+            if (extension.length() > 5) {
+                fileName += ".jpg";
+            }
+        }
+
+        Map<String, String> headers = new HashMap<>(2);
+        headers.put("Is-Card", "true");
+        headers.put("File-Name", fileName);
+        request.setHeaders(headers);
+
+        try {
+            Response<JsonNode> response = NetworkManager.execute(request);
+            checkResponseAndThrowIfNeeded(response);
+            return new FileObject(response.result.get("file"));
         } catch (MalformedURLException e) {
             throw new ResponseParseError("malformed request sent", e);
         }

@@ -13,58 +13,61 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="32dp"
-        tools:ignore="MissingPrefix" android:weightSum="1">
+        tools:ignore="MissingPrefix"
+        android:weightSum="1">
 
         <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:contentDescription="@null"
-            android:src="@drawable/ic_logo_64p"/>
-
-        <TextView
-                fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/app_slogan"
-                android:textColor="@color/app_white"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_logo_130dp"/>
 
         <android.support.v4.widget.Space
             android:layout_width="0px"
-            android:layout_height="30dp"/>
-
+            android:layout_height="15dp"/>
 
         <TextView
-                fontPath="fonts/Roboto-Medium.ttf"
-                android:layout_width="255dp"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="Войти через..."
-                android:paddingBottom="3dp"
-                android:textColor="@color/app_white"/>
-        <android.support.v4.widget.Space
-                android:layout_width="0px"
-                android:layout_height="3dp"/>
-
-        <com.facebook.login.widget.LoginButton
-                android:id="@+id/login_button"
-                android:layout_width="255dp"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:paddingTop="12sp"
-                android:paddingBottom="11sp"/>
-
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/app_slogan"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:textColor="@color/app_white"/>
 
         <android.support.v4.widget.Space
-                android:layout_width="0px"
-                android:layout_height="12dp"/>
+            android:layout_width="0px"
+            android:layout_height="70dp"/>
 
-        <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_login_button"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:text="Google+"
-                android:textSize="15sp"/>
+        <Button
+            android:id="@+id/login_button"
+            android:theme="@style/FacebookLoginButton"
+            android:layout_width="230dp"
+            android:layout_height="56dp"
+            android:text="Facebook"
+            android:drawableLeft="@drawable/ic_facebook"
+            android:drawableStart="@drawable/ic_facebook"
+            android:textColor="@color/auth_text_color"
+            android:textAllCaps="true"
+            android:textSize="16sp"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="0px"
+            android:layout_height="2dp"/>
+
+        <Button
+            android:id="@+id/google_login_button"
+            android:theme="@style/GoogleSignInButton"
+            android:textColor="@color/auth_text_color"
+            android:layout_width="230dp"
+            android:layout_height="56dp"
+            android:text="Google"
+            android:drawableLeft="@drawable/ic_google_plus"
+            android:drawableStart="@drawable/ic_google_plus"
+            android:textAllCaps="true"
+            android:textSize="16sp"/>
 
         <android.support.v4.widget.Space
             android:layout_width="0px"
@@ -72,25 +75,26 @@
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_in"
-            android:layout_width="260dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:theme="@style/SignInSingUpBorderlessButton"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="@string/auth_sign_in"
-            android:textColor="@color/app_white"
             android:textAllCaps="false"
-            android:textSize="15sp"/>
-
-        <android.support.v4.widget.Space
-                android:layout_width="0px"
-                android:layout_height="3dp"/>
-
+            android:textSize="14sp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/fragment_auth_btn_sign_up"
-            android:layout_width="260dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:theme="@style/SignInSingUpBorderlessButton"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:text="@string/auth_sign_up"
-            android:textColor="@color/app_white"
             android:textAllCaps="false"
-            android:textSize="15sp"/>
+            android:textSize="14sp"
+            android:gravity="center"/>
     </LinearLayout>
 </ScrollView>

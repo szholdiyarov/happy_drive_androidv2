@@ -2,11 +2,17 @@
 <resources>
     <color name="colorPrimary">#2d2c5c</color>
     <color name="colorPrimaryDark">#16162e</color>
-    <color name="colorAccent">#eb008b</color>
+    <color name="colorAccent">#921854</color>
 
     <color name="app_white">#fff</color>
     <color name="app_black">#000</color>
     <color name="app_transparent">#0000</color>
+    <color name="dark_blue">#111028</color>
 
     <color name="app_text">#464646</color>
+
+    <color name="auth_text_color">#c0c0c0</color>
+    <color name="facebook_login_button_color">#494978</color>
+    <color name="google_sign_in_button_color">#a42e2e</color>
+    <color name="sign_in_sing_up_button_color">#26ffffff</color>
 </resources>

@@ -1,13 +1,10 @@
 package kz.telecom.happydrive.ui.fragment;
 
-import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -87,15 +84,21 @@ public class CatalogItemFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        try {
+            view.findViewById(R.id.fragment_catalog_toolbar_fake_drawer_toggler)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().onBackPressed();
+                        }
+                    });
+        } catch (ClassCastException cce) {
+            throw new IllegalStateException("used to work with MainActivity");
+        }
+
         Bundle bundle = this.getArguments();
         categoryId = bundle.getInt("categoryId");
         categoryName = bundle.getString("categoryName");
-
-        BaseActivity activity = (BaseActivity) getActivity();
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(
-                ContextCompat.getColor(getContext(), R.color.colorPrimary)));
-        actionBar.setTitle(categoryName);
 
         if (adapter == null) {
             adapter = new ItemAdapter();
@@ -111,7 +114,7 @@ public class CatalogItemFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BaseActivity activity = (BaseActivity) getActivity();
                 Card card = (Card) adapter.getItem(position);
-                activity.replaceContent(CardDetailsFragment.newInstance(card),
+                activity.replaceContent(CardDetailsFragment.newInstance(card, false),
                         true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
         });
@@ -233,13 +236,13 @@ public class CatalogItemFragment extends BaseFragment {
                                     .foreignCacheKey(card.getAvatar()))
                             .bitmapTransform(new CenterCrop(getContext()),
                                     new GlideRoundedCornersTransformation(getContext(),
-                                            Utils.dipToPixels(3f, dm), Utils.dipToPixels(1.5f, dm)))
-                            .error(R.drawable.user_photo)
-                            .placeholder(R.drawable.user_photo_load)
+                                            Utils.dipToPixels(20f, dm), Utils.dipToPixels(1.5f, dm)))
+                            .error(R.drawable.user_photo_circle)
+                            .placeholder(R.drawable.user_photo_load_circle)
                             .into(viewHolder.imageView);
                 }
             } else {
-                viewHolder.imageView.setImageResource(R.drawable.user_photo);
+                viewHolder.imageView.setImageResource(R.drawable.user_photo_circle);
             }
 
             ImageView starView = viewHolder.actionImageBtn;

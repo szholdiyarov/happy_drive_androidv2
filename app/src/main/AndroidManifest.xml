@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="kz.telecom.happydrive">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,7 +30,8 @@
         android:icon="@drawable/logo_app"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        android:theme="@style/Base.AppTheme.Translucent.NoActionBar">
+        android:theme="@style/Base.AppTheme.Translucent.NoActionBar"
+        tools:replace="android:supportsRtl">
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -76,6 +78,22 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.SlideShowActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PromoteActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CardMenuActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.ChangeDomainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
@@ -98,6 +116,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <service android:name="com.parse.PushService" />
 
         <receiver
@@ -119,6 +141,11 @@
                 <category android:name="kz.telecom.happydrive" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider983139428414718"
+            android:exported="true" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

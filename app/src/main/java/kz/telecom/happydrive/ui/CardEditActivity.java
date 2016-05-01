@@ -1,18 +1,16 @@
 package kz.telecom.happydrive.ui;
 
 import android.app.ProgressDialog;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -60,13 +58,17 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
             mCard = Card.copyOf(User.currentUser().card);
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_toolbar);
-        ActionBar actionBar = initToolbar(toolbar);
-        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat
-                .getColor(this, R.color.colorPrimary)));
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(mCard.getCategoryId() > 0 ?
-                "Редактировать визитку" : "Создать визитку");
+        findViewById(R.id.activity_card_edit_toolbar_fake_back_btn)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
+
+        TextView titleTextView = (TextView) findViewById(R.id.activity_card_edit_toolbar_fake_tv_title);
+        titleTextView.setText(mCard.getCategoryId() > 0 ?
+                "РЕДАКТИРОВАНИЕ" : "СОЗДАНИЕ");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));

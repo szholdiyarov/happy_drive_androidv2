@@ -105,7 +105,8 @@ public class Card implements Comparable<Card>, Parcelable {
                     publicFolders.add(new FolderObject(
                             Utils.getValue(Integer.class, FolderObject.API_FOLDER_ID, -1, f),
                             Utils.getValue(String.class, FolderObject.API_FOLDER_NAME, "", f),
-                            true, 0
+                            true, 0,
+                            Utils.getValue(Integer.class, FolderObject.API_FILES_COUNT, 0, f)
                     ));
                 } catch (Exception ignored) {
                 }
@@ -114,13 +115,13 @@ public class Card implements Comparable<Card>, Parcelable {
             int photoFolderId = Utils.getValue(Integer.class,
                     UserHelper.PREFS_KEY_PUBLIC_PHOTO_FOLDER_ID, -1, data);
             if (photoFolderId > 0) {
-                publicFolders.add(new FolderObject(photoFolderId, "Фотографии", true, 0));
+                publicFolders.add(new FolderObject(photoFolderId, "Фотографии", true, 0, 0));
             }
 
             int videoFolderId = Utils.getValue(Integer.class,
                     UserHelper.PREFS_KEY_PUBLIC_VIDEO_FOLDER_ID, -1, data);
             if (videoFolderId > 0) {
-                publicFolders.add(new FolderObject(videoFolderId, "Видеозаписи", true, 0));
+                publicFolders.add(new FolderObject(videoFolderId, "Видеозаписи", true, 0, 0));
             }
         }
     }
@@ -428,6 +429,14 @@ public class Card implements Comparable<Card>, Parcelable {
         public final Card card;
 
         public OnBackgroundUpdatedEvent(Card card) {
+            this.card = card;
+        }
+    }
+
+    public static class OnAvatarUpdatedEvent {
+        public final Card card;
+
+        public OnAvatarUpdatedEvent(Card card) {
             this.card = card;
         }
     }

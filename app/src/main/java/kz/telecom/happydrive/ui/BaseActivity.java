@@ -44,7 +44,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!(this instanceof AuthActivity) && !User.isAuthenticated()) {
+        if (!(this instanceof AuthActivity) && !(this instanceof SlideShowActivity)
+                && !User.isAuthenticated()) {
             Intent intent = new Intent(this, AuthActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);

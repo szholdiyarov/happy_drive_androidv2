@@ -21,6 +21,7 @@ public class ApiResponseError extends Exception {
     public static final int API_RESPONSE_CODE_CARD_FAVOURITE_NOT_FOUND = 11;
     public static final int API_RESPONSE_CODE_CARD_FAVOURITE_ALREADY_EXIST = 12;
     public static final int API_RESPONSE_CODE_ACCESS_DENIED = 13;
+    public static final int API_RESPONSE_CODE_ACCOUNT_EMAIL_NOT_VERIFIED = 27;
     public static final int API_RESPONSE_CODE_SERVER_ERROR = 999;
 
     public final int apiErrorCode;

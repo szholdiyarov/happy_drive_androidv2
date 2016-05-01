@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.internal.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -11,37 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="44dp"
+        android:background="#1a1938"
+        app:itemBackground="@drawable/drawer_item_bkg"
+        app:itemIconTint="#a2a1b6"
+        app:itemTextColor="#fff"
         app:menu="@menu/drawer_main" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/fragment_drawer_tv_storage_size"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:layout_gravity="bottom"
-        android:background="#ccc"
-        android:orientation="vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingTop="2dp"
-        tools:ignore="MissingPrefix">
-
-        <TextView
-            android:id="@+id/fragment_drawer_tv_storage_size"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/drawer_footer_storage_size_fmt"
-            android:textColor="#959595"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/fragment_drawer_tv_expiration_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/drawer_footer_expiration_fmt"
-            android:textColor="#959595"
-            android:textSize="14sp" />
-    </LinearLayout>
+        android:background="#111028"
+        android:drawableLeft="@drawable/ic_flash_drive"
+        android:drawablePadding="12dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:singleLine="true"
+        android:text="@string/drawer_footer_storage_size_fmt"
+        android:textColor="#fff"
+        android:textSize="13sp" />
 </android.support.design.internal.ScrimInsetsFrameLayout>

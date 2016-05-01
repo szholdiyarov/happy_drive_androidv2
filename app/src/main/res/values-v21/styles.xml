@@ -4,4 +4,17 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+    <style name="FacebookLoginButton" parent="Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/facebook_login_button_color</item>
+    </style>
+    <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/google_sign_in_button_color</item>
+    </style>
+    <style name="SignInSingUpBorderlessButton" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlHighlight">@color/colorPrimary</item>
+        <item name="android:textColor">@color/auth_tv_password_recovery</item>
+    </style>
+    <style name="SignInSingUpButton" parent="Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+    </style>
 </resources>

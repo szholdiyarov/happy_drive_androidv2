@@ -3,35 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/drawer_height"
-    android:background="@color/colorPrimary"
     tools:ignore="MissingPrefix">
 
     <ImageView
-        android:id="@+id/drawer_header_background_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/drawer_header_photo"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
         android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/drawer_header_email"
-        fontPath="fonts/Roboto-Medium.ttf"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textColor="#fff"
-        android:textSize="14sp" />
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/drawer_header_photo"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/drawer_header_username"
-        fontPath="fonts/Roboto-Medium.ttf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/drawer_header_email"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textColor="#fff"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/drawer_header_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/drawer_header_position"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#636090"
+            android:textSize="12sp" />
+    </LinearLayout>
 </RelativeLayout>

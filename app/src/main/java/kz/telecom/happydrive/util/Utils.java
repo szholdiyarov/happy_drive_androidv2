@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
@@ -73,6 +74,13 @@ public class Utils {
     public static File tempFile(String env, String extension) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String fileName = extension.toUpperCase() + "_" + timestamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(env);
+
+        return File.createTempFile(fileName, "." + extension, storageDir);
+    }
+
+    public static File tempFileWithName(String env, String name, String extension) throws IOException {
+        String fileName = extension.toUpperCase() + "_" + name + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(env);
 
         return File.createTempFile(fileName, "." + extension, storageDir);
@@ -179,6 +187,16 @@ public class Utils {
         }
     }
 
+    public static void takeScreenshot(View view, File file) throws IOException {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        FileOutputStream outputStream = new FileOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        outputStream.flush();
+        outputStream.close();
+    }
 
     // Returns the URI path to the Bitmap displayed in specified ImageView
     public static Uri getLocalBitmapUri(ImageView imageView) {

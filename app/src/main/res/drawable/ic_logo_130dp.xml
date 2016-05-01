@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="#26f8f8f8"/>
+        </shape>
+    </item>
+    <item android:left="20dp" android:top="20dp" android:right="20dp" android:bottom="20dp" android:gravity="center">
+        <shape android:shape="oval">
+            <solid android:color="#1Afefefe"/>
+            <size android:width="100dp" android:height="100dp"/>
+        </shape>
+    </item>
+    <item>
+        <bitmap android:src="@drawable/ic_logo_64p" android:gravity="center" />
+    </item>
+</layer-list>

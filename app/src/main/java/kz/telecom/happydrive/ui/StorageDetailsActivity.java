@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.Card;
 import kz.telecom.happydrive.data.FileObject;
+import kz.telecom.happydrive.ui.fragment.PortfolioPhotoDetailsFragment;
 import kz.telecom.happydrive.ui.fragment.StoragePhotoDetailsFragment;
 
 /**

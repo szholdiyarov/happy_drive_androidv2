@@ -23,14 +23,28 @@
 
     <style name="Widget.EditText"/>
     <style name="Widget.EditText.Auth">
-        <item name="android:background">@color/app_white</item>
+        <item name="android:background">@color/sign_in_sing_up_button_color</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingRight">12dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColorHint">#acacac</item>
+        <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">14sp</item>
-
+        <item name="android:layout_margin">6dp</item>
+    </style>
+    <style name="FacebookLoginButton" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/facebook_login_button_color</item>
+    </style>
+    <style name="GoogleSignInButton" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/google_sign_in_button_color</item>
+    </style>
+    <style name="SignInSingUpBorderlessButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+        <item name="android:textColor">@color/auth_tv_password_recovery</item>
+    </style>
+    <style name="SignInSingUpButton" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 </resources>

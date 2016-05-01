@@ -3,6 +3,7 @@
     <string name="app_slogan">Happy MOMENTS, happy BUSINESS</string>
 
     <!-- error -->
+    <string name="error">Ошибка</string>
     <string name="no_connection">Нет подключения к интернету</string>
 
     <!-- common -->
@@ -14,34 +15,44 @@
     <string name="auth_sign_up">Регистрация</string>
 
     <string name="sign_up_title">Регистрация</string>
-    <string name="sign_up_hint_email">E-mail</string>
-    <string name="sign_up_hint_password">Пароль</string>
+    <string name="sign_up_hint_email">e-mail</string>
+    <string name="sign_up_hint_password">пароль</string>
+    <string name="sign_up_hint_password_repeat">повторите пароль</string>
     <string name="change_pwd_hint_password1">Текущий пароль</string>
     <string name="change_pwd_hint_password2">Новый пароль</string>
+    <string name="sign_up_successful_dlg_title">Успешная регистрация</string>
+    <string name="sign_up_successful_dlg_msg">На указанную Вами электронную почту отправлено
+        письмо с ссылкой для активации аккаунта</string>
     <string name="sign_up_user_already_taken">Пользователь с таким e-mail уже существует</string>
     <string name="sign_up_user_cred_invalid">Неправильно указан e-mail или пароль</string>
-
+    <string name="sign_up_repeat_password_does_not_match">Пароль и подтверждение пароля не совпадают</string>
 
     <string name="sign_in_title">Войти по E-mail</string>
-    <string name="sign_in_hint_email">@string/sign_up_hint_email</string>
+    <string name="sign_in_hint_email">e-mail или логин</string>
     <string name="sign_in_hint_password">@string/sign_up_hint_password</string>
     <string name="sign_in_password_recovery">Забыли пароль?</string>
     <string name="sign_in_btn">Войти</string>
-    <string name="sign_in_sign_up">Не зарегистрированы? <u>Регистрация</u></string>
+    <string name="sign_in_sign_up">Регистрация</string>
     <string name="sign_in_user_cred_invalid">Неправильно указан e-mail или пароль</string>
+    <string name="sign_in_user_email_not_verified">К сожалению, Ваш e-mail не подтверждён.
+        После регистрации на Ваш e-mail было направлено письмо с ссылкой для активации.
+        Пожалуйста, пройдите по этой ссылке для активации аккаунта</string>
 
     <string name="password_recovery_title">Восстановление пароля</string>
     <string name="password_recovery_hint_email">E-mail</string>
     <string name="password_recovery_btn">Отправить</string>
-    <string name="password_recovery_successful_msg">На указанную вами электронную почту отправлено
+    <string name="password_recovery_successful_msg">На указанную Вами электронную почту отправлено
         письмо с дальнейшими инструкциями для восстановления пароля</string>
-
+    <string name="password_recovery_empty_email">Нужно указать e-mail</string>
+    <string name="password_recovery_email_invalid">Неправильно указан e-mail</string>
     <!-- drawer menu -->
-    <string name="action_card">Визитка</string>
+    <string name="action_main">Главная</string>
+    <string name="action_card">Облачная визитка</string>
     <string name="action_cloud">Облачное хранилище</string>
-    <string name="action_favourite">Избранное</string>
-    <string name="action_catalog">Каталог</string>
+    <string name="action_favourite">Визитница</string>
+    <string name="action_catalog">Каталог визиток</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_promote">Раскрутка</string>
     <string name="action_help">Помощь</string>
     <string name="action_about">О приложении</string>
     <string name="action_exit">Выйти</string>
@@ -58,7 +69,39 @@
     <string name="canceled">Отменено</string>
 
     <string name="drawer_footer_storage_size_fmt">Использовано %1$s из %2$s</string>
-    <string name="drawer_footer_expiration_fmt">До оплаты осталось %d дней</string>
+    <string name="slide_title_1">Happy Drive</string>
+    <string name="slide_title_2">Онлайн-визитка</string>
+    <string name="slide_title_3">Облачное хранилище данных</string>
+    <string name="slide_title_4">Поделитесь визиткой</string>
+    <string name="slide_title_5">Миссия Happy Drive</string>
+    <string name="slide_text_1">Это облачный продукт сочетающий в себе онлайн-визитку и облачное хранилище данных.</string>
+    <string name="slide_text_2">Ваша личная электронная визитка и ваше представительство в сети Интернет.
+        Продвигайте свои товары и услуги в несколько касаний экрана вашего смартфона.</string>
+    <string name="slide_text_3">Все нужные файлы будут доступными для Вас в любое время
+        с любого устройства (компьютера, смартфона, планшета) и в любой точке земного шара.</string>
+    <string name="slide_text_4">Поделитесь своей онлайн-визиткой по всем возможным каналам продвижения
+        и привлеките новых клиентов и партнеров, используя функцию раскрутки.</string>
+    <string name="slide_text_5">Дать возможность профессионалам, предпринимателям, активным деловым людям в несколько
+         касаний экрана своего смартфона создать свое собственное представительство в сети Интернет
+        с активным продвижением и расширением круга деловых контактов, клиентов и партнеров.</string>
+    <string name="promote_email_step_1">С помощью инструмента e-mail рассылки можно быстро
+    проинформировать Ваших клиентов, коллег и партнеров о Вашей бизнес-страничке, товарах или услугах.
+    Список электронных адресов для рассылки подгружается автоматически из Вашего электронного ящика.
+    \n\nПожалуйста, отметьте галочкой те адреса, кому Вы желаете отправить сообщение с ссылкой на Вашу бизнес-страничку.
+    \n\nАдресаты получат сообщение с общей информацией и приглашением посетить Вашу страницу, поделиться в социальных сетях
+    или поставить отметку \"Нравится\".
+    \n\nМы рекомендуем осуществлять e-mail рассылку не реже 1-го раза в месяц и каждый раз, когда Вы размещаете
+    новые товары или услуги, или новую информацию.</string>
+    <string name="promote_email_step_2">Выберите, пожалуйста, почтовый сервис для загрузки
+        списка почтовых адресов, которым будет направлено приглашение посетить
+        вашу электронную визитку. Необходимо дать разрешение нашему приложению
+        на получение списка электронных адресов для рассылки. Для достижения положительного
+        эффекта от рассылки, рекомендуем осуществлять повторные рассылки не чаще чем 1 раз в 2 недели.</string>
+    <string name="promote_link">
+        Отправьте ссылку на Вашу визитку\nв других мессенджерах и\nсоциальных медиа
+    </string>
+    <string name="promote_shared_text" formatted="false">Здравствуйте!\n\nПриглашаю Вас посетить мою электронную визитку, в которой Вы можете найти мои контакты,
+    информацию о моей деятельности, фотографии и видео-ролики.\n\n%1sС уважением,\n%2s</string>
 
     <string-array name="about_options">
         <item>О себе</item>

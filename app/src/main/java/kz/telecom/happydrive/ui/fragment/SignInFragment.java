@@ -2,7 +2,6 @@ package kz.telecom.happydrive.ui.fragment;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.Snackbar;
@@ -10,23 +9,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import kz.telecom.happydrive.R;
 import kz.telecom.happydrive.data.ApiResponseError;
 import kz.telecom.happydrive.data.DataManager;
-import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.data.User;
+import kz.telecom.happydrive.data.network.NoConnectionError;
 import kz.telecom.happydrive.ui.BaseActivity;
 import kz.telecom.happydrive.ui.MainActivity;
 
@@ -65,29 +61,31 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
         ViewCompat.setBackgroundTintList(mButton, signInTintList);
         mButton.setOnClickListener(this);
 
-        TextView textView = (TextView) view.findViewById(R.id.fragment_sign_in_tv_sign_up);
-        textView.setText(textView.getText(), TextView.BufferType.SPANNABLE);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
-        textView.setHighlightColor(Color.TRANSPARENT);
+//        Button textView = (Button) view.findViewById(R.id.fragment_sign_in_btn_sign_up);
+//        textView.setText(textView.getText(), TextView.BufferType.SPANNABLE);
+//        textView.setMovementMethod(LinkMovementMethod.getInstance());
+//        textView.setHighlightColor(Color.TRANSPARENT);
 
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                ((BaseActivity) getActivity()).replaceContent(new SignUpFragment(),
-                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            }
-        };
+//        ClickableSpan clickableSpan = new ClickableSpan() {
+//            @Override
+//            public void onClick(View widget) {
+//                ((BaseActivity) getActivity()).replaceContent(new SignUpFragment(),
+//                        true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            }
+//        };
 
-        Spannable spannable = (Spannable) textView.getText();
-        final String text = textView.getText().toString();
-        final String signUp = "Регистрация";
-        final int startIdx = text.indexOf(signUp);
-        final int endIdx = startIdx + signUp.length();
-        spannable.setSpan(clickableSpan, startIdx, endIdx, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        Spannable spannable = (Spannable) textView.getText();
+//        final String text = textView.getText().toString();
+//        final String signUp = "Регистрация";
+//        final int startIdx = text.indexOf(signUp);
+//        final int endIdx = startIdx + signUp.length();
+//        spannable.setSpan(clickableSpan, startIdx, endIdx, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         mEmailEditText = (EditText) view.findViewById(R.id.fragment_sign_in_et_email);
         mPasswordEditText = (EditText) view.findViewById(R.id.fragment_sign_in_et_password);
-        view.findViewById(R.id.fragment_sign_in_tv_password_recovery)
+        view.findViewById(R.id.fragment_sign_in_btn_password_recovery)
+                .setOnClickListener(this);
+        view.findViewById(R.id.fragment_sign_in_btn_sign_up)
                 .setOnClickListener(this);
 
         toggleViewStates(isProcessing);
@@ -111,10 +109,13 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
         if (viewId == R.id.fragment_sign_in_btn_sign_in) {
             signIn(mEmailEditText.getText().toString(),
                     mPasswordEditText.getText().toString());
-        } else if (viewId == R.id.fragment_sign_in_tv_password_recovery) {
+        } else if (viewId == R.id.fragment_sign_in_btn_password_recovery) {
             ((BaseActivity) getActivity()).replaceContent(
                     new PasswordRecoveryFragment(), true,
                     FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        } else if (viewId == R.id.fragment_sign_in_btn_sign_up) {
+            ((BaseActivity) getActivity()).replaceContent(new SignUpFragment(),
+                    true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         }
     }
 
@@ -158,6 +159,12 @@ public class SignInFragment extends BaseFragment implements View.OnClickListener
                                     if (error.apiErrorCode == 16) {
                                         activity.replaceContent(MigrationUpgradeFragment.newInstance(email, password),
                                                 true, FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                    } else if (error.apiErrorCode == 27) {
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle(R.string.error)
+                                                .setMessage(R.string.sign_in_user_email_not_verified)
+                                                .setPositiveButton(R.string.ok, null)
+                                                .show();
                                     } else {
                                         Snackbar.make(view, R.string.sign_in_user_cred_invalid, Snackbar.LENGTH_LONG)
                                                 .setDuration(Snackbar.LENGTH_LONG)
