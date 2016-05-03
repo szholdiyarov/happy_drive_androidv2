@@ -66,6 +66,14 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
                     }
                 });
 
+        findViewById(R.id.activity_card_edit_toolbar_fake_accept)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        proceedSave();
+                    }
+                });
+
         TextView titleTextView = (TextView) findViewById(R.id.activity_card_edit_toolbar_fake_tv_title);
         titleTextView.setText(mCard.getCategoryId() > 0 ?
                 "РЕДАКТИРОВАНИЕ" : "СОЗДАНИЕ");
@@ -113,63 +121,65 @@ public class CardEditActivity extends BaseActivity implements View.OnClickListen
             onBackPressed();
             handled = true;
         } else if (itemId == R.id.action_save) {
-            BaseFragment baseFragment = findDefaultContent();
-            if (baseFragment instanceof IsSavable) {
-                if (((IsSavable) baseFragment).readyForSave()) {
-                    final ProgressDialog dialog = new ProgressDialog(this);
-                    dialog.setMessage("Сохранение...");
-                    dialog.setCancelable(false);
-                    dialog.show();
-
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                ApiClient.updateCard(mCard);
-                                if (mAudioFile != null && mAudioFile.length() > 0) {
-                                    User.currentUser().changeAudio(mAudioFile);
-                                }
-
-                                if (User.currentUser().card.getCategoryId() <= 0) {
-                                    ApiClient.setVisibility(true);
-                                }
-
-                                User.currentUser().updateCard();
-                                CardEditActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DataManager.getInstance().bus
-                                                .post(new Card.OnCardUpdatedEvent(mCard));
-                                        dialog.dismiss();
-                                        finish();
-                                    }
-                                });
-                            } catch (final Exception e) {
-                                CardEditActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dialog.dismiss();
-                                        if (e instanceof NoConnectionError) {
-                                            Toast.makeText(CardEditActivity.this, "Нет подключения к интернету",
-                                                    Toast.LENGTH_LONG).show();
-                                        } else {
-                                            Toast.makeText(CardEditActivity.this, "Произошла ошибка при сохранении визитки",
-                                                    Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }.start();
-                } else {
-                    Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
-                }
-            }
-
             handled = true;
         }
 
         return handled || super.onOptionsItemSelected(item);
+    }
+
+    private void proceedSave() {
+        BaseFragment baseFragment = findDefaultContent();
+        if (baseFragment instanceof IsSavable) {
+            if (((IsSavable) baseFragment).readyForSave()) {
+                final ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setMessage("Сохранение...");
+                dialog.setCancelable(false);
+                dialog.show();
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            ApiClient.updateCard(mCard);
+                            if (mAudioFile != null && mAudioFile.length() > 0) {
+                                User.currentUser().changeAudio(mAudioFile);
+                            }
+
+                            if (User.currentUser().card.getCategoryId() <= 0) {
+                                ApiClient.setVisibility(true);
+                            }
+
+                            User.currentUser().updateCard();
+                            CardEditActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DataManager.getInstance().bus
+                                            .post(new Card.OnCardUpdatedEvent(mCard));
+                                    dialog.dismiss();
+                                    finish();
+                                }
+                            });
+                        } catch (final Exception e) {
+                            CardEditActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    if (e instanceof NoConnectionError) {
+                                        Toast.makeText(CardEditActivity.this, "Нет подключения к интернету",
+                                                Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(CardEditActivity.this, "Произошла ошибка при сохранении визитки",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }.start();
+            } else {
+                Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

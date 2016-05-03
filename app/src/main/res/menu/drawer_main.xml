@@ -11,10 +11,10 @@
     <group
         android:id="@+id/action_block_main_1"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/action_card"
-            android:icon="@drawable/ic_drawer_card"
-            android:title="@string/action_card" />
+        <!--<item-->
+            <!--android:id="@+id/action_card"-->
+            <!--android:icon="@drawable/ic_drawer_card"-->
+            <!--android:title="@string/action_card" />-->
         <item
             android:id="@+id/action_favourite"
             android:icon="@drawable/ic_drawer_favourite"

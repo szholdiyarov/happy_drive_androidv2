@@ -388,6 +388,16 @@ public class CardDetailsFragment extends BaseFragment implements View.OnClickLis
 
         final ImageView userPhoto = (ImageView) view.findViewById(R.id.fragment_card_img_view_avatar);
         if (card != null && card.getCategoryId() > 0) {
+            try {
+                final File imageFile = Utils.tempFileWithName(Environment.DIRECTORY_PICTURES, "temp_card", "jpg");
+                Utils.takeScreenshot((ViewGroup) shareButton.getParent(), imageFile);
+                PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext())
+                        .edit()
+                        .putString("temp_card_file_loc", imageFile.getAbsolutePath())
+                        .apply();
+            } catch (Exception ignored) {
+            }
+
             view.findViewById(R.id.fragment_card_v_info_container).setVisibility(View.VISIBLE);
             NetworkManager.getGlide()
                     .load(card.getAvatar())

@@ -32,12 +32,31 @@ public class PromoteWhatsAppFragment extends BaseFragment implements View.OnClic
     public void onViewCreated(View view, Bundle savedInstanceState) {
         view.findViewById(R.id.fragment_promote_whatsapp_btn).setOnClickListener(this);
         mEditText = (EditText) view.findViewById(R.id.fragment_promote_whatsapp_et);
+
+        if (mEditText.getText().length() == 0) {
+            final Card card = User.currentUser().card;
+            String userText = card.getFirstName();
+            if (!TextUtils.isEmpty(card.getLastName())) {
+                userText += " " + card.getLastName();
+            }
+
+            String domainText = "";
+            if (!TextUtils.isEmpty(card.getDomain())) {
+                domainText = "Визитка доступна по адресу https://" + card.getDomain() + ".happy-drive.kz\n\n";
+            }
+
+            String text = PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getString(PromoteActivity.SHARED_TEXT, getString(R.string.promote_shared_text,
+                            domainText, userText));
+            mEditText.setText(text);
+            initialText = text;
+        }
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && getView() != null) {
             final Card card = User.currentUser().card;
             String userText = card.getFirstName();
             if (!TextUtils.isEmpty(card.getLastName())) {

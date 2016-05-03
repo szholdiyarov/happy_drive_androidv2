@@ -107,37 +107,37 @@
             android:textColor="@color/promote_indicator_color"
             android:textSize="11sp" />
 
-        <TextView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/promote_indicator_bkg"
-            android:gravity="center"
-            android:text="5"
-            android:textColor="@color/promote_indicator_color"
-            android:textSize="11sp" />
+        <!--<TextView-->
+            <!--android:layout_width="18dp"-->
+            <!--android:layout_height="18dp"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:background="@drawable/promote_indicator_bkg"-->
+            <!--android:gravity="center"-->
+            <!--android:text="5"-->
+            <!--android:textColor="@color/promote_indicator_color"-->
+            <!--android:textSize="11sp" />-->
 
-        <TextView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/promote_indicator_bkg"
-            android:gravity="center"
-            android:text="6"
-            android:textColor="@color/promote_indicator_color"
-            android:textSize="11sp" />
+        <!--<TextView-->
+            <!--android:layout_width="18dp"-->
+            <!--android:layout_height="18dp"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:background="@drawable/promote_indicator_bkg"-->
+            <!--android:gravity="center"-->
+            <!--android:text="6"-->
+            <!--android:textColor="@color/promote_indicator_color"-->
+            <!--android:textSize="11sp" />-->
 
-        <TextView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/promote_indicator_bkg"
-            android:gravity="center"
-            android:text="7"
-            android:textColor="@color/promote_indicator_color"
-            android:textSize="11sp" />
+        <!--<TextView-->
+            <!--android:layout_width="18dp"-->
+            <!--android:layout_height="18dp"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:background="@drawable/promote_indicator_bkg"-->
+            <!--android:gravity="center"-->
+            <!--android:text="7"-->
+            <!--android:textColor="@color/promote_indicator_color"-->
+            <!--android:textSize="11sp" />-->
     </LinearLayout>
 </LinearLayout>

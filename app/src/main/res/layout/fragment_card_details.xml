@@ -57,6 +57,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/card_block_bkg"
+                android:minHeight="220dp"
                 android:paddingBottom="16dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"

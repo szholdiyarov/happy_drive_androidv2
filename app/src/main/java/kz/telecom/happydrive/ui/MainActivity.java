@@ -132,11 +132,11 @@ public class MainActivity extends BaseActivity implements DrawerFragment.Callbac
                 replaceContent(new MainFragment(), false,
                         FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             }
-        } else if (itemId == R.id.action_card) {
-            if (!(findDefaultContent() instanceof CardDetailsFragment)) {
-                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card, false), false,
-                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            }
+//        } else if (itemId == R.id.action_card) {
+//            if (!(findDefaultContent() instanceof CardDetailsFragment)) {
+//                replaceContent(CardDetailsFragment.newInstance(User.currentUser().card, false), false,
+//                        FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            }
 //        } else if (itemId == R.id.action_cloud) {
 //            if (!(findDefaultContent() instanceof CloudFragment)) {
 //                replaceContent(new CloudFragment(), false,

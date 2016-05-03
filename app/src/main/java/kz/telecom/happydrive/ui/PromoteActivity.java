@@ -52,7 +52,7 @@ public class PromoteActivity extends BaseActivity {
 
         final FragmentStatePagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager(),
                 new ViewData[]{
-                        new ViewData(PromoteEmailFragment.class, "РАССЫЛКА", null),
+//                        new ViewData(PromoteEmailFragment.class, "РАССЫЛКА", null),
                         new ViewData(PromoteFacebookFragment.class, "FACEBOOK", null),
                         new ViewData(PromoteWhatsAppFragment.class, "WHATSAPP", null),
                         new ViewData(PromoteInstagramFragment.class, "INSTAGRAM", null),
