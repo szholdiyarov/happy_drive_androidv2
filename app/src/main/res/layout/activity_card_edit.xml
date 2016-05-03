@@ -54,6 +54,16 @@
                 android:textColor="@color/app_white"
                 android:textSize="18sp" />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/activity_card_edit_toolbar_fake_accept"
+            android:layout_width="@dimen/fake_toolbar_icon_size"
+            android:layout_height="@dimen/fake_toolbar_icon_size"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_accept" />
     </FrameLayout>
 
     <LinearLayout

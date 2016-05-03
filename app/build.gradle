@@ -9,8 +9,8 @@ android {
         applicationId "kz.telecom.happydrive"
         minSdkVersion 16
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "2.0"
+        versionCode 16
+        versionName "3.0"
     }
 
     signingConfigs {

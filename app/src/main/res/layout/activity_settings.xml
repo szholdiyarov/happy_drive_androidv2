@@ -73,22 +73,6 @@
         android:background="#70cecece" />
 
     <TextView
-        android:id="@id/action_change_domain"
-        fontPath="fonts/Roboto-Light.ttf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick"
-        android:padding="12dp"
-        android:text="Установить домен"
-        android:textColor="@color/auth_tv_password_recovery"
-        android:textSize="14sp" />
-
-    <View
-        android:layout_width="60dp"
-        android:layout_height=".8dp"
-        android:background="#70cecece" />
-
-    <TextView
         android:id="@id/action_toggle_card_visibility"
         fontPath="fonts/Roboto-Light.ttf"
         android:layout_width="wrap_content"
